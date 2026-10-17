@@ -1,0 +1,10 @@
+{
+    "standalone": [
+        "bootyLogic.js",
+        "gameWorker.js",
+        "goldfishLogic.js",
+        "subGameWorker.js",
+        "svision/js/platform/canvas2D/zxSpectrum/zxRomDraw.js",
+        "svision/js/audio/worker/audioProcessor.js"
+    ]
+}
