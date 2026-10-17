@@ -57,7 +57,8 @@ class AboutPage extends AbstractAboutPage {
       'footer' =>
         '<p>An unofficial fan remake. The original game and its artwork belong to their authors '.
         '(John F. Cain, Firebird Software). '.
-        'The remake\'s source code is licensed under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" rel="noopener">CC BY-NC-SA 4.0</a>.</p>',
+        'Remake source code is available on <a href="https://github.com/mitrenga/booty" target="_blank" rel="noopener">GitHub</a> '.
+        'under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" rel="noopener">CC BY-NC-SA 4.0</a>.</p>',
     ];
   } // aboutData
 
