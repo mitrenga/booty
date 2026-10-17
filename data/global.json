@@ -1,0 +1,1954 @@
+{
+  "global": {
+    "hold": 1,
+    "jim": [16, 21, 3, 3, 0, 0, 32, 2, 3, 5, 1, 3, 0, 16, 21, 3, 0, 0, 0, 0],
+    "lives": 3,
+    "booty": 0,
+    "treasure": 125
+  },
+  "holds": {
+    "glyphs": {
+      "address": 33656,
+      "scenery": 33656,
+      "crates": 34424,
+      "bytes": "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"
+    },
+    "holds": {
+      "1": {
+        "address": 47588,
+        "COLDAT": [
+          [7],
+          [4],
+          [0],
+          [7],
+          [0],
+          [1],
+          [6]
+        ],
+        "DKDAT": [
+          [33, 23, 16],
+          [33, 18, 16],
+          [33, 13, 16],
+          [33, 8, 16],
+          [33, 3, 16]
+        ],
+        "EODAT": [
+          [7, 22, 4, 2],
+          [6, 7, 4, 11],
+          [30, 12, 5, 7]
+        ],
+        "LDAT": [
+          [16, 18],
+          [20, 13],
+          [16, 8]
+        ],
+        "SDDAT": [
+          [12, 23, 14, 6, 2, 3],
+          [22, 23, 8, 11, 1, 3],
+          [22, 18, 32, 11, 3, 3],
+          [12, 18, 19, 21, 4, 3],
+          [24, 13, 32, 6, 5, 3],
+          [12, 13, 22, 11, 6, 3],
+          [22, 8, 19, 16, 7, 3],
+          [12, 8, 27, 21, 8, 3]
+        ],
+        "PHDAT": [],
+        "OPST": [
+          [33, 6, 3, 3, 255, 0, 32, 2, 3, 7, 1, 3, 0, 33, 6, 3],
+          [10, 11, 3, 3, 255, 0, 32, 2, 3, 6, 1, 3, 0, 10, 11, 3]
+        ],
+        "TDAT": [
+          [6, 15, 2, 2, 5, 1, 88],
+          [31, 20, 2, 2, 6, 1, 120],
+          [32, 15, 2, 2, 7, 1, 84],
+          [27, 10, 2, 2, 5, 1, 88],
+          [20, 5, 2, 2, 6, 1, 92],
+          [25, 5, 2, 2, 3, 1, 96],
+          [8, 5, 2, 2, 2, 1, 100]
+        ],
+        "BDAT": [
+          [18, 12, 104, 4],
+          [29, 17, 56, 6]
+        ],
+        "LIDAT": [],
+        "TDDAT": []
+      },
+      "2": {
+        "address": 47390,
+        "COLDAT": [
+          [4],
+          [6],
+          [0],
+          [6],
+          [0],
+          [1],
+          [5]
+        ],
+        "DKDAT": [
+          [33, 23, 16],
+          [33, 18, 16],
+          [33, 8, 16],
+          [33, 3, 16],
+          [33, 13, 16]
+        ],
+        "EODAT": [
+          [7, 22, 4, 1],
+          [8, 17, 4, 14],
+          [14, 7, 2, 18]
+        ],
+        "LDAT": [
+          [13, 18],
+          [32, 18],
+          [24, 13],
+          [4, 8]
+        ],
+        "SDDAT": [
+          [26, 23, 32, 6, 1, 3],
+          [10, 23, 2, 21, 2, 3],
+          [26, 18, 6, 6, 3, 3],
+          [16, 18, 22, 21, 4, 3],
+          [18, 13, 2, 16, 5, 3],
+          [26, 8, 24, 21, 6, 3],
+          [10, 8, 24, 6, 7, 3]
+        ],
+        "PHDAT": [],
+        "OPST": [
+          [21, 16, 3, 3, 255, 0, 32, 2, 3, 7, 1, 3, 0, 21, 16, 3],
+          [33, 11, 3, 3, 255, 0, 32, 2, 3, 7, 1, 3, 0, 33, 11, 3]
+        ],
+        "TDAT": [
+          [29, 20, 2, 2, 5, 1, 88],
+          [14, 20, 2, 2, 5, 1, 88],
+          [4, 20, 2, 2, 6, 1, 92],
+          [19, 15, 2, 2, 6, 1, 116],
+          [5, 15, 2, 2, 5, 1, 88],
+          [31, 10, 2, 2, 5, 1, 88],
+          [14, 10, 2, 2, 5, 1, 88],
+          [29, 5, 2, 2, 5, 1, 88],
+          [22, 5, 2, 2, 5, 1, 88]
+        ],
+        "BDAT": [
+          [20, 22, 104, 4],
+          [9, 12, 80, 5]
+        ],
+        "LIDAT": [],
+        "TDDAT": []
+      },
+      "3": {
+        "address": 47228,
+        "COLDAT": [
+          [5],
+          [4],
+          [0],
+          [4],
+          [0],
+          [0],
+          [4]
+        ],
+        "DKDAT": [
+          [33, 23, 16],
+          [33, 18, 16],
+          [33, 13, 16],
+          [33, 8, 16],
+          [33, 3, 16]
+        ],
+        "EODAT": [
+          [32, 17, 7, 17],
+          [5, 12, 6, 15],
+          [20, 7, 3, 19]
+        ],
+        "LDAT": [
+          [24, 18],
+          [14, 13],
+          [12, 8]
+        ],
+        "SDDAT": [
+          [26, 23, 32, 6, 1, 3],
+          [10, 23, 7, 11, 2, 3],
+          [26, 18, 12, 21, 3, 3],
+          [8, 18, 3, 21, 4, 3],
+          [18, 13, 32, 21, 5, 3],
+          [23, 8, 4, 16, 6, 3],
+          [16, 8, 29, 16, 7, 3]
+        ],
+        "PHDAT": [],
+        "OPST": [
+          [33, 16, 3, 3, 255, 0, 32, 2, 3, 6, 1, 3, 0, 33, 16, 3]
+        ],
+        "TDAT": [
+          [29, 20, 2, 2, 5, 1, 100],
+          [15, 20, 2, 2, 5, 1, 100],
+          [7, 15, 2, 2, 4, 1, 100],
+          [25, 10, 2, 2, 4, 1, 100],
+          [10, 10, 2, 2, 6, 1, 100],
+          [30, 5, 2, 2, 7, 1, 100],
+          [14, 5, 2, 2, 2, 1, 100]
+        ],
+        "BDAT": [
+          [22, 22, 56, 3]
+        ],
+        "LIDAT": [],
+        "TDDAT": []
+      },
+      "4": {
+        "address": 47029,
+        "COLDAT": [
+          [6],
+          [5],
+          [0],
+          [5],
+          [0],
+          [1],
+          [7]
+        ],
+        "DKDAT": [
+          [33, 23, 16],
+          [33, 18, 16],
+          [33, 13, 16],
+          [33, 8, 16],
+          [33, 3, 16]
+        ],
+        "EODAT": [
+          [15, 17, 4, 6],
+          [4, 17, 4, 16],
+          [29, 12, 4, 10]
+        ],
+        "LDAT": [
+          [24, 18],
+          [26, 13],
+          [9, 13],
+          [17, 8]
+        ],
+        "SDDAT": [
+          [20, 23, 32, 11, 1, 3],
+          [12, 23, 5, 16, 2, 3],
+          [10, 18, 32, 6, 3, 3],
+          [22, 13, 18, 21, 4, 3],
+          [22, 8, 3, 11, 5, 3],
+          [6, 8, 3, 21, 6, 3]
+        ],
+        "PHDAT": [],
+        "OPST": [
+          [15, 11, 3, 3, 255, 0, 32, 2, 3, 7, 1, 3, 0, 15, 11, 3],
+          [15, 21, 3, 3, 255, 0, 32, 2, 3, 7, 1, 3, 0, 15, 21, 3]
+        ],
+        "TDAT": [
+          [24, 20, 2, 2, 7, 1, 84],
+          [8, 20, 2, 2, 6, 1, 84],
+          [29, 15, 2, 2, 7, 1, 84],
+          [19, 15, 2, 2, 6, 1, 84],
+          [8, 15, 2, 2, 5, 1, 84],
+          [31, 10, 2, 2, 7, 1, 84],
+          [20, 10, 2, 2, 6, 1, 84],
+          [25, 5, 2, 2, 5, 1, 84],
+          [13, 5, 2, 2, 6, 1, 84],
+          [4, 5, 2, 2, 2, 1, 84]
+        ],
+        "BDAT": [
+          [33, 22, 80, 4],
+          [15, 12, 80, 4]
+        ],
+        "LIDAT": [],
+        "TDDAT": []
+      },
+      "5": {
+        "address": 46871,
+        "COLDAT": [
+          [6],
+          [6],
+          [0],
+          [6],
+          [0],
+          [1],
+          [4]
+        ],
+        "DKDAT": [
+          [33, 23, 16],
+          [33, 18, 16],
+          [33, 13, 16],
+          [33, 8, 16],
+          [33, 3, 16]
+        ],
+        "EODAT": [
+          [16, 22, 3, 11],
+          [5, 17, 3, 18],
+          [28, 7, 5, 13]
+        ],
+        "LDAT": [
+          [9, 18],
+          [27, 13],
+          [25, 8]
+        ],
+        "SDDAT": [
+          [24, 23, 20, 16, 1, 3],
+          [6, 23, 6, 11, 2, 3],
+          [28, 18, 29, 6, 3, 3],
+          [22, 18, 32, 21, 4, 3],
+          [12, 13, 2, 16, 5, 3],
+          [12, 8, 2, 21, 6, 3]
+        ],
+        "PHDAT": [],
+        "OPST": [],
+        "TDAT": [
+          [22, 20, 2, 2, 6, 1, 120],
+          [5, 20, 2, 2, 6, 1, 116],
+          [32, 10, 2, 2, 5, 1, 96],
+          [10, 5, 2, 2, 7, 1, 104],
+          [32, 15, 2, 2, 6, 1, 92],
+          [25, 15, 2, 2, 6, 1, 92],
+          [19, 15, 2, 2, 6, 1, 92]
+        ],
+        "BDAT": [
+          [30, 22, 56, 4],
+          [15, 17, 56, 4],
+          [23, 12, 56, 3],
+          [7, 7, 56, 5]
+        ],
+        "LIDAT": [],
+        "TDDAT": [
+          [17, 8, 5, 40, 100, 0]
+        ]
+      },
+      "6": {
+        "address": 46733,
+        "COLDAT": [
+          [7],
+          [7],
+          [0],
+          [5],
+          [0],
+          [1],
+          [4]
+        ],
+        "DKDAT": [
+          [33, 23, 2],
+          [19, 23, 9],
+          [15, 18, 7],
+          [15, 13, 7],
+          [15, 8, 7],
+          [33, 3, 16],
+          [29, 13, 5]
+        ],
+        "EODAT": [
+          [26, 17, 4, 12],
+          [15, 17, 4, 4],
+          [15, 7, 4, 16]
+        ],
+        "LDAT": [
+          [4, 18],
+          [6, 13],
+          [11, 8]
+        ],
+        "SDDAT": [
+          [10, 23, 11, 16, 1, 3],
+          [8, 13, 3, 6, 2, 3],
+          [8, 8, 14, 11, 3, 3]
+        ],
+        "PHDAT": [],
+        "OPST": [
+          [19, 6, 3, 3, 255, 0, 32, 2, 3, 7, 1, 3, 0, 19, 6, 3]
+        ],
+        "TDAT": [
+          [14, 20, 2, 2, 2, 1, 100],
+          [4, 20, 2, 2, 2, 1, 100],
+          [23, 15, 2, 2, 6, 1, 116],
+          [4, 10, 2, 2, 5, 1, 108],
+          [6, 5, 2, 2, 7, 1, 104]
+        ],
+        "BDAT": [
+          [33, 7, 32, 2],
+          [27, 7, 32, 2],
+          [21, 7, 32, 2]
+        ],
+        "LIDAT": [],
+        "TDDAT": []
+      },
+      "7": {
+        "address": 46561,
+        "COLDAT": [
+          [6],
+          [6],
+          [0],
+          [6],
+          [1],
+          [0],
+          [5]
+        ],
+        "DKDAT": [
+          [33, 23, 16],
+          [33, 18, 16],
+          [33, 13, 16],
+          [33, 8, 16],
+          [33, 3, 16]
+        ],
+        "EODAT": [
+          [4, 22, 4, 17],
+          [24, 17, 4, 20],
+          [30, 12, 6, 1]
+        ],
+        "LDAT": [
+          [13, 18],
+          [21, 13],
+          [32, 8]
+        ],
+        "SDDAT": [
+          [26, 23, 32, 16, 1, 3],
+          [26, 18, 3, 6, 2, 3],
+          [8, 18, 24, 21, 3, 3],
+          [16, 13, 10, 6, 4, 3],
+          [16, 8, 18, 11, 5, 3],
+          [8, 8, 3, 11, 6, 3]
+        ],
+        "PHDAT": [],
+        "OPST": [
+          [12, 16, 3, 3, 255, 0, 32, 2, 3, 6, 1, 3, 0, 12, 16, 3]
+        ],
+        "TDAT": [
+          [31, 20, 2, 2, 7, 1, 104],
+          [30, 15, 2, 2, 5, 1, 88],
+          [6, 15, 2, 2, 5, 1, 88],
+          [12, 10, 2, 2, 5, 1, 88],
+          [7, 10, 2, 2, 6, 1, 92],
+          [13, 5, 2, 2, 6, 1, 80],
+          [6, 5, 2, 2, 7, 1, 84]
+        ],
+        "BDAT": [
+          [23, 7, 56, 2],
+          [29, 7, 80, 2],
+          [23, 22, 80, 4],
+          [17, 22, 104, 4],
+          [11, 22, 80, 4]
+        ],
+        "LIDAT": [],
+        "TDDAT": []
+      },
+      "8": {
+        "address": 46396,
+        "COLDAT": [
+          [7],
+          [6],
+          [0],
+          [6],
+          [2],
+          [1],
+          [6]
+        ],
+        "DKDAT": [
+          [33, 23, 16],
+          [33, 18, 16],
+          [33, 13, 16],
+          [33, 8, 16],
+          [33, 3, 16]
+        ],
+        "EODAT": [
+          [18, 22, 4, 15],
+          [26, 12, 4, 12],
+          [5, 7, 4, 20]
+        ],
+        "LDAT": [
+          [32, 18],
+          [4, 13],
+          [32, 8]
+        ],
+        "SDDAT": [
+          [22, 23, 20, 21, 1, 3],
+          [12, 23, 25, 21, 2, 3],
+          [22, 18, 5, 21, 3, 3],
+          [20, 13, 8, 6, 4, 3],
+          [12, 13, 15, 11, 5, 3],
+          [12, 8, 22, 11, 6, 3]
+        ],
+        "PHDAT": [
+          [30, 17, 32],
+          [25, 17, 36],
+          [20, 17, 40],
+          [15, 17, 44],
+          [10, 17, 48],
+          [5, 17, 52]
+        ],
+        "OPST": [],
+        "TDAT": [
+          [29, 20, 2, 2, 6, 1, 80],
+          [4, 20, 2, 2, 6, 1, 80],
+          [27, 15, 2, 2, 6, 1, 80],
+          [6, 15, 2, 2, 7, 1, 80],
+          [18, 10, 2, 2, 7, 1, 80],
+          [9, 10, 2, 2, 6, 1, 80],
+          [25, 5, 2, 2, 5, 1, 80],
+          [10, 5, 2, 2, 7, 1, 80]
+        ],
+        "BDAT": [
+          [20, 7, 104, 2]
+        ],
+        "LIDAT": [],
+        "TDDAT": []
+      },
+      "9": {
+        "address": 46253,
+        "COLDAT": [
+          [5],
+          [2],
+          [0],
+          [7],
+          [0],
+          [1],
+          [2]
+        ],
+        "DKDAT": [
+          [33, 23, 16],
+          [33, 18, 16],
+          [33, 13, 4],
+          [33, 8, 4],
+          [17, 13, 8],
+          [17, 8, 8],
+          [33, 3, 16]
+        ],
+        "EODAT": [
+          [32, 22, 4, 18],
+          [5, 22, 5, 13],
+          [16, 17, 5, 14]
+        ],
+        "LDAT": [
+          [28, 18],
+          [32, 13],
+          [28, 8],
+          [4, 13],
+          [8, 8]
+        ],
+        "SDDAT": [],
+        "PHDAT": [],
+        "OPST": [
+          [9, 21, 3, 3, 255, 0, 32, 2, 3, 7, 1, 3, 0, 9, 21, 3],
+          [33, 6, 3, 3, 255, 0, 32, 2, 3, 7, 1, 3, 0, 33, 6, 3],
+          [16, 11, 3, 3, 255, 0, 32, 2, 3, 7, 1, 3, 0, 16, 11, 3]
+        ],
+        "TDAT": [
+          [12, 10, 2, 2, 2, 1, 100],
+          [17, 5, 2, 2, 4, 1, 100]
+        ],
+        "BDAT": [
+          [23, 7, 56, 4],
+          [29, 22, 32, 2],
+          [23, 22, 32, 2],
+          [17, 22, 32, 2],
+          [11, 22, 32, 2]
+        ],
+        "LIDAT": [],
+        "TDDAT": []
+      },
+      "10": {
+        "address": 46079,
+        "COLDAT": [
+          [7],
+          [6],
+          [0],
+          [6],
+          [0],
+          [1],
+          [6]
+        ],
+        "DKDAT": [
+          [33, 23, 16],
+          [33, 18, 5],
+          [33, 13, 5],
+          [33, 8, 5],
+          [11, 18, 5],
+          [11, 13, 5],
+          [11, 8, 5],
+          [33, 3, 5],
+          [11, 3, 5],
+          [20, 3, 3]
+        ],
+        "EODAT": [
+          [32, 17, 2, 13],
+          [29, 12, 4, 4],
+          [17, 7, 5, 21],
+          [4, 7, 4, 19]
+        ],
+        "LDAT": [],
+        "SDDAT": [
+          [26, 23, 3, 21, 1, 3],
+          [8, 23, 32, 11, 2, 3],
+          [8, 18, 29, 16, 3, 3],
+          [8, 13, 32, 6, 4, 3],
+          [30, 8, 5, 16, 5, 3],
+          [8, 8, 32, 21, 6, 3]
+        ],
+        "PHDAT": [],
+        "OPST": [],
+        "TDAT": [
+          [30, 20, 2, 2, 2, 1, 100],
+          [6, 20, 2, 2, 4, 1, 100],
+          [26, 15, 2, 2, 6, 1, 84],
+          [25, 10, 2, 2, 6, 1, 116],
+          [19, 5, 2, 2, 7, 1, 88],
+          [7, 5, 2, 2, 6, 1, 92]
+        ],
+        "BDAT": [],
+        "LIDAT": [
+          [23, 18, 3, 3, 0, 255, 36, 3, 1, 5, 19, 3, 3, 1, 0, 0],
+          [14, 18, 3, 3, 0, 255, 36, 3, 1, 5, 19, 3, 3, 1, 0, 0]
+        ],
+        "TDDAT": []
+      },
+      "11": {
+        "address": 45908,
+        "COLDAT": [
+          [6],
+          [4],
+          [0],
+          [4],
+          [0],
+          [1],
+          [4]
+        ],
+        "DKDAT": [
+          [33, 23, 16],
+          [33, 18, 16],
+          [33, 13, 16],
+          [33, 8, 16],
+          [33, 3, 16]
+        ],
+        "EODAT": [
+          [16, 22, 4, 5],
+          [29, 17, 3, 16],
+          [6, 7, 4, 1]
+        ],
+        "LDAT": [
+          [8, 18],
+          [32, 13],
+          [10, 8]
+        ],
+        "SDDAT": [
+          [22, 23, 3, 16, 1, 3],
+          [10, 23, 20, 21, 2, 3],
+          [22, 18, 7, 6, 3, 3],
+          [14, 18, 32, 6, 4, 3],
+          [24, 8, 20, 16, 5, 3],
+          [18, 8, 24, 16, 6, 3]
+        ],
+        "PHDAT": [],
+        "OPST": [
+          [8, 16, 3, 3, 255, 0, 32, 2, 3, 7, 1, 3, 0, 8, 16, 3]
+        ],
+        "TDAT": [
+          [25, 20, 2, 2, 7, 1, 108],
+          [5, 20, 2, 2, 6, 1, 120],
+          [18, 15, 2, 2, 6, 1, 116],
+          [11, 15, 2, 2, 4, 1, 100],
+          [29, 5, 2, 2, 7, 1, 92],
+          [21, 5, 2, 2, 6, 1, 84]
+        ],
+        "BDAT": [
+          [32, 22, 104, 5],
+          [7, 12, 80, 3]
+        ],
+        "LIDAT": [],
+        "TDDAT": [
+          [29, 8, 4, 50, 50, 0],
+          [23, 8, 5, 45, 55, 0],
+          [16, 8, 4, 40, 60, 0]
+        ]
+      },
+      "12": {
+        "address": 45698,
+        "COLDAT": [
+          [6],
+          [6],
+          [0],
+          [5],
+          [0],
+          [1],
+          [2]
+        ],
+        "DKDAT": [
+          [33, 23, 16],
+          [33, 18, 8],
+          [13, 18, 6],
+          [33, 13, 8],
+          [13, 13, 2],
+          [5, 13, 2],
+          [33, 8, 6],
+          [15, 8, 3],
+          [5, 8, 2],
+          [33, 3, 16]
+        ],
+        "EODAT": [
+          [26, 17, 4, 6],
+          [26, 12, 4, 8],
+          [10, 7, 3, 17]
+        ],
+        "LDAT": [
+          [13, 8]
+        ],
+        "SDDAT": [
+          [7, 23, 29, 11, 1, 3],
+          [20, 18, 3, 16, 2, 3],
+          [24, 8, 29, 16, 3, 3]
+        ],
+        "PHDAT": [],
+        "OPST": [
+          [33, 21, 3, 3, 255, 0, 32, 2, 3, 7, 1, 3, 0, 33, 21, 3],
+          [33, 6, 3, 3, 255, 0, 32, 2, 3, 5, 1, 3, 0, 33, 6, 3],
+          [33, 11, 3, 3, 255, 0, 32, 2, 3, 6, 1, 3, 0, 33, 11, 3]
+        ],
+        "TDAT": [
+          [29, 20, 2, 2, 3, 1, 100],
+          [5, 20, 2, 2, 6, 1, 116],
+          [4, 10, 2, 2, 5, 1, 88],
+          [29, 5, 2, 2, 7, 1, 104]
+        ],
+        "BDAT": [],
+        "LIDAT": [
+          [17, 18, 3, 3, 0, 255, 36, 4, 1, 5, 19, 3, 13, 3, 0, 0],
+          [9, 8, 3, 3, 0, 1, 36, 4, 1, 5, 14, 3, 8, 3, 0, 0],
+          [21, 8, 3, 3, 255, 0, 33, 3, 1, 4, 21, 3, 18, 3, 0, 0]
+        ],
+        "TDDAT": [
+          [11, 18, 4, 50, 75, 0]
+        ]
+      },
+      "13": {
+        "address": 45512,
+        "COLDAT": [
+          [7],
+          [6],
+          [0],
+          [6],
+          [0],
+          [0],
+          [7]
+        ],
+        "DKDAT": [
+          [33, 23, 16],
+          [33, 18, 5],
+          [33, 13, 5],
+          [33, 8, 5],
+          [19, 18, 9],
+          [19, 13, 9],
+          [19, 8, 9],
+          [33, 3, 5],
+          [19, 3, 9]
+        ],
+        "EODAT": [
+          [5, 22, 5, 9],
+          [32, 17, 2, 10],
+          [28, 7, 5, 5]
+        ],
+        "LDAT": [],
+        "SDDAT": [
+          [16, 18, 32, 11, 1, 3],
+          [8, 18, 3, 6, 2, 3],
+          [26, 13, 18, 16, 3, 3],
+          [16, 13, 32, 21, 4, 3],
+          [10, 8, 15, 11, 5, 3]
+        ],
+        "PHDAT": [
+          [28, 17, 32],
+          [13, 17, 48]
+        ],
+        "OPST": [
+          [33, 6, 3, 3, 255, 0, 32, 2, 3, 7, 1, 3, 0, 33, 6, 3]
+        ],
+        "TDAT": [
+          [29, 20, 2, 2, 6, 1, 80],
+          [7, 20, 2, 2, 4, 1, 100],
+          [6, 15, 2, 2, 5, 1, 108],
+          [30, 10, 2, 2, 4, 1, 112],
+          [5, 10, 2, 2, 2, 1, 100],
+          [18, 5, 2, 2, 7, 1, 104],
+          [7, 5, 2, 2, 3, 1, 96]
+        ],
+        "BDAT": [
+          [19, 22, 32, 4],
+          [13, 22, 56, 4],
+          [11, 12, 56, 5]
+        ],
+        "LIDAT": [
+          [23, 18, 3, 3, 0, 255, 36, 4, 1, 5, 19, 3, 3, 1, 0, 0]
+        ],
+        "TDDAT": []
+      },
+      "14": {
+        "address": 45327,
+        "COLDAT": [
+          [7],
+          [6],
+          [0],
+          [2],
+          [1],
+          [0],
+          [4]
+        ],
+        "DKDAT": [
+          [33, 23, 16],
+          [33, 3, 16],
+          [33, 18, 4],
+          [33, 13, 4],
+          [33, 8, 4],
+          [9, 18, 4],
+          [9, 13, 4],
+          [9, 8, 4]
+        ],
+        "EODAT": [
+          [16, 17, 5, 9],
+          [8, 17, 4, 2],
+          [29, 7, 2, 15]
+        ],
+        "LDAT": [
+          [4, 18],
+          [32, 13],
+          [4, 8]
+        ],
+        "SDDAT": [],
+        "PHDAT": [],
+        "OPST": [
+          [33, 6, 3, 3, 255, 0, 32, 2, 3, 6, 1, 3, 0, 33, 6, 3]
+        ],
+        "TDAT": [
+          [33, 20, 2, 2, 4, 1, 100],
+          [7, 20, 2, 2, 6, 1, 92],
+          [30, 15, 2, 2, 7, 1, 108],
+          [29, 10, 2, 2, 3, 1, 112],
+          [6, 10, 2, 2, 5, 1, 88],
+          [19, 5, 2, 2, 4, 1, 100],
+          [9, 5, 2, 2, 4, 1, 100]
+        ],
+        "BDAT": [
+          [25, 7, 104, 4],
+          [17, 7, 56, 4],
+          [31, 22, 80, 5]
+        ],
+        "LIDAT": [
+          [25, 18, 3, 3, 255, 0, 33, 3, 1, 6, 25, 3, 12, 3, 0, 0],
+          [12, 13, 3, 3, 1, 0, 33, 3, 1, 6, 25, 3, 12, 3, 0, 0],
+          [25, 8, 3, 3, 255, 0, 33, 3, 1, 6, 25, 3, 12, 3, 0, 0]
+        ],
+        "TDDAT": []
+      },
+      "15": {
+        "address": 45112,
+        "COLDAT": [
+          [7],
+          [7],
+          [0],
+          [5],
+          [3],
+          [0],
+          [6]
+        ],
+        "DKDAT": [
+          [33, 23, 16],
+          [33, 18, 4],
+          [33, 13, 4],
+          [33, 8, 4],
+          [21, 18, 4],
+          [21, 13, 4],
+          [21, 8, 4],
+          [9, 18, 4],
+          [9, 13, 4],
+          [9, 8, 4],
+          [33, 3, 4],
+          [21, 3, 4],
+          [9, 3, 4]
+        ],
+        "EODAT": [
+          [18, 22, 7, 8],
+          [5, 12, 6, 3],
+          [29, 7, 2, 14]
+        ],
+        "LDAT": [],
+        "SDDAT": [
+          [28, 23, 3, 21, 1, 3],
+          [8, 23, 33, 11, 2, 3],
+          [28, 18, 2, 16, 3, 3],
+          [6, 18, 33, 21, 4, 3],
+          [28, 13, 3, 6, 5, 3],
+          [8, 8, 14, 11, 6, 3]
+        ],
+        "PHDAT": [],
+        "OPST": [],
+        "TDAT": [
+          [31, 20, 2, 2, 4, 1, 100],
+          [21, 20, 2, 2, 5, 1, 112],
+          [6, 20, 2, 2, 4, 1, 96],
+          [32, 15, 2, 2, 7, 1, 104],
+          [15, 15, 2, 2, 3, 1, 100],
+          [4, 15, 2, 2, 5, 1, 88],
+          [31, 10, 2, 2, 7, 1, 80],
+          [21, 10, 2, 2, 5, 1, 108],
+          [21, 5, 2, 2, 4, 1, 100],
+          [6, 5, 2, 2, 7, 1, 84]
+        ],
+        "BDAT": [
+          [21, 17, 32, 4],
+          [19, 7, 32, 5]
+        ],
+        "LIDAT": [
+          [25, 19, 3, 1, 0, 255, 36, 4, 1, 5, 19, 3, 3, 1, 0, 0],
+          [13, 4, 3, 1, 0, 1, 36, 4, 1, 5, 19, 3, 3, 1, 0, 0]
+        ],
+        "TDDAT": []
+      },
+      "16": {
+        "address": 44904,
+        "COLDAT": [
+          [7],
+          [6],
+          [0],
+          [6],
+          [0],
+          [0],
+          [2]
+        ],
+        "DKDAT": [
+          [33, 23, 16],
+          [33, 18, 11],
+          [33, 13, 11],
+          [33, 8, 11],
+          [5, 13, 2],
+          [33, 3, 11],
+          [5, 3, 2]
+        ],
+        "EODAT": [
+          [29, 17, 5, 11],
+          [4, 17, 4, 4],
+          [15, 7, 4, 6]
+        ],
+        "LDAT": [],
+        "SDDAT": [
+          [26, 23, 23, 11, 1, 3],
+          [18, 23, 5, 16, 2, 3],
+          [28, 13, 32, 6, 3, 3],
+          [20, 13, 24, 6, 4, 3],
+          [26, 8, 32, 21, 5, 3],
+          [18, 8, 21, 21, 6, 3]
+        ],
+        "PHDAT": [],
+        "OPST": [
+          [33, 16, 3, 3, 255, 0, 32, 2, 3, 5, 1, 3, 0, 33, 16, 3],
+          [7, 6, 3, 3, 255, 0, 32, 2, 3, 5, 1, 3, 0, 7, 6, 3]
+        ],
+        "TDAT": [
+          [30, 20, 2, 2, 4, 1, 100],
+          [24, 20, 2, 2, 7, 1, 104],
+          [18, 15, 2, 2, 5, 1, 100],
+          [26, 10, 2, 2, 3, 1, 96],
+          [31, 10, 2, 2, 7, 1, 80],
+          [30, 5, 2, 2, 4, 1, 108],
+          [22, 5, 2, 2, 5, 1, 88]
+        ],
+        "BDAT": [
+          [25, 17, 104, 4],
+          [19, 12, 56, 3]
+        ],
+        "LIDAT": [
+          [11, 13, 3, 3, 0, 1, 36, 3, 1, 5, 19, 3, 3, 1, 0, 0],
+          [8, 13, 3, 3, 0, 255, 36, 3, 1, 5, 19, 3, 3, 1, 0, 0]
+        ],
+        "TDDAT": []
+      },
+      "17": {
+        "address": 44657,
+        "COLDAT": [
+          [6],
+          [6],
+          [0],
+          [2],
+          [0],
+          [0],
+          [4]
+        ],
+        "DKDAT": [
+          [33, 23, 16],
+          [33, 18, 2],
+          [33, 13, 2],
+          [33, 8, 2],
+          [33, 3, 2],
+          [26, 18, 1],
+          [26, 13, 1],
+          [26, 8, 1],
+          [26, 3, 12],
+          [15, 18, 7],
+          [15, 13, 7],
+          [15, 8, 7],
+          [3, 3, 1]
+        ],
+        "EODAT": [
+          [4, 22, 4, 7],
+          [10, 7, 4, 12]
+        ],
+        "LDAT": [],
+        "SDDAT": [
+          [14, 18, 13, 11, 1, 3],
+          [10, 18, 6, 21, 2, 3],
+          [6, 18, 3, 11, 3, 3],
+          [14, 13, 32, 11, 4, 3],
+          [10, 13, 16, 6, 5, 3]
+        ],
+        "PHDAT": [],
+        "OPST": [
+          [24, 6, 3, 3, 255, 0, 32, 2, 3, 5, 1, 3, 0, 24, 6, 3]
+        ],
+        "TDAT": [
+          [9, 20, 2, 2, 2, 1, 112],
+          [12, 15, 2, 2, 7, 1, 104],
+          [4, 15, 2, 2, 6, 1, 116],
+          [12, 10, 2, 2, 4, 1, 100],
+          [32, 5, 2, 2, 4, 1, 100],
+          [14, 5, 2, 2, 2, 1, 100]
+        ],
+        "BDAT": [
+          [24, 7, 32, 2],
+          [15, 22, 32, 2],
+          [9, 12, 32, 2]
+        ],
+        "LIDAT": [
+          [29, 18, 3, 3, 0, 255, 36, 3, 1, 5, 19, 3, 3, 1, 0, 0],
+          [24, 18, 3, 3, 255, 0, 33, 3, 1, 6, 24, 3, 18, 3, 0, 0],
+          [18, 8, 3, 3, 1, 0, 33, 3, 1, 7, 24, 3, 18, 3, 0, 0],
+          [22, 13, 3, 3, 1, 0, 33, 3, 1, 4, 24, 3, 18, 3, 0, 0]
+        ],
+        "TDDAT": [
+          [26, 18, 130, 140, 70, 0],
+          [26, 13, 2, 140, 70, 70],
+          [26, 8, 2, 140, 70, 0]
+        ]
+      },
+      "18": {
+        "address": 44445,
+        "COLDAT": [
+          [7],
+          [5],
+          [0],
+          [5],
+          [1],
+          [0],
+          [3]
+        ],
+        "DKDAT": [
+          [33, 23, 16],
+          [33, 18, 3],
+          [33, 13, 3],
+          [33, 8, 3],
+          [15, 18, 7],
+          [15, 13, 7],
+          [15, 8, 7],
+          [33, 3, 3],
+          [15, 3, 7]
+        ],
+        "EODAT": [
+          [5, 17, 5, 5],
+          [14, 7, 7, 2]
+        ],
+        "LDAT": [],
+        "SDDAT": [
+          [14, 23, 31, 6, 1, 3],
+          [10, 23, 9, 6, 2, 3],
+          [6, 23, 29, 21, 3, 3],
+          [12, 13, 2, 21, 4, 3],
+          [8, 13, 28, 21, 5, 3],
+          [10, 8, 13, 21, 6, 3],
+          [6, 8, 10, 11, 7, 3]
+        ],
+        "PHDAT": [],
+        "OPST": [],
+        "TDAT": [
+          [12, 20, 2, 2, 2, 1, 100],
+          [8, 20, 2, 2, 2, 1, 100],
+          [5, 20, 2, 2, 2, 1, 100],
+          [9, 15, 2, 2, 2, 1, 100],
+          [5, 10, 2, 2, 2, 1, 100],
+          [8, 5, 2, 2, 2, 1, 100],
+          [5, 5, 2, 2, 2, 1, 100]
+        ],
+        "BDAT": [
+          [15, 17, 56, 4]
+        ],
+        "LIDAT": [
+          [27, 18, 3, 3, 0, 255, 36, 3, 1, 5, 19, 3, 3, 3, 0, 0],
+          [24, 13, 3, 3, 0, 255, 36, 3, 1, 5, 19, 3, 3, 3, 0, 0],
+          [21, 8, 3, 3, 0, 255, 36, 3, 1, 5, 19, 3, 3, 3, 0, 0],
+          [18, 3, 3, 3, 0, 1, 36, 3, 1, 5, 19, 3, 3, 3, 0, 0]
+        ],
+        "TDDAT": []
+      },
+      "19": {
+        "address": 44233,
+        "COLDAT": [
+          [5],
+          [7],
+          [0],
+          [7],
+          [6],
+          [0],
+          [4]
+        ],
+        "DKDAT": [
+          [33, 23, 16],
+          [33, 18, 8],
+          [33, 13, 8],
+          [33, 8, 8],
+          [5, 18, 2],
+          [5, 13, 2],
+          [5, 8, 2],
+          [33, 3, 8],
+          [5, 3, 2]
+        ],
+        "EODAT": [
+          [32, 22, 7, 20],
+          [20, 7, 4, 3],
+          [4, 7, 4, 10]
+        ],
+        "LDAT": [],
+        "SDDAT": [
+          [4, 23, 22, 11, 1, 3],
+          [26, 18, 32, 6, 2, 3],
+          [22, 18, 26, 6, 3, 3],
+          [4, 18, 27, 11, 4, 3],
+          [24, 13, 24, 16, 5, 3],
+          [20, 13, 2, 11, 6, 3],
+          [4, 13, 28, 21, 7, 3],
+          [28, 8, 2, 16, 8, 3],
+          [22, 8, 2, 21, 9, 3]
+        ],
+        "PHDAT": [],
+        "OPST": [
+          [32, 11, 3, 3, 255, 0, 32, 2, 3, 4, 1, 3, 0, 32, 11, 3]
+        ],
+        "TDAT": [
+          [30, 15, 2, 2, 5, 1, 96],
+          [26, 10, 2, 2, 7, 1, 84],
+          [30, 5, 2, 2, 7, 1, 104]
+        ],
+        "BDAT": [],
+        "LIDAT": [
+          [17, 18, 3, 3, 0, 255, 36, 3, 1, 5, 19, 3, 3, 3, 0, 0],
+          [11, 8, 3, 3, 0, 255, 36, 3, 1, 5, 19, 3, 3, 3, 0, 0],
+          [14, 13, 3, 3, 0, 255, 36, 3, 1, 5, 19, 3, 3, 3, 0, 0],
+          [8, 3, 3, 3, 0, 1, 36, 3, 1, 5, 19, 3, 3, 3, 0, 0]
+        ],
+        "TDDAT": []
+      },
+      "20": {
+        "address": 44041,
+        "COLDAT": [
+          [6],
+          [6],
+          [0],
+          [6],
+          [0],
+          [0],
+          [4]
+        ],
+        "DKDAT": [
+          [33, 23, 16],
+          [33, 18, 2],
+          [33, 8, 2],
+          [25, 13, 2],
+          [17, 18, 3],
+          [17, 8, 3],
+          [7, 18, 3],
+          [7, 8, 3],
+          [33, 3, 2],
+          [25, 3, 2],
+          [17, 3, 3],
+          [7, 3, 3]
+        ],
+        "EODAT": [
+          [32, 22, 4, 19],
+          [24, 17, 4, 7],
+          [5, 7, 4, 8]
+        ],
+        "LDAT": [],
+        "SDDAT": [
+          [16, 23, 6, 6, 1, 3],
+          [12, 23, 6, 11, 2, 3],
+          [6, 23, 32, 11, 3, 3],
+          [16, 8, 2, 21, 4, 3],
+          [12, 8, 33, 21, 5, 3]
+        ],
+        "PHDAT": [],
+        "OPST": [
+          [15, 6, 3, 3, 255, 0, 32, 2, 3, 7, 1, 3, 0, 15, 6, 3]
+        ],
+        "TDAT": [
+          [15, 20, 2, 2, 6, 1, 80],
+          [4, 20, 2, 2, 5, 1, 84],
+          [32, 5, 2, 2, 5, 1, 88],
+          [4, 10, 2, 2, 6, 1, 92]
+        ],
+        "BDAT": [
+          [17, 12, 56, 4]
+        ],
+        "LIDAT": [
+          [29, 18, 3, 3, 0, 255, 36, 4, 1, 5, 19, 3, 3, 3, 0, 0],
+          [21, 18, 3, 3, 0, 255, 36, 4, 1, 5, 19, 3, 3, 3, 0, 0],
+          [11, 18, 3, 3, 0, 255, 36, 4, 1, 5, 19, 3, 3, 3, 0, 0]
+        ],
+        "TDDAT": []
+      },
+      "21": {
+        "address": 43990,
+        "COLDAT": [
+          [7],
+          [7],
+          [0],
+          [0],
+          [1],
+          [1],
+          [2]
+        ],
+        "DKDAT": [
+          [25, 18, 8],
+          [25, 13, 4],
+          [33, 18, 3]
+        ],
+        "EODAT": [
+          [19, 22, 4, 1]
+        ],
+        "LDAT": [
+          [23, 18],
+          [20, 13]
+        ],
+        "SDDAT": [],
+        "PHDAT": [],
+        "OPST": [
+          [33, 21, 3, 3, 255, 0, 32, 2, 2, 5, 1, 3, 0, 33, 21, 3]
+        ],
+        "TDAT": [],
+        "BDAT": [],
+        "LIDAT": [],
+        "TDDAT": []
+      }
+    }
+  },
+  "sprites": {
+    "firstCode": 32,
+    "banks": {
+      "jim": {
+        "chars": 35192,
+        "codes": [32, 127],
+        "bytes": "AQIEBAQCAQHgEHC48PDgwAIHCQ8JDwkHIPBIeEh4SHAEAgICAgICA5AgQEBAMAj4AQIEBAQCAQHgEHC48PDgwAIHCQ8JDwgHIPBIeEh4qPgEAgICBAQEBxAgQGBg+Bz8AAECBAQEAgEA4BBwuPDw4AECBwkPCA8YwCDwaLjY7DQfBgMGDBgMB/gQIHBw+Dz8AAECBAQEAgEA4BBwuPDw4AECBwkPCQ8IwCDwSHhIuKgPBAICBAQEB/AgQGBg+Bz8AQIEBAQCAQHgEHC48PDgwAIHCQ8JDwkHIPBIeEh4SHAEAgICAgICA5AgQEBAMAj4AQIEBAQCAQHgEHC48PDgwAIHDQ4KDQ0LIPBI+Ij4DPwGAgEBAwMDAxgQIBCQiIT8AAECBAQEAgEA4BBwuPDw4AECBwoNDQ0NwCDwiPgI+AgHAgEDBw8HA/gQEBCIhML+AAECBAQEAgEA4BBwuPDw4AECBwkOCg4KwCDwSPiI+IgHAgEBAwMDA/AQECCQiIT8AAcIDh0PDwcAgEAgICBAgAMEDxIeER8RgEDgkPBQcFAPCAgECREhP+BAgIDAwMDAAAcIDh0PDwcAgEAgICBAgAMEDxEfEB8QgEDgULCwsLAfCAgIESFDf+BAgMDg8ODABwgOHQ8PBwOAQCAgIECAgAQPEh8RHzA/QOCwcFCwsNAYCAQICREhP2BAgIDAwMDABwgOHQ8PBwOAQCAgIECAgAQPEh4SHhIOQOCQ8JDwkOAJBAICAgwQHyBAQEBAQEDAAAcIDh0PDwcAgEAgICBAgAMEDxIeEh4VgEDgkPCQ8BAPBAIGBh84P/AgQEAgICDgAAcIDh0PDwcAgEAgICBAgAMEDxYdGzcsgEDgkPAQ8BgfCAQODh88P/hgwGAwGDDgBwgOHQ8PBwOAQCAgIECAgAQPEh4SHhUfQOCQ8JDwEOAIBAIGBh84PyBAQEAgICDgBwgOHQ8PBwOAQCAgIECAgAQPEh4SHhIOQOCQ8JDwkOAJBAICAgwQHyBAQEBAQEDA"
+      },
+      "pirate": {
+        "chars": 36392,
+        "codes": [32, 127],
+        "bytes": "P0CBhY2e7474IMBgwCGTdx8kbk5OTn8vD4/fXn58/Pg/HwobCgkID/DAAAAAgEDAP0CBhY2e7474IMBgwCGTdx8kbk5OT38nD49efvz48MA7HwobCBcQH4AAAADAIKDgAD9AgYWNnu8A+iLDZ8cnlx8kbk9HQ/+hf4/eXrz48OB+GykSIkQiH8AAAICAQCDgP0CBhY2e7474IMBgwCGTdx8kbk5OTn8nD49efnz44MA7HwobCBcQH4AAAADAIKDgP0CBhY2e7474IMBgwCGTdx8kbk5OTn4vD49fXn58fPg/HwobCgkID/DAAAAAgEDAP0CBhY2e7474IMBgwCCQcB8kbk5eXH8/AYNHT15+/Ph/HwoJGRQUH+AAAIAAwCDgAD9AgYWNnu8A+CDAYMAgkB88fn58cH4/cICAQUNPXvw/HwkdJEQiH/jgAMCAQCDgP0CBhY2e7474IMBgwCCQcB8kbk5eXH8/AYNHT15+/Ph/HwoJGRQUH+AAAIAAwCDgHwQDBgMECQ78AoGhsXn3cYDB4vJ6fj8f+CR2cno6/vwHAAABAAMEB/74UJCYKCj4AB8EAwYDBAkA/AKBobF59w4BAYLC8no/+Dx+fj4OfvwfBwADAQIEB/z4kLgkIkT4HwQDBgMECQ78AoGhsXn3cYDB4vJ6fj8f+CR2cno6/vwHAAABAAMEB/74UJCYKCj4HwQDBgOEye78AoGhsXn3cfDx+np+Pj4f+CR2cnJyfvQPAwAAAAECA/z4UNhQkBDwHwQDBgOEye78AoGhsXn3cfDxen4+HwcD+CR2cnJy/uQBAAAAAwQFB9z4UNgQ6Aj4AF9Ew+bj5OkA/AKBobF59/7xe3o9Hw8H+CR28uLC/4UDAAABAQIEB37YlEhEIkT4HwQDBgOEye78AoGhsXn3cfDxen4/Hw8D+CR2cnLy/uQBAAAAAwQFB9z4UNgQ6Aj4HwQDBgOEye78AoGhsXn3cfDx+3p+Pj8f+CR2cnJy/vQPAwAAAAECA/z4UNhQkBDw"
+      },
+      "creature": {
+        "chars": 37708,
+        "codes": [32, 127],
+        "bytes": "AAAIDB93/38APH7//////wAAAACAwPj/AAAAAAAAAPgAAAAAAAAAHwAAAAABAx//ADx+//////8AABAw+O7//gAAAACA8H4/AAAAGDx+d/8wHw8DAAAAADz48MAAAAAAABg8fu7/OxsAAAEPfvzc2A8DAwEAAAAA8MDg4OBwAAAMDg8Hh/d/NwAAAJi8/re/NB8PAwAAAAC8+PDAAAAAAAAAABg8fu7/AAAAAAEPfvw8Hw8DAAAAAAz48MAAAAAAAAAAAIDwfj8AAAAYPH53/zAfDwMAAAAAPPjwwAAAAAAAAAAZPX/t/TBw8ODh7/7sPR8PAwAAAAAs+PDAAAAAAAAAgPB+PzsbABg8fnf/3NgPAwcHBw4AAPDAwIAAAAAAAAAAGDx+7v8AAAAAAQ9+/DwfDwMAAAAADPjwwAAAAAAMEgkEAjlEgwAAAIB/a/pOAAAAAACDz78AAAA+eODAgJ+vvnwQAAAAQmH5aT0HAACPgoH4hAMAAAAAgGAQCP4AAAAAAAAcIsEAAAAOESBgrgAAAQOHz/48AH74wIAAAADPV18+CAAAALuqaiofAAAAzIKB8YgEAgEAAAAAgIBA+AMBAAAAOESD4BCISCcmZqoAAAAAAIPPvwAAAD544MCAn6++fBkSJDi6qmqqHwAAAI+CgfiEAwAAAACAYBAI/gAQOFz3//3f/xg8eu/7//f/AAAAwPF7//8AAADB8/+//yAweO//u///AAAAh4/f/v8QOPz/9////wwcPv//u///EDhc9//93/8YPHrv+//3/wAAAMDxe///AAAAwfP/v/8gMHjv/7v//wAAAIeP3/7/EDj8//f///8MHD7//7v//wAAAACAwf9/AAAAAAH///8gMDgc/////wAAAAD8/u//f//DgAAAAAD///8fAwAAAP//////AwYA/vzw4IAAAAAIGBg/f++HAwAAAADA8P//ACAwOBw///8AAAAAAPz+7wEAAAAAAAAA//9/Px8DAAD///////8DBv/+/PDggAAA"
+      },
+      "platform": {
+        "chars": 61819,
+        "codes": [32, 47],
+        "bytes": "AAAAAAAAAAA/Pz8/AAAAAP////8AAAAA/Pz8/AAAAAAAAP////8AAAAA/////wAAAAD/////AAAAAP////8AACAgICAgICAgQk9PVFkgICAgICBUUkVBU1VSRSAgICAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA="
+      },
+      "porthole": {
+        "chars": 37196,
+        "codes": [32, 79],
+        "bytes": "AwwRJy9PX1/AMIjk9PL6+k8vJhEMAwAA8vRkiDDAAAADDBEnL09fX8AwiOT08vr6TygmEQwDAAASFGSIMMAAAAMMEScvT19ewDCI5PTy+gpIKCYRDAMAABIUZIgwwAAAAwwRJy9OUFDAMIjk9BIKCkgoJhEMAwAAEhRkiDDAAAADDBEnL0hQUMAwiOT0EgoKSCgmEQwDAAASFGSIMMAAAAMMEScoSFBQwDCI5PQSCgpIKCYRDAMAABIUZIgwwAAAAwwRJy9IUFDAMIjk9PIKCkgoJhEMAwAAEhRkiDDAAAADDBEnL09fUMAwiOT08vr6SCgmEQwDAAASFGSIMMAAAAAAAQECBAgYAPAICAgICAg8ToeHh4dOPBAQEBAQCAQDAAABAQIECBgA8AgICAgICDxOh4eHh048EBAQECAIIAAAAAEBAgQIGADwCAgICigIPE6Hh4eHTjwAJAAAAAAAAAAAAQECBAgYAPAICCgCEAQ8ToeHh4dOPAAAAAAAAAAA"
+      },
+      "explosion": {
+        "chars": 37452,
+        "codes": [32, 79],
+        "bytes": "AAABAQIECBgA8AgICAgICDxOh4eHh048EBAQEBAIBAMAAAEBAgQIGADwCAgICAgIPE6Hh4eHTjwQEBAQIAggAAAAAQECBAgYAPAICAgKKAg8ToeHh4dOPAAkAAAAAAAAAAABAQIECBgA8AgIKAIQBDxOh4eHh048AAAAAAAAAAAAAAEBAgQIGADwCQAUAQgAPE6Hh4eHTjwAAAAAAAAAAAABAAECBAgYACAAIACAAAA8ToeHh4dOPAAAAAAAAAAAAAACAAAECRgAAAAAgAAAADxOh4eHh048AAAAAAAAAAAABAASIAAIGAAAAAAAAAAAPE6Hh4eHTjwAAAAAAAAAAAAACAwfd/9/ADx+//////8AAAAAgMD4/wAAAAAAAAD4AAAAAAAAAB8AAAAAAQMf/wA8fv//////AAAQMPju//4AAAAAgPB+PwAAABg8fnf/MB8PAwAAAAA8+PDAAAAAAAAYPH7u/zsbAAABD3783NgPAwMBAAAAAPDA4ODgcAAA"
+      },
+      "blank": {
+        "chars": 40812,
+        "codes": [32, 47],
+        "bytes": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA="
+      },
+      "icons": {
+        "chars": 61787,
+        "codes": [32, 35],
+        "bytes": "EBs+HPgwEhA4OBD+ODgobABwiI+PiHAAAAAA/v4+KgA="
+      }
+    }
+  },
+  "panel": {
+    "row": 1,
+    "ink": 6,
+    "template": {
+      "address": 62139,
+      "c": 33,
+      "text": "        BOOTY      TREASURE     "
+    },
+    "booty": {
+      "c": 19,
+      "start": 0
+    },
+    "treasure": {
+      "c": 5,
+      "start": 125
+    },
+    "lives": {
+      "c": 33,
+      "code": 33,
+      "start": 3
+    },
+    "keyIcon": {
+      "c": 29,
+      "codes": [34, 35]
+    },
+    "keyNumber": {
+      "c": 27,
+      "start": 0
+    },
+    "icons": {
+      "chars": 61787,
+      "bytes": "ODgQ/jg4KGwAcIiPj4hwAAAAAP7+PioA"
+    },
+    "goldKey": {
+      "address": 59068,
+      "text": "FIND THE GOLD KEY IN    SECONDS!",
+      "ink": 7,
+      "b": 2,
+      "c": 33
+    }
+  },
+  "texts": {
+    "menu": {
+      "attrP": 0,
+      "header": {
+        "address": 55805,
+        "bytes": "1105100016010c20424f4f545920160307204259204a4f484e20462e204341494e2e20160505207f2031393834204a4f484e20462e204341494e2e20ff"
+      },
+      "items": [
+        {
+          "address": 55866,
+          "bytes": "1007110016080731202d204b4559424f4152441400ff"
+        },
+        {
+          "address": 55888,
+          "bytes": "160a0732202d20494e544552464143452032204a4f59535449434b1400ff"
+        },
+        {
+          "address": 55918,
+          "bytes": "160c0733202d20435552534f52204a4f59535449434b1400ff"
+        },
+        {
+          "address": 55943,
+          "bytes": "160e0734202d204b454d5053544f4e204a4f59535449434b1400ff"
+        },
+        {
+          "address": 55970,
+          "bytes": "16100735202d20444546494e45204b4559531400ff"
+        },
+        {
+          "address": 55991,
+          "bytes": "16120730202d2053544152542047414d451400ff"
+        }
+      ],
+      "select": [36, 28, 20, 12, null, null]
+    },
+    "pressFire": {
+      "address": 53615,
+      "bytes": "16140712015052455353204649524520425554544f4e1200ff"
+    },
+    "goldfish": {
+      "address": 56730,
+      "bytes": "160402202020424f4f5459204259204a4f484e2046204341494e202020160c07434154434820323020474f4c4446495348160e0442555420444f4e542052554e204f5554204f46204149521610004f522047455420544f4f20434c4f534520544f20544845204249472046495348ff"
+    }
+  },
+  "memory": {
+    "segments": [
+      {
+        "address": 23500,
+        "length": 52,
+        "bytes": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAJAQTCwMmAQQAAAAAAAAAAAAAAAAAAA=="
+      },
+      {
+        "address": 23552,
+        "length": 192,
+        "bytes": "/wAAADAFIjAwIwUAAAAUEgEABgALAAEAAQAGABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADxAAP/sAPNoAAAAAQD/CgAJBwAAQF0AALZcu1zLXDxdylxBXURdO12bXUZdRl1GXS2SXAAAAAAAAAAAAAC2GgcASgAAWP8AACEAWyEXVVDgUAwGIRcDAAAHAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPZo///0CagQS/QJxBVT"
+      },
+      {
+        "address": 33656,
+        "length": 7412,
+        "bytes": "Dw8PDw8PDw8PDw8PDw8PDw8PDw8PDwgIBgYGBgYGBgIEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAYGBgYEBgYGBgQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBgYGBgYGBgYEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQGBgYGBgYGBgQEBAQEBAQEBAQEBAQEBAQEBQUFBQQEBAYGBgYGBgYGBAQEBAQEBAQEBAQEBAQEBAQFBAQEBAQEBgYGBgYGBgYEBAQEBAQEBAQEBAQFBQUFBQUFBQUFBQUFBQYGBgYGBgQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAAAAAAAAAAA////AAAAAAD///88PDwAAAAAAAEBAwMDDz//8MfXt7eA4Ph8HF5ubgcHBwcHBwcGd3d3dnd3dzd3dkASQHZ3dwQFBAYHBwcHl9eXN3d3d3Z3d3d3d3ZAEgcHBwAHBwcAd3d3AP///wBAdncA////AP/4+Pg4Pz84/x8fHxz8/Bw4ODg/Pzg4OBwcHPz8HBwcOD8/ODg4OD8c/PwcHBwc/D84ODg4Pz84/BwcHBz8/Bw4ODg/Pzg4OBwcHPz8HBwc///3ZnZ2dn7//8N6Ql5Cfv//w3piekJ+///fXlZCdn7//8NeQnpCfv//w15CWkJ+///Denp2dn7//8NaQlpCfv//w1pCekJ+fnZmdnZ2fhh+QnpCXkJ+GH5CemJ6Qn4Yfl5eVkJ2fhh+Ql5CekJ+GH5CXkJaQn4YfkJ6enZ2fhh+QlpCWkJ+GH5CWkJ6Qn4YGBgYGBgeHB4kJCQkJCQkJCQkJCQkpeelJCQkJCQkJCQkJCQkJCQkPAMB8WFhYWExwICPhoaGhow5Hw8BAQMGH5z48IAAwCD4wOBxupyKdycAAAAAAAAAgAMDAQEAAAAAwODw+Px+HwcPBQMADx0wYPCgQADwuAwOZeDwfXAwHQ++DwemBgy48B9vl6upk4eP+Pbp1ZXJodGfn5+/Xw8HD8nJyc3asODwCgQbOGnftdGAgH8///AAAK7QqNhwAAAAAAAAAAAAAAAHHDB/AH8AavAcBv8A/wCrampqampqAH+rq6urq6sA/wAAAAEDBw4dPmPx2aFzvlw7dO3WIm32eLhQIMCAAAAAQOBwOBYPDwcAAAAAAACAwAMBAAAAAAAAkHh8/nkwEQqv39DfV9dX0f//Af8RV1UR39DfXt/f0K//Af8H//8B/wAAAAO6uyNxeCgA/QD9fYB5KT8bDwMAAJyUfFhwwAAAAQICAQMHBweAQECAwGAgIA8PHx84PwMBkJDIyAT8QIAAAAECBAgfBUDgMDg8Hv+0BQAFBQAFBQC0ALS0ALS0AAAAAAAAAAAAHz8/fwD///9gcLC4ALy8vB8/P38A////YHCwuAC8vLwAAAAAAAAAAAAAAAAAAAAA//8Afz8/Hx+8vAC4sHBgYP//AH8/Px8fvLwAuLBwYGAAAAAAAAAAAB8/P38A////YHCwuAC8vLwfPz9/AP///2BwsLgAvLy8Hz8/fwD///9gcLC4ALy8vP//AH8/Px8fvLwAuLBwYGD//wB/Pz8fH7y8ALiwcGBg//8Afz8/Hx+8vAC4sHBgYAAAAAAAAAAAAAAAAAAAf38HBwcHBwcHB////wB3e30+////AP/////4+Pg4uLi4uAAAAAABAQAff39/AP//D2AHBwcA////AF9vdwD///8Af7/fAP///wC4uLgA////Bx8/P38A////b3e3uwO9vb1vb29vb2hpanZ2dnZ2AFWq7+/v7+8BVal3d3d3d3d3d///AH8/Px8fvb0Du7B3b29pamlqAfr5+lWqVapVqlWqValVqVSpVal3d3d3B////z8/Pzg7Ozs7////Af39/f3AwMDf38Df3wAAAP//AP//AAAA//8A//8AAAD//wP7+zs7Ozg/Pz8A/f39Af///wDA39/A39/AHwD//wD//wCAAP//AP//AAAD+/sD+/sDG////+Dv7+/v////B/f39/d/AH9/AH9/AL8/v7g7u7s7////Af39/f3bw9vbw9vbw+/v7+/g////9/f39wf///9/fwB/fwB/f7u7O7u4P7+//f39/QH////b28Pb28Pf3wAAAAAAAAAAPzg/OD84Pzj/AP8A/wD/AP8A/wD/AP8A/wf/B/8H/wcAAAAAAAAAAAAAAAAAAAAAPzg/OD84PwD/AP8A/wD/AP8A/wD/AP8A/wf/B/8H/wAAAAAAAAAAAP+Av7+/v769/wHt3bl17d0AAAAAAAAAAAAAAAAAAAAA/4C/v7+/vr3/Ae3duXXt3bu3rp27t4D/vX39/f39Af8AAAAAAAAAAAAAAAAAAAAAu7eunbu3gP+9ff39/f0B/wECBAQEAgEB4BBwuPDw4MACBwkPCQ8JByDwSHhIeEhwBAICAgICAgOQIEBAQDAI+AECBAQEAgEB4BBwuPDw4MACBwkPCQ8IByDwSHhIeKj4BAICAgQEBAcQIEBgYPgc/AABAgQEBAIBAOAQcLjw8OABAgcJDwgPGMAg8Gi42Ow0HwYDBgwYDAf4ECBwcPg8/AABAgQEBAIBAOAQcLjw8OABAgcJDwkPCMAg8Eh4SLioDwQCAgQEBAfwIEBgYPgc/AECBAQEAgEB4BBwuPDw4MACBwkPCQ8JByDwSHhIeEhwBAICAgICAgOQIEBAQDAI+AECBAQEAgEB4BBwuPDw4MACBw0OCg0NCyDwSPiI+Az8BgIBAQMDAwMYECAQkIiE/AABAgQEBAIBAOAQcLjw8OABAgcKDQ0NDcAg8Ij4CPgIBwIBAwcPBwP4EBAQiITC/gABAgQEBAIBAOAQcLjw8OABAgcJDgoOCsAg8Ej4iPiIBwIBAQMDAwPwEBAgkIiE/AAHCA4dDw8HAIBAICAgQIADBA8SHhEfEYBA4JDwUHBQDwgIBAkRIT/gQICAwMDAwAAHCA4dDw8HAIBAICAgQIADBA8RHxAfEIBA4FCwsLCwHwgICBEhQ3/gQIDA4PDgwAcIDh0PDwcDgEAgICBAgIAEDxIfER8wP0DgsHBQsLDQGAgECAkRIT9gQICAwMDAwAcIDh0PDwcDgEAgICBAgIAEDxIeEh4SDkDgkPCQ8JDgCQQCAgIMEB8gQEBAQEBAwAAHCA4dDw8HAIBAICAgQIADBA8SHhIeFYBA4JDwkPAQDwQCBgYfOD/wIEBAICAg4AAHCA4dDw8HAIBAICAgQIADBA8WHRs3LIBA4JDwEPAYHwgEDg4fPD/4YMBgMBgw4AcIDh0PDwcDgEAgICBAgIAEDxIeEh4VH0DgkPCQ8BDgCAQCBgYfOD8gQEBAICAg4AcIDh0PDwcDgEAgICBAgIAEDxIeEh4SDkDgkPCQ8JDgCQQCAgIMEB8gQEBAQEBAwAECBAQEAjF7wicXFxcnx+88HwgPCA8EBB78CPgI+BAIBQUFBQUFCQ/IUEh4AAAAAAECJHR0cnF7wCASFxcnx+88HwgPCA8EBB78CPgI+BAQBQUFBQkPAADQUFBQSHgAACFydHR0cnF7wCAQEBAgxu88HwgPCA8ECB78CPgI+BAQCQUJDwAAAADQUFBQUFBIeAECJHR0cnF7wCASFxcnx+88HwgPCA8EBB78CPgI+BAQBQUFBQkPAADQUFBQSHgAAAECBQYHAwEfwCDQsHDgwPw8f2hvaG90dB7/C/sK+BAQJQUFBQUJET/QUFBQUEhEfgABAgNj8Xg94hPrW7vz5/8eDwQHBAcCAg78BPwE/AgIAgRpkkQoEABoqCgoKCQiPwECBQYHAzF7wCDQsHDgxu98PxgPCA8EBB/+DPgI+BAQBQUFCQoSInzQUFBIKCQiH0fI19rdz+f/AIBAwMaPHrxwPyA/ID8QEHjwIOAg4EBAFhUUFBQkRPxAIJZJIhQIAAECBQYHAzF7wCDQsHDgxu98PxgPCA8EBB/+DPgI+BAQBQUFCQoSInzQUFBIKCQiHz9AgYWNnu+O+CDAYMAhk3cfJG5OTk5/Lw+P315+fPz4Px8KGwoJCA/wwAAAAIBAwD9AgYWNnu+O+CDAYMAhk3cfJG5OTk9/Jw+PXn78+PDAOx8KGwgXEB+AAAAAwCCg4AA/QIGFjZ7vAPoiw2fHJ5cfJG5PR0P/oX+P3l68+PDgfhspEiJEIh/AAACAgEAg4D9AgYWNnu+O+CDAYMAhk3cfJG5OTk5/Jw+PXn58+ODAOx8KGwgXEB+AAAAAwCCg4D9AgYWNnu+O+CDAYMAhk3cfJG5OTk5+Lw+PX15+fHz4Px8KGwoJCA/wwAAAAIBAwD9AgYWNnu+O+CDAYMAgkHAfJG5OXlx/PwGDR09efvz4fx8KCRkUFB/gAACAAMAg4AA/QIGFjZ7vAPggwGDAIJAfPH5+fHB+P3CAgEFDT178Px8JHSREIh/44ADAgEAg4D9AgYWNnu+O+CDAYMAgkHAfJG5OXlx/PwGDR09efvz4fx8KCRkUFB/gAACAAMAg4B8EAwYDBAkO/AKBobF593GAweLyen4/H/gkdnJ6Ov78BwAAAQADBAf++FCQmCgo+AAfBAMGAwQJAPwCgaGxefcOAQGCwvJ6P/g8fn4+Dn78HwcAAwECBAf8+JC4JCJE+B8EAwYDBAkO/AKBobF593GAweLyen4/H/gkdnJ6Ov78BwAAAQADBAf++FCQmCgo+B8EAwYDhMnu/AKBobF593Hw8fp6fj4+H/gkdnJycn70DwMAAAABAgP8+FDYUJAQ8B8EAwYDhMnu/AKBobF593Hw8Xp+Ph8HA/gkdnJycv7kAQAAAAMEBQfc+FDYEOgI+ABfRMPm4+TpAPwCgaGxeff+8Xt6PR8PB/gkdvLiwv+FAwAAAQECBAd+2JRIRCJE+B8EAwYDhMnu/AKBobF593Hw8Xp+Px8PA/gkdnJy8v7kAQAAAAMEBQfc+FDYEOgI+B8EAwYDhMnu/AKBobF593Hw8ft6fj4/H/gkdnJycv70DwMAAAABAgP8+FDYUJAQ8AMMEScvT19fwDCI5PTy+vpPLyYRDAMAAPL0ZIgwwAAAAwwRJwMMEScvT19fwDCI5PTy+vpPLyYRDAMAAPL0ZIgwwAAAAwwRJy9PX1/AMIjk9PL6+k8oJhEMAwAAEhRkiDDAAAADDBEnL09fXsAwiOT08voKSCgmEQwDAAASFGSIMMAAAAMMEScvTlBQwDCI5PQSCgpIKCYRDAMAABIUZIgwwAAAAwwRJy9IUFDAMIjk9BIKCkgoJhEMAwAAEhRkiDDAAAADDBEnKEhQUMAwiOT0EgoKSCgmEQwDAAASFGSIMMAAAAMMEScvSFBQwDCI5PTyCgpIKCYRDAMAABIUZIgwwAAAAwwRJy9PX1DAMIjk9PL6+kgoJhEMAwAAEhRkiDDAAAAAAAEBAgQIGADwCAgICAgIPE6Hh4eHTjwQEBAQEAgEAwAAAQECBAgYAPAICAgICAg8ToeHh4dOPBAQEBAgCCAAAAABAQIECBgA8AgICAooCDxOh4eHh048ACQAAAAAAAAAAAEBAgQIGADwCAgoAhAEPE6Hh4eHTjwAAAAAAAAAAAAAAQECBAgYAPAJABQBCAA8ToeHh4dOPAAAAAAAAAAAAAEAAQIECBgAIAAgAIAAADxOh4eHh048AAAAAAAAAAAAAAIAAAQJGAAAAACAAAAAPE6Hh4eHTjwAAAAAAAAAAAAEABIgAAgYAAAAAAAAAAA8ToeHh4dOPAAAAAAAAAAAAAAIDB93/38APH7//////wAAAACAwPj/AAAAAAAAAPgAAAAAAAAAHwAAAAABAx//ADx+//////8AABAw+O7//gAAAACA8H4/AAAAGDx+d/8wHw8DAAAAADz48MAAAAAAABg8fu7/OxsAAAEPfvzc2A8DAwEAAAAA8MDg4OBwAAAMDg8Hh/d/NwAAAJi8/re/NB8PAwAAAAC8+PDAAAAAAAAAABg8fu7/AAAAAAEPfvw8Hw8DAAAAAAz48MAAAAAAAAAAAIDwfj8AAAAYPH53/zAfDwMAAAAAPPjwwAAAAAAAAAAZPX/t/TBw8ODh7/7sPR8PAwAAAAAs+PDAAAAAAAAAgPB+PzsbABg8fnf/3NgPAwcHBw4AAPDAwIAAAAAAAAAAGDx+7v8AAAAAAQ9+/DwfDwMAAAAADPjwwAAAAAAMEgkEAjlEgwAAAIB/a/pOAAAAAACDz78AAAA+eODAgJ+vvnwQAAAAQmH5aT0HAACPgoH4hAMAAAAAgGAQCP4AAAAAAAAcIsEAAAAOESBgrgAAAQOHz/48AH74wIAAAADPV18+CAAAALuqaiofAAAAzIKB8YgEAgEAAAAAgIBA+AMBAAAAOESD4BCISCcmZqoAAAAAAIPPvwAAAD544MCAn6++fBkSJDi6qmqqHwAAAI+CgfiEAwAAAACAYBAI/gAQOFz3//3f/xg8eu/7//f/AAAAwPF7//8AAADB8/+//yAweO//u///AAAAh4/f/v8QOPz/9////wwcPv//u///EDhc9//93/8YPHrv+//3/wAAAMDxe///AAAAwfP/v/8gMHjv/7v//wAAAIeP3/7/EDj8//f///8MHD7//7v//wAAAACAwf9/AAAAAAH///8gMDgc/////wAAAAD8/u//f//DgAAAAAD///8fAwAAAP//////AwYA/vzw4IAAAAAIGBg/f++HAwAAAADA8P//ACAwOBw///8AAAAAAPz+7wEAAAAAAAAA//9/Px8DAAD///////8DBv/+/PDggAAAAAAAAIDB/38AAAAAAf///yAwOBz/////AAAAAPz+7/9/f8CAAAAAAP///x8DAAAA//7///8DBgD+APDggAAAAAAAAAAABw8fAAAAH/////8wOBz//////wAAAPz+7//+P//8OBgYEAD//x8DAAAAAP////8DBgAAAPDggAAAAAAAAAAAAD7/4wAAAAAAAMHjAAAcPnfjwYAAAAAAAAAAAHc+HAAAAAAAAAAAAAAAAAAAAHD4nA4HAwAAAAAAfP/HAAAAAAEDB44AAAAAAAAAAAEAAAAAAAAA3PhwAAAAAAAAAAEDBw4cOAAAwOBwOR8PAAAAAADw/B5w4MAAAAAAAAAAAAAAAAAABwMBAAAAAAAAAAAAAODweAAABw8dOHDgAAAAgMDnfzwdDwcAAAAAAMCAAAAAAAAAAAAAAAAAAAAAAABAYHN/P3gkEh//////AAAAAMDw/L5/cWBAAAAAAP//fx8lSvwA/PDggAAAAAAAAABAYHN/P3gkEh//////AAAAAMDw/L5/cWBAAAAAAP//fx8lSvwA/PDggAAAAAAAAABAYHN/P3gkEh//////AAAAAMDw/L5/cWBAAAAAAP//fx8lSvwA/PDggAAAAAAAAABAYHN/P3gkEh//////AAAAAMDw/L5/cWBAAAAAAP//fx8lSvwA/PDggAAAAAADBwUHAwMFCcDgYODAwMCgESFCQkSIiBCgoKCQSEQkIAMHBgcDAwMHwOCg4MDAoJAKFCQk5AgICIiEQiIiEgoJAwcFBwMDAwfA4GDgwMDAwAYGChIiIiJCoKCgoFAoGBgDBwYHAwMDA8DgoODAwMDABQUFBQkJCQlAYFBQUEggIAAAAFw+XAAAAC4fLgAAAABcPlwAAAAAAAAuHy4AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAw4wMDA4dLo1MgAAAAAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADAAEwfHNwsP+wMAAAB/gAgAECNM8QIECAAAAx/zAwMDAwMGCYRiEQCAQCAAAAg3wAAAAwMPAwMDAwMAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQECAwMFBQQwMDD/+vr39gQIECBAhwAAAwEBAQD/AgT/+vr39P8xMAEAAACA/yCQA4BAIBAIBAL/MDAwMDAwMAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAMAAAAAAAAA/wgQECAgQED/Onl4eLS0/P/gGIdAIBAICDDAAAAAAAEweHh4tLT8MkgmEwgEAgEAAwH/YxwAAYL/+vv29Ox4tAAA/wAAAAAAAAAAAAAAAAAAAAAAAAABBgABAgQYYIAAgQEBAgIDBAQyMv4xMf8wMAQCAQAAAICAAQECgkMkFA8y/jEx/zAw/wAAAAAAgIGCRCkRKUWCAwO2/zIy/jEx/wAAgEAgEAiEAAH+eB8HAAA4wAAAgPh/BwAAAAAAAID4BwgIDxAQHyD/MDD/MTH/MYBAQED/z7a2DAoPEPg/2NgwMP+wcP8xOkRI0CBg4BETBw8fP3///////8TExP//////R0dH////AAAAAAAAAAAAAAAAAAAAAP9/Pz8fHw8H/////8/P9/v////D29vDf8///wxtbQz/P///MLa2MP/////D29vD/////wxtbQz/////P7+/P//A/8D//////wb+Bv7+/oCAAAAAAAAAAAAAAAAAAAAAAAMBAAAAAAAA/f74Px8HAwB/f3////////////////////////////////////////////////////////////////7+/Pz4+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEBAeAAAAAAAAAAAAAAAAAAAAAAAAAAgOD9+qAAAAAAAgPgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAF/fEBA+MbBQID8AAABDvAAAQIUaJMhQIA0KiUi/3QgIAAAAMAwjEMgAAAAAAABBvgAAABAcP53QAAAAAAAAMAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAHwYCAgIEBwf/7EhEQkH+9AECBAgQIMDAAAAABwMDAwEgICD+9PTu6RAIBAIBAAAAAAAABwKBQiRAQED86EBAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAACwsJ/x8sIED17uz///Px8C8RCP7CMQ6A/6t8EGCAgEH/+mdg8PDwaP6o8JBMJxIMGBgkR4P/1z1AQED+9Pf+6QAAAAAA/qjwAAAAAAAAAAAAAAAAAAAAAAAAAAECPwgwQYGCBAj/1X/gYGBgYP/+8UAgEAgE/63wIREKBgOFBYdo+PT0/Gvq/gwSIUCAAAAAAQIFiVIiUorY8GhoZGRkZAAAAAAAAAAAAAAAAAP8cB8AAQ5wgAAAAMABAgQIECBAgQIECBAhQYFoZPLx8GhoaAAAAACAQCAQSiofHRUfKy799f9u6v9l5QECBIiQoMDABAYJCAgQEP9iYmHhYWBw/wAABwsLkJD+BwAAAAAAAADwfwcBAAAAAIEC9P//cH8/AgIC//8A//9kZGT6/gf//wgEAgEAgf//P1V1f6rq////Ynb/Y3///+GzrP//////CvoP//////+qqv///////6qq/vz8/PzwAAAAAAAAAAAAAAAAAAAAAD8fDwcDAQAA////////fz////n5////////5+f///////+env///////3l5////////5+f///////X/////////Vf/+/vz8/MAAAAAAAAAAMCh3nrx3BAQAAOB8fuEAACAgd/68dwEAAALnfXjsBoMgIHeevH8QIAAA4Hx+4QAAICF3nr53AgIAgud9eOwGAyAhd569dwAAAADgfH7hgEAwKHeevXcBAAAC53147AYDICB3n7x3AAAAAOD8fuEAADwkd5y8fxAgAALnfXjsBgM="
+      },
+      {
+        "address": 41068,
+        "length": 344,
+        "bytes": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABaLE1VUA1KUiBCUw1CMToNTEQgQSxEDUNQIChJWCsxNSkNSlIgWixCUw1DUCAzDUNBTEwgWixNVVANQlM6DVJFVA1NUkk6DVBVU0ggQkMNUFVTSCBERQ1MRCBDLChJWCsxMykNTEQgQiwoSVgrMTQpDUxEIEQsKElYKzgpDUxEIEUsMQ1MRCBBLChJWCsxNSkNQ1AgMw1KUiBaLE5JRDENSU5DIEQNTklEMToNQ0FMTCBQVVRTUQ1QT1AgREUNUE9QIEJDDVJFVA1NTEU6DVBVU0ggQkMNUFU="
+      },
+      {
+        "address": 43990,
+        "length": 3787,
+        "bytes": "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"
+      },
+      {
+        "address": 47777,
+        "length": 554,
+        "bytes": "/wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA="
+      },
+      {
+        "address": 52117,
+        "length": 1,
+        "bytes": "TA=="
+      },
+      {
+        "address": 57275,
+        "length": 16,
+        "bytes": "fv/Dw/9+GBgYGBgfHh8eHw=="
+      },
+      {
+        "address": 58479,
+        "length": 11,
+        "bytes": "AAAAAAAAAAAAAAA="
+      },
+      {
+        "address": 59068,
+        "length": 32,
+        "bytes": "RklORCBUSEUgR09MRCBLRVkgSU4gICAgU0VDT05EUyE="
+      },
+      {
+        "address": 59424,
+        "length": 1,
+        "bytes": "AA=="
+      },
+      {
+        "address": 62001,
+        "length": 277,
+        "bytes": "AAAAAAAAAAAAAAAAAAAAAAAAAAAQFgMDAAAgAgMFAQAAEBYDAAAAAP8AEBs+HPgwEhA4OBD+ODgobABwiI+PiHAAAAAA/v4+KgAAAAAAAAAAAD8/Pz8AAAAA/////wAAAAD8/Pz8AAAAAAAA/////wAAAAD/////AAAAAP////8AAAAA/////wAAICAgICAgICBCT09UWSAgICAgIFRSRUFTVVJFICAgICAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAEBAAAAAAABAAAAAP8BAAAAAP8AAAADCA0SFwAAAAAAAAAAAAAAAAAAAAD///8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=="
+      },
+      {
+        "address": 65527,
+        "length": 9,
+        "bytes": "AwP4+gAAAAAA"
+      }
+    ]
+  },
+  "transition": {
+    "holds": 20,
+    "toCls": {
+      "base": 3259,
+      "records": 58.03,
+      "bytes": 38.71
+    },
+    "cls": {
+      "duration": 190434,
+      "blocks": [
+        [16384, 256, 251, 8644],
+        [18432, 256, 8744, 17137],
+        [20480, 256, 17237, 25630],
+        [16640, 256, 26041, 31675],
+        [18688, 256, 31722, 37230],
+        [20736, 256, 37316, 42826],
+        [16896, 256, 42974, 48483],
+        [18944, 256, 48569, 54078],
+        [20992, 256, 54066, 62448],
+        [17152, 256, 62591, 70980],
+        [19200, 256, 71015, 79409],
+        [21248, 256, 79477, 87869],
+        [17408, 256, 88003, 96394],
+        [19456, 256, 96857, 102774],
+        [21504, 256, 102736, 108245],
+        [17664, 256, 108394, 113902],
+        [19712, 256, 113988, 119498],
+        [21760, 256, 119584, 125092],
+        [17920, 256, 124954, 133203],
+        [19968, 256, 133292, 141677],
+        [22016, 256, 141714, 150108],
+        [18176, 256, 150240, 158634],
+        [20224, 256, 158697, 167090],
+        [22272, 256, 167585, 173892],
+        [22528, 32, 173929, 174615],
+        [22560, 32, 174617, 175304],
+        [22592, 32, 175306, 175992],
+        [22624, 32, 175994, 176681],
+        [22656, 32, 176683, 177370],
+        [22688, 32, 177372, 178058],
+        [22720, 32, 178060, 178747],
+        [22752, 32, 178749, 179436],
+        [22784, 32, 179438, 180124],
+        [22816, 32, 180126, 180813],
+        [22848, 32, 180815, 181501],
+        [22880, 32, 181503, 182190],
+        [22912, 32, 182192, 182879],
+        [22944, 32, 182881, 183567],
+        [22976, 32, 183569, 184256],
+        [23008, 32, 184258, 184945],
+        [23040, 32, 184947, 185633],
+        [23072, 32, 185635, 186322],
+        [23104, 32, 186324, 187010],
+        [23136, 32, 187012, 187699],
+        [23168, 32, 187701, 188388],
+        [23200, 32, 188390, 189076],
+        [23232, 32, 189078, 189765],
+        [23264, 32, 189767, 190452]
+      ]
+    },
+    "draw": {
+      "base": 97434,
+      "glyph": 813.22,
+      "clSet": 815.78,
+      "rst10": 472.61
+    },
+    "attrCopy": 20238,
+    "panel": 40201
+  },
+  "loading": {
+    "width": 256,
+    "height": 192,
+    "videoRAM": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPAAD/cAAAAAAAAAAAAAAPAAAAAAAAAAAAAAAAAAAAAAAAA+AcAAAAAD/gAAAAAAAAAAAAAAAAAAA//////8AAAAA+DgB+AH4B8AH8f4AAAAH////////AAAAAAAAAAeAAA+APvAO8A58AjwPgAHgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAfgAAAAAAB//AAAAAAAAAAAAAAAAAH4+fH58Pnx4AAAAAAAAAAAAAAAAAAAAAH4+fH58Pnx4AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAH4AAP5gAAAAAAAAAAAAAH4AAAAAAAAAAAAAAAAAAAAAAAAPgPAAAAAAfAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPgcB54HngfAA8D4AAAAAAAAAAAAAAAAAAAAAAAPwAAPgD7wHvAefAQ8D4AD8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD4AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAP/+AAAAD//+AAAAAAAAAAAAAAAAABACEJAQghCRAAAAAAAAAAAAAAAAAAAAABACEJAQghCRAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD/AAH4MAAAAAAAAAAAAAD/AAAAAAAAAAAAAAAAAAAAAAAAHwDwAAAAAPgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAHwDA8ODw4PgAeB8AAAAAAAAAAAAAAAAAAAAAAAH+AAHwB88DzwPPgMeB8AB/gAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAB8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAHD//8AH//8AAAAAAAAAAAAAAAAAAAfAhCfHwIQkIAAAAAAAAAAAAAAAAAAAAAfAhCfHwIQkIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA/wAB8DgAAAAAAAAAAAAA/wAAAAAAAAAAAAAAAAAAAAAAAB8B4AAAAAD4AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAB8A4eBx4HD4AHgfAAAAAAAAAAAAAAAAAAAAAAAB/gAB8A/OA84Dz4GHgfAAf4AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAfAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABgAP////4AAAAAAAAAAAAAAAAAAAAEAIfEBCCHxCAAAAAAAAAAAAAAAAAAAAAEAIfEBCCHxCAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAP8AA+A4AAAAAAAAAAAAAP8AAAAAAAAAAAAAAAAAAAAAAAA+A8P//////////wAAAAAAAAAAAAAAAAAAAAAAAAAAA+APPAc8Bx8ADwPgAAAAAAAAAAAAAAAAAAAAAAAf4AA+AfjgeOB48DjwPgAH+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAcAAP///4AAAAAAAAAAAAAAAAAAAABACERAQghERAAAAAAAAAAAAAAAAAAAAABACERAQghERAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD/AAPgOAAAAAAAAAAAAAD/AAAAAAAAAAAAAAAAAAAAAAAAPh/H//////////4AAAAAAAAAAAAAAAAAAAAAAAAAAAPgHzwHPAcfAA8D4AAAAAAAAAAAAAAAAAAAAAAAH+AAP4fwcPBw8Hhw8H4AB/gAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD4AAAAAAAAAAAAAAAAAAAAAAAAAAAAAADgP//////gAAAAAAAAAAAAAAAAAAAQD5Cfnw+QngAAAAAAAAAAAAAAAAAAAAAQD5Cfnw+QngAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAfgAHwDgAAAAAAAAAAAAAfgAAAAAAAAAAAAAAAAAAAAAAAH//gAAAAAPgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAHwB94D3gPPgAeB8AAAAAAAAAAAAAAAAAAAAAAAA/AAH3/4HngeeB54Hj8AAPwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAB8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAf//gAAA///AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADwAB8B4AAAAAAAAAAAAADwAAAAAAAAAAAB//////4AAAAB8fwAAAAAD4AAAAAAAAAP///////+AAAAAAAAAAAAAB8AfcA9wDz4BHgfAAAAAAAAAAAAAAAAAAAAAAAAHgAD8f4AfgB+AP8AffAAB4AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAB+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD/gAAAAAD//+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADAAGjCwADAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD/wID/wCAMgAAAAAAAAAD/AAAAAAAAAAAGDAH/wAAAAP/AEgwQ////8AAAAAAA////AAAAAAAD8AQ/8/A/AAAAbSIATIAgTIEAAAAAAAB///4AAAAAAIA/Afng4AOAAP//4CIMMAH/4AAcAAAAAAAAAAAAAAD8PD4oAAcAAAAAf////////////wAAAAAAAAAAAAAAAAMf4AOAAWAABQAF///////////ABQUAAAUFBQAABQAAAAAAAAAAAAAAAAAAAAAMAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAwAGf/zAD4AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADAEAf4AQDIAAAAAAAAAD/8AAAAAAAAAABg4D//AAAAB/gGQeDAdcEAAAAAAAAP///wAAAAAAD8AA//+AA+AAAP+UAH+AQEyAgAAAAAAAf//+AAAAAACA/4Hh4DAAwAD///ASDFACDBAAA4OAAAAAAAAAAAAA/z34CAAHgAAAAH////////////4AAAAAAAAAAAAAAAAHGPAA4AFgAAAFAP//////////gAAABQUAAAAFBQAAAAAAAAAAAAAAAAAAAAAADAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPAGIMCODOAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAwCAH+ACAxAAAAAAAAAD//wAAAAAAAAAAYOB8AYAAD////IHgMYnggAAAAAAAD///8AAAAAAB4AH//8AABwAAFMiACMQIB/gEAAAAAAAD///AAAAAAAg/DHg3gYAEAA///4C//wAgwQAAB/4AAAAAAAAAAAAAf/wAgAB4AAAAB////////////8AAAAAAAAAAAAAAAADjA4ABABYAAAAAV//////////wAFAAAAAAAAAAAFAAAAAAAAAAAAAAAAAAAAABwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADMGEDAQfDgAAAAAAAAAAAAAAAAAAAAAAAPAAAAAAAAAMBAD/gAT/wAAAAAAAAB//+AAAAAAAAAAGDg8ACAAAAH/GEB4A4R4IAAAAAAAA////AAAAAAAcAP////gAEAACTJQAjEEAjEAgAAAAAAA///wAAAAAAAeQbAM8CABAAP///AQNCAL/8AAAH4AAAAAAAAAAAAAf/4AAAAeAAAAAf////////////AAAAAAAAAAAAAAAABxwHAAAAXAAAAAAf/////////wAAAAAAAUFBQUAAAAAAAAAAAAAAAAAAAAAAAAuAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAw+CAwCAA0AAAAAAAAAAAAAAAAAAAAAAAP4AAAAAAAADAgBPwACf8AAAAAAAAA///wAAAAAAAAD/g4eAAQAAAA/OCAtAAIeBAAAAAAAAP///wAAAAAAeAP4A///gBAABH+iAP/CAIxAGAAAAAAAH//4AAAAAAAPECgCHAgAAAD///4GDj//DAgAAf4AAAAAAAAAAAAAf///AAADwAAAAH////////////gAAAAAAAAAAAAAAAA4YBwAAAFwBQUFBT/////////4AAUFBQAFBQUABQUAAAAAAAAAAAAAAAAAAAAAXQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAMABAMAQH/wAAAAAAAAAAAAAAAAAAAAAADuAAAAAAAAAwQ////4X+gAAAAAAAAP//8AAAAAAAAP/8OPAAEAAAAPwBALQAELQQAAAAAAAD///8AAAAAAHAHgA//D/AAAAiMQQEMJAD/wAYAAAAAAA//8AAAAAAAHhA/BB4AAAAA////B////wwIAB/gAAAAAAAAAAAAAPh//+AAA8AAAAB////////////4AAAAAAAAAAAAAAAAMGAOAAABcAAAAAA/////////4AAAAAAFBQUFAAAAAAAAAAAAAAAAAAAAAAAAAKzAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADAAgDACADQAAAAAAAAAAAAAAAAAAAAAAAxwAAAAAAAAMIASMQAD/oAAAAAAAAH///gAAAAAAAP///vgHgAAAAB6AgD8ACC0CAAAAAAAA////AAAAAADgDAB/+AH4AAAQjMCBDCgBDCABgAAAAAAD/8AAAAAAABwB+OQOAAAAAP///4iMP///+AH+AAAAAAAAAAAAAADg/8H4AAPAAAAAAf//////////8AAAAAAAAAAAAAAAAGDgDgAAATAAAAUAH////////8AAAAAFAAAAAAUFAAEAAAAAAAAAAAAAAAAAAAFMcAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAwAQAwAQAyAAAAAAAAAAAAAAAAAAAAAAAccAH4AAAAADEAJDCAAfyAAAAAAAAB///4AAAAAAAH+B//wP/gAAAAtQQBMgBA/AgAAAAAAAP///wAAAAAAwBAA//+APgAAIf/AQf/wAQwgAGAAAAAAAP8AAAAAAPAcDygUDwAAAAD////IXD//DAQf4AAAAAAAAAAAAAAAgc+AHwAD4AAAAAH//////////+AAAAAAAAAAAAAAAABgwA8AAAE4BQUAAB////////8AAAAFAAAFBQUFAAABAGDABwAABbgFBQAFBQAABQAFAAAFBQAABQAAAAAABQUAAQAF4AUFnAAAAAAAAAAAAAAAAAAAAAAABQUFBQAABQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD4AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADBwAcABQC4AAAAAAAABQAFAAAFAAAABQAABQUFAAAAAAEFAOAAAJwFBQUAAAAAAAUABQAAAAAABQUFBQUABQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAB8AAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAfj58fn5AggAAAAAAAAAAAAAAAAAAAAAAQQAYPDwIAAIAfgA8ABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAwYAHgAAFuAUFAAAAAAAAAAUAAAAAAAAFAAUFAAAAAAABAAXgAACcBQUABQAAAAAAAAAFAAAAAAAFBQUFAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQhw4PBw4aAAAIDh4AAAAAAAAAAAAAAAAAEAIQkBAQEQAAAAAAAAAAAAAAAAAAAAAAJyAKEJCGAACAEAAQjgAeAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIGAB4AAALgFBQAABQUAAAAAAAAABQUAAAAFBQAAAAUAAQAA4AUFnAAAAAAAAAUFAAAAAAAABQUABQUFBQUAAAUAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEIgREQgBFQQADxERAAAAAAAAAAAAAAAAAB8CEJ8fEAoAAAAAAAAAAAAAAAAAAAAAACigAhCPCgAAgB8AEAEMEQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACBgAfABQWcBQUFBQAAAAUFBQUFBQAABQUFBQUABQUAAAEFBfAAAJwFBQAAAAAAAAAAAAAAAAAAAAAAAAUAAAUAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAB8IEREIDxUAAAiREQAAAAAAAAAAAAAAAAAQAh8QEBAEAAAAAAAAAAAAAAAAAAAAAAAoIAIPkJIAEIAQABAPBBEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgYADwAAAnAAAAAAFAAUAAAAAAAAFAAAAAAUFBQAABQEAAADwBQWcAAAAAAAAAAUFAAAAAAAFAAUFBQUAAAUABQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQCBEPCBEVAAAIkR4AAAAAAAAAAAAAAAAAEAIREBAQBAAAAAAAAAAAAAAAAAAAAAAAKKACAJCfgBCAEAAQkQQRAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAA8AFAJwAAAAAAAAAAAUAAAUAAAAFAAAFBQUAAAABAAUA8AAAnAUFBQAAAAAAAAAFAAAAAAAABQUFBQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAgOAQgPFQQADw4QAAAAAAAAAAAAAAAAABAPkJ+QH4QAAAAAAAAAAAAAAAAAAAAAACcgD48PAgAPABAADw8OEQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAHgAACcBQUFBQAFAAAAAAUABQAFAAAFAAAFBQUAAQAAAPAFBZwFBQAABQUFAAAAAAAFBQAFAAUFBQUFAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA4AAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcoKC0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLSgoKCgoKCgoKCgoKCgtLy8vLy8vLy8vLy8vLy8vLy8vLy8oKCgoLy8vLy8vLy8vLy8vLy8vLy8vLy8vLy8vLy8vLy8vLy8vLy8vLy8vLy8vLy8vLy8vLy8vLy8vLy8vLy8vLy8vLygoKCgoKC8vLy8vLy8vLy8vLy8vLy8vLygoKCgoKCgoKCgoKCgoLy8vLy8vLy8vLy8vLy8vLy8oKCgoKCgoKCgoKCgvLy8vLy8vLy8vLy8vLy8vLy8vLygoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgtKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoLi4uKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCguLi4oKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKC4uLigoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoCAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABwcHBwcHBwcHBwcHBwcHAAAAAAAAAAAAAAAAAAAABwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcH"
+  },
+  "tape": {
+    "blocks": [
+      {
+        "block": 1,
+        "flag": 0,
+        "length": 19,
+        "pauseMs": 1000,
+        "kind": "rom",
+        "pilot": 2168,
+        "pilotPulses": 8063,
+        "sync": [667, 735],
+        "zero": 855,
+        "one": 1710,
+        "header": true,
+        "type": "Program",
+        "name": "BOOTY     ",
+        "dataLength": 252,
+        "param1": 1,
+        "bytes": "0000424f4f54592020202020fc000100e9007b",
+        "tapeMs": 5090,
+        "durationMs": 5090
+      },
+      {
+        "block": 2,
+        "flag": 255,
+        "length": 254,
+        "pauseMs": 0,
+        "kind": "rom",
+        "pilot": 2168,
+        "pilotPulses": 3223,
+        "sync": [667, 735],
+        "zero": 855,
+        "one": 1710,
+        "bytes": "ff00013700080808080811071007f9c02828be350e00004b5c00292b2828be360e00004c5c00292a320e0000000100292d3134300e0000740000290dff0fcb00000000003b3aef2222af32363838300e00000069003af9c032363838300e00000069003af9c035323530300e000014cd000dffffc400dd210000dd39dd7e14f3ddcb1526cb27dd7714ddae15c5dd210100a737080e221e06069ccde30530f73ec6b830f21d20f11c3eff3708114700dd21015bcd8f05f3ed5b3f5b18002a535cebed4b415bed43425cfd360a0021015b013e00edb0d9215827d9fbd12a4b5cc3e519000d3e0e0164000df800000100000000c800000000010000feff0974",
+        "tapeMs": 3354,
+        "durationMs": 3354
+      },
+      {
+        "block": 3,
+        "flag": 255,
+        "length": 73,
+        "pauseMs": 800,
+        "kind": "turbo",
+        "pilot": 2165,
+        "pilotPulses": 497,
+        "sync": [667, 735],
+        "dumpSync": [875, 525],
+        "zero": 856,
+        "one": 1712,
+        "bytes": "ff000a6d00e7300e00000000003ada300e00000000003ad9300e00000000003afd32363837300e0000f668003aef2222aa3af5ac31390e00001300002c300e00000100ffff00000034",
+        "tapeMs": 676,
+        "durationMs": 676
+      },
+      {
+        "block": 4,
+        "flag": 0,
+        "length": 19,
+        "pauseMs": 1000,
+        "kind": "rom",
+        "pilot": 2168,
+        "pilotPulses": 8063,
+        "sync": [667, 735],
+        "zero": 855,
+        "one": 1710,
+        "header": true,
+        "type": "Bytes",
+        "name": "bs        ",
+        "dataLength": 6912,
+        "param1": 16384,
+        "bytes": "000362732020202020202020001b0040000049",
+        "tapeMs": 5082,
+        "durationMs": 5082
+      },
+      {
+        "block": 5,
+        "flag": 255,
+        "length": 6914,
+        "pauseMs": 1100,
+        "kind": "rom",
+        "pilot": 2168,
+        "pilotPulses": 3223,
+        "sync": [667, 735],
+        "zero": 855,
+        "one": 1710,
+        "bytesIn": "loading",
+        "tapeMs": 33056,
+        "durationMs": 33056
+      },
+      {
+        "block": 6,
+        "flag": 0,
+        "length": 19,
+        "pauseMs": 1000,
+        "kind": "rom",
+        "pilot": 2168,
+        "pilotPulses": 8063,
+        "sync": [667, 735],
+        "zero": 855,
+        "one": 1710,
+        "header": true,
+        "type": "Bytes",
+        "name": "bc        ",
+        "dataLength": 38655,
+        "param1": 25880,
+        "bytes": "000362632020202020202020ff96186500697f",
+        "tapeMs": 5092,
+        "durationMs": 5092
+      },
+      {
+        "block": 7,
+        "flag": 255,
+        "length": 38657,
+        "pauseMs": 0,
+        "kind": "rom",
+        "pilot": 2168,
+        "pilotPulses": 3223,
+        "sync": [667, 735],
+        "zero": 855,
+        "one": 1710,
+        "bytes": "ffdd210000dd39dd7e14f3ddcb1526cb27dd7714ddae15c5dd210100a737080e221e06069ccde30530f73ec6b830f21d20f11c3eff3708114700dd21015bcd8f05f3ed5b3f5b18102a535cebed4b415bed43425cfd360a0021015b013e00edb0d9215827d9fbd1c94b5cc3e519000d3e0e0164000d3e0e016400000000000c000000000000000000000000000000000000000000000000000000000c00068c2c000c00000000000000000000000000000000000000000000000000ffc080ffc0200c8000000000000000ff00000000000000000000000000000000ffc0120c10fffffff00000000000ffffff00000000000000060c01ffc00000006d22004c80204c810000000000007ffffe000000000003f0043ff3f03f0000ffffe0220c3001ffe0001c000000000000000000000000803f01f9e0e00380007fffffffffffffffffff000000000000000000000007fc3c3e2800070000000005ffffffffffffffffc00505000005050500000500cf031fe003800160000500000000000c000000000000000000000000000000000000000000000000000000000c0019fff3003e000000000000000000000000000000000000000000000000000c01007f80100c8000000000000003ffc00000000000000000000000000000007f80641e0c075c10000000000000ffffff00000000000000060e03fff0000000ff94007f80404c808000000000007ffffe00000000000fc000ffff8003e000fffff0120c50020c10000383800000000000000000000080ff81e1e03000c0007ffffffffffffffffffe00000000000000000000001fff3df80800078000000500ffffffffffffffff8000000505000000050500009c0718f000e00160000000000000000c000000000000000000000000000000000000000000000000000000000f00620c08e0ce000000000000000000000000000000000000000000000000000c02007f80080c400000000000000ffff00000000000000000000000000000ffffffc81e03189e08000000000000ffffff00000000000000060e07c0180000014c88008c40807f804000000000003ffffc00000000001e001ffffc00007000fffff80bfff0020c1000007fe00000000000000000000083f0c78378180040007ffffffffffffffffffc00000000000000000000003807ffc008000780000000057fffffffffffffff000500000000000000000500980e303800100160000000000000001c000000000000000000000000000000000000000000000000000000000cc1840c041f0e000000000000000000000000000000000000000000000000000c0400ff8004ffc00000000000001ffff80000000000000000f00000000000007fc6101e00e11e08000000000000ffffff00000000000000060e0f00080000024c94008c41",
+        "cut": true,
+        "tapeMs": 200468,
+        "durationMs": 6953
+      },
+      {
+        "block": 8,
+        "flag": 255,
+        "length": 73,
+        "pauseMs": 0,
+        "kind": "turbo",
+        "pilot": 2158,
+        "pilotPulses": 497,
+        "sync": [667, 735],
+        "dumpSync": [875, 525],
+        "zero": 857,
+        "one": 1713,
+        "bytes": "ff21fefe3ec377233e6977233efe772100f40104013efe77230b78b120f7010000ed43feffed43fcffed43fbfff32100fa22f9ff3ef4ed47ed5e3e0332f7ff14cd0100ffff0000003a",
+        "tapeMs": 747,
+        "durationMs": 747
+      }
+    ]
+  },
+  "title": {
+    "videoRAM": "AAAAAAAMAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAwABowsAAwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA/8CA/8AgDIAAAAAAAAAA/wAAAAAAAAAAAAAAAAAAAAD/wBIMEP////AAAAAAAP///wAAAAAAAAAGDAH/wAAAAG0iAEyAIEyBAAAAAAAAf//+AAAAAAAD8AQ/8/A/AAD//+AiDDAB/+AAHAAAAAAAAAAAAAAAAIA/Afng4AOAAH////////////8AAAAAAAAAAAAAAAf8PD4oAAcAAAAABf//////////wAUFAAAFBQUAAAUAzwMf4AOAAWAABQAAAAAADAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAMABn/8wA+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAwBAH+AEAyAAAAAAAAAA//AAAAAAAAAAAAAAAAAAAAAf4BkHgwHXBAAAAAAAAD///8AAAAAAAAABg4D//AAAAD/lAB/gEBMgIAAAAAAAH///gAAAAAAD8AA//+AA+AA///wEgxQAgwQAAODgAAAAAAAAAAAAACA/4Hh4DAAwAB////////////+AAAAAAAAAAAAAAAf/z34CAAHgAAABQD//////////4AAAAUFAAAABQUAAJwHGPAA4AFgAAAAAAAAAAwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADwBiDAjgzgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAMAgB/gAgMQAAAAAAAAA//8AAAAAAAAAAAAAAAAAAA////yB4DGJ4IAAAAAAAA////AAAAAAAAAAYOB8AYAAABTIgAjECAf4BAAAAAAAA///wAAAAAAB4AH//8AABwAP//+Av/8AIMEAAAf+AAAAAAAAAAAAAAg/DHg3gYAEAAf////////////AAAAAAAAAAAAAAAOAf/wAgAB4AAAAAFf/////////8ABQAAAAAAAAAABQCYDjA4ABABYAAAAAAAAAAcAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAzBhAwEHw4AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADAQA/4AE/8AAAAAAAAAf//gAAAAAAAAAAPAAAAAAAAB/xhAeAOEeCAAAAAAAAP///wAAAAAAAAAGDg8ACAAAAkyUAIxBAIxAIAAAAAAAP//8AAAAAAAcAP////gAEAD///wEDQgC//AAAB+AAAAAAAAAAAAAAAeQbAM8CABAAH////////////wAAAAAAAAAAAAAADAf/4AAAAeAAAAAAH/////////8AAAAAAAFBQUFAAAAMBxwHAAAAXAAAAAAAAAALgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAMPggMAgANAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAwIAT8AAn/AAAAAAAAAP//8AAAAAAAAAAP4AAAAAAAAPzggLQACHgQAAAAAAAD///8AAAAAAAAD/g4eAAQAAAR/ogD/wgCMQBgAAAAAAB//+AAAAAAAeAP4A///gBAA///+Bg4//wwIAAH+AAAAAAAAAAAAAAAPECgCHAgAAAB////////////4AAAAAAAAAAAAAAAgf///AAADwAAABQU/////////+AAFBQUABQUFAAUFAGA4YBwAAAFwBQUAAAAAAF0AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADAAQDAEB/8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAMEP///+F/oAAAAAAAAD///AAAAAAAAAADuAAAAAAAAD8AQC0ABC0EAAAAAAAA////AAAAAAAAP/8OPAAEAAAIjEEBDCQA/8AGAAAAAAAP//AAAAAAAHAHgA//D/AAAP///wf///8MCAAf4AAAAAAAAAAAAAAAHhA/BB4AAAAAf///////////+AAAAAAAAAAAAAAAYPh//+AAA8AAAAAAP////////+AAAAAABQUFBQAAAADAMGAOAAABcAAAAAAAAACswAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAwAIAwAgA0AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADCAEjEAA/6AAAAAAAAB///4AAAAAAAAAAxwAAAAAAAAegIA/AAgtAgAAAAAAAP///wAAAAAAAP///vgHgAAAEIzAgQwoAQwgAYAAAAAAA//AAAAAAADgDAB/+AH4AAD///+IjD////gB/gAAAAAAAAAAAAAAABwB+OQOAAAAAAH///////////AAAAAAAAAAAAAAAEHg/8H4AAPAAAAFAB/////////AAAAABQAAAAAFBQABgGDgDgAAATAAAAAAAAABTHAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAMAEAMAEAMgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAxACQwgAH8gAAAAAAAAf//+AAAAAAAAAAccAH4AAAAALUEATIAQPwIAAAAAAAD///8AAAAAAAH+B//wP/gAACH/wEH/8AEMIABgAAAAAAD/AAAAAAAAwBAA//+APgAA////yFw//wwEH+AAAAAAAAAAAAAAAPAcDygUDwAAAAAB///////////gAAAAAAAAAAAAAABDgc+AHwAD4AAAAAAf////////AAAABQAABQUFBQAAAQBgwA8AAAE4BQUABQUAAAUABQAABQUAAAUAAAAAAAUFAGDABwAABbgFBQAAAAAAAAAAAAAAAAAAAAUFBQUAAAUAAQAF4AUFnAAAAAAFBQAABQAAAAUFBQAFBQUFBQAFAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABQUFAAUAPwAAAAAAAAAAAAUFAAAFAAAFAAUFAAUFAAUFBQUABR8AAAAAAAAAAAAAAAUAAAAFAAAABQUAAAAAAAAFBQAFfwAAAAAAAAAAAAAAAAAABQAFBQAABQAFAAUFBQUFBQUP/wAAAAAAAAAAAAAFAAAFAAUABQUABQAABQUFBQUFAAA/AAA8AAAAAAAAAAAAAAUABQAABQAAAAUAAAUFBQAAAADBwAcABQC4AAAFAAAAAAAFAAUAAAAAAAUFBQUFAAUAAAEFAOAAAJwFBQUAAAAABQAABQAAAAAFAAUFBQUFAAAAAAB/AAAAAAAABQAABQAAAAAABQAAAAAABQAFBQUAAP8AAAAAAAAAAAAAAAAFAAAFAAAAAAUAAAAFBQUFAAA/AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAUABQUFAD8AAAAAAAAAAAAAAAUFBQAAAAAABQAAAAUABQUABQUAD/8AAAAAAAAAAAAAAAAAAAUAAAAABQAABQUFBQUABQAFHwAB/8AAAAAAAAAAAAAAAAAFAAAAAAAABQAFBQAAAAAAwYAHgAAFuAUFAAUAAAAAAAAABQAAAAAABQUFBQAAAAABAAXgAACcBQUAAAAAAAAAAAAAAAAAAAAFBQUFAAUAAAAH/wAAAAAAAAAFAAAFAAAAAAAAAAAAAAUAAAUAAAP/AAAAAAAAAAAAAAAAAAAAAAUAAAAABQAAAAAFBQAAPwAAAAAAAAAAAAAAAAAAAAAAAAAFAAAAAAAABQUFBQA/AAAAAAAAAAAAAAAAAAAFAAAAAAAFAAAABQUFBQUAAAf/AAAAAAAAAAAABQAFAAUAAAAAAAAAAAAAAAUFBQAAAB8AH//8AAAAAAAAAAUFAAAAAAAAAAUFAAAABQUAAAAFAIGAB4AAALgFBQAAAAAFBQAAAAAAAAUFAAUFBQUFAAAFAQAA4AUFnAAAAAAABQUAAAUAAAAFAAAAAAAAAAAAAAAA//8AAAAAAAAAAAAAAAAABQUAAAAFBQAFAAUFAAAH/wAAAAAAAAAAAAAFBQAABQAAAAAFAAAABQUFBQUAAH8AAAAAAAAAAAAAAAAFBQAABQAAAAAAAAUAAAUAAAUAPwAAAAAAAAAAAAAFAAAAAAAABQUAAAUAAAUFBQUFBQUD/wAAAAAAAAAAAAAAAAAAAAAFAAUAAAAABQUFBQUFBQAPABH//8AAAAAABQUAAAAFBQUFBQUAAAUFBQUFAAUFAACBgAfABQWcBQUAAAAAAAAAAAAAAAAAAAAAAAAFAAAFAAEFBfAAAJwFBQUFBQAAAAUABQUFAAUFBQUFBQUFBQUAP///AAAAAAAABQUFBQUFBQAABQUFAAAFBQUFBQAFB/8AAAAAAAAAAAAFAAAABQAFBQUFAAUFBQAFBQUFBQV/AAAAAAAAAAAAAAAFAAAABQAFBQUFBQUAAAUFBQUFBT8AAAAAAAAAAAAAAAUABQUFBQAABQUABQAFBQUFAAUAAf8AAAAAAAAAAAAAAAAFBQUFAAUAAAUFBQUFBQUFBQAFBwAIP//8AAAAAAAABQAFAAAAAAAABQAAAAAFBQUAAAUBgYADwAAAnAAAAAAAAAAFBQAAAAAABQAFBQUFAAAFAAUAAADwBQWcAAAAAAAFAAUABQAAAAUAAAAFBQUFAAAAAf///wAAAAAAAAAAAAAAAAAFAAAAAAUAAAUABQUFAA//AAAAAAAAAAAAAAUABQAFAAAAAAUAAAAABQUFBQAAfwAAAAAAAAAAAAAFAAUABQAFAAAAAAAAAAUAAAUFBQAfAAAAAAAAAAAAAAUAAAAAAAAFAAAAAAAFBQUFBQUFBQD/AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAFBQUFBQUFAAcACAf//8AAAAAAAAAAAAAFAAAFAAAABQAA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MDAwMDAwMDAwMDAwMDAwMDAwNzAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDA3MDAwMDAwMDAwMDAwMDAwMDAPCAgICAgICAgICA8PDw8PDw8PDw8ICAgICAgICAgPDw8ICAgICAgICAgPDw8PDw8PDw8PDwgICAgICA8PCA8PDwgICA8PDwgICAgPDw8PDw8PDw8PDw8IDw8IDw8IDw8PDwgICAgICA8PDw8PDw8PDw8PDw8PCAgICAcCAgcHBw8IDwgIDwgICAgIDw8PDw8PDw8PDwgIAgICBwICBwICDw8PDw8PDw8PDw8PDw8PDw8PDw8PCAICAgIHAgIHAgIPDw8PDw8PDw8PDw8PDw8PDw8PDw8IAgICAgcHBwcCAg8PDw8PDw8PDw8PDw8PDw8PDw8PDwgIAgICAgICBwICDw8PDw8PDw8PDw8PDw8PDw8PDw8PDwgCBgYGBgYGBgIPDw8PDw8PDw8PDw8PDw8PDw8PDw8PCAgGBgYGBgYGAgQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBgYGBgQGBgYGBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQGBgYGBgYGBgQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAYGBgYGBgYGBAQEBAQEBAQEBAQEBAQEBAQFBQUFBAQEBgYGBgYGBgYEBAQEBAQEBAQEBAQEBAQEBAUEBAQEBAQGBgYGBgYGBgQEBAQEBAQEBAQEBAUFBQUFBQUFBQUFBQUFBgYGBgYGBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQE",
+    "seaMark": 5,
+    "seaLimit": 128,
+    "seed": 0,
+    "border": 3,
+    "passTStates": 483501,
+    "passFrames": 6.9182,
+    "demoTStates": 71558824
+  },
+  "sounds": {
+    "tune": [
+      [38, 43],
+      [34, 48],
+      [38, 43],
+      [0, 0],
+      [22, 73],
+      [0, 0],
+      [22, 73],
+      [0, 0],
+      [34, 48],
+      [30, 53],
+      [28, 58],
+      [46, 35],
+      [46, 35],
+      [43, 38],
+      [46, 35],
+      [0, 0],
+      [53, 30],
+      [46, 35],
+      [53, 30],
+      [0, 0],
+      [25, 65],
+      [0, 0],
+      [25, 65],
+      [0, 0],
+      [25, 65],
+      [22, 73],
+      [21, 78],
+      [34, 48],
+      [34, 48],
+      [32, 50],
+      [34, 48],
+      [0, 0],
+      [38, 43],
+      [43, 38],
+      [46, 35],
+      [43, 38],
+      [38, 43],
+      [34, 48],
+      [38, 43],
+      [34, 48],
+      [30, 53],
+      [28, 58],
+      [30, 53],
+      [28, 58],
+      [25, 65],
+      [22, 73],
+      [22, 73],
+      [20, 80],
+      [18, 90],
+      [16, 103],
+      [0, 0],
+      [18, 90],
+      [22, 73],
+      [21, 78],
+      [25, 65],
+      [22, 73],
+      [28, 58],
+      [25, 65],
+      [30, 53],
+      [28, 58],
+      [0, 0],
+      [22, 73],
+      [0, 0],
+      [22, 73],
+      [0, 0],
+      [0, 0],
+      [34, 48],
+      [30, 53],
+      [28, 58],
+      [46, 35],
+      [46, 35],
+      [34, 48],
+      [28, 58],
+      [46, 35],
+      [46, 35],
+      [34, 48],
+      [38, 43],
+      [0, 0],
+      [29, 55],
+      [0, 0],
+      [29, 55],
+      [0, 0],
+      [38, 43],
+      [34, 48],
+      [29, 55],
+      [53, 30],
+      [53, 30],
+      [38, 43],
+      [29, 55],
+      [53, 30],
+      [53, 30],
+      [38, 43],
+      [43, 38],
+      [0, 0],
+      [34, 48],
+      [0, 0],
+      [34, 48],
+      [0, 0],
+      [38, 43],
+      [43, 38],
+      [46, 35],
+      [43, 38],
+      [38, 43],
+      [34, 48],
+      [38, 43],
+      [34, 48],
+      [30, 53],
+      [28, 58],
+      [30, 53],
+      [28, 58],
+      [25, 65],
+      [22, 73],
+      [22, 73],
+      [20, 80],
+      [18, 90],
+      [16, 103],
+      [0, 0],
+      [18, 90],
+      [22, 73],
+      [21, 78],
+      [25, 65],
+      [22, 73],
+      [28, 58],
+      [25, 65],
+      [30, 53],
+      [28, 58],
+      [0, 0],
+      [22, 73],
+      [0, 0],
+      [22, 73],
+      [0, 0],
+      [0, 0]
+    ],
+    "tuneMask": 3,
+    "tuneOn": 3,
+    "slots": {
+      "death": [
+        {
+          "routine": "F66C",
+          "bc": 100,
+          "de": 200
+        }
+      ],
+      "creature": {
+        "1": {
+          "mask": 7,
+          "calls": [
+            {
+              "routine": "F648",
+              "bc": 50,
+              "de": 60
+            }
+          ]
+        },
+        "2": {
+          "mask": 15,
+          "calls": [
+            {
+              "routine": "F648",
+              "bc": 10,
+              "de": 10
+            }
+          ]
+        }
+      },
+      "explosion": {
+        "1": {
+          "mask": 7,
+          "tone": [
+            {
+              "routine": "F648",
+              "bc": 5,
+              "de": 50
+            }
+          ],
+          "noise": {
+            "b": 31,
+            "de": 10
+          }
+        },
+        "2": {
+          "noise": {
+            "b": 255,
+            "de": 20
+          }
+        }
+      },
+      "oneShot": {
+        "1": {
+          "repeat": 10,
+          "calls": [
+            {
+              "routine": "F66C",
+              "bc": 100,
+              "de": 50
+            }
+          ]
+        },
+        "2": {
+          "calls": [
+            {
+              "routine": "F6B5",
+              "bc": 150,
+              "de": 100
+            },
+            {
+              "routine": "F66C",
+              "bc": 1,
+              "de": 100
+            }
+          ]
+        },
+        "3": {
+          "calls": [
+            {
+              "routine": "F66C",
+              "bc": 20,
+              "de": 200
+            }
+          ]
+        },
+        "4": {
+          "calls": [
+            {
+              "routine": "F6B5",
+              "bc": 50,
+              "de": 25
+            }
+          ]
+        },
+        "5": {
+          "calls": [
+            {
+              "routine": "F6B5",
+              "bc": 100,
+              "de": 50
+            }
+          ]
+        },
+        "6": {
+          "calls": [
+            {
+              "routine": "F66C",
+              "bc": 50,
+              "de": 25
+            }
+          ]
+        }
+      }
+    },
+    "beeper": [
+      [50, 200],
+      [200, 200],
+      [200, 100]
+    ],
+    "noise": "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",
+    "noisePointer": 0,
+    "romInterrupt": 882,
+    "border": 3
+  },
+  "goldfish": {
+    "segments": [
+      {
+        "address": 16384,
+        "length": 6912,
+        "bytes": "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AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAB+PjxCAAA8ADw+fAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAhAQgAARgBCCEIA/////////////////////////wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAHwIPH4AAEoAQghCAP////////////////////////8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABACAJCAABSAH4IfAD/////////////////////////AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAhCQgAAYgBCCEQA/////////////////////////wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEA+PEIAADwAQj5CAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAODg4ODg4ODg4ODg4ODg4ODg4ODg4ODg4ODg4ODg4ODg4ODg4ODg4ODg4ODg4ODg4ODg4ODg4ODg4ODg4ODg4ODg4ODg4ODg4ODg4ODg4ODg4ODg4ODg4ODg4ODg4ODg4ODg4ODg4ODg4ODg4ODg4ODg4ODg4ODg4ODg4ODg4ODg4ODg4ODg4ODg4ODg4ODg4ODg4ODg4ODg4ODg4ODg4ODg4ODg4ODg4ODg4ODg4ODg4ODg4ODg4ODg4ODg4ODg4ODg4ODg4ODg4ODg4ODg4ODg4ODg4ODg4ODg4ODg4ODg4ODg4ODg4ODg4ODg4ODg4ODg4ODg4ODg4ODg4ODg4OAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAoKCgoKCgoKCgoKCgqKioqKioqKioqKioqKioqKioqKigoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgo"
+      },
+      {
+        "address": 23552,
+        "length": 192,
+        "bytes": "/wAAAP8AGzAwIwUAAAAREAEABgALAAEAAQAGABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAALtJAAP/sAPNoAAAAAQD/CgAJKAAAQF0AALZcu1zLXDxdylxBXURdO12bXUZdRl1GXS2SXAAAAAAAAAAAAAC2GgcAtAIAWP8AACEAWyEX4FDgUAECIRcDKAAqAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPZo///0CagQS/QJxBVT"
+      },
+      {
+        "address": 36864,
+        "length": 4608,
+        "bytes": "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YJhGIRAIBAIAAACDfAAAADAw8DAwMDAwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAQIDAwUFBDAwMP/6+vf2BAgQIECHAAADAQEBAP8CBP/6+vf0/zEwAQAAAID/IJADgEAgEAgEAv8wMDAwMDAwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAwAAAAAAAAD/CBAQICBAQP86eXh4tLT8/+AYh0AgEAgIMMAAAAAAATB4eHi0tPwySCYTCAQCAQADAf9jHAABgv/6+/b07Hi0AAD/AAAAAAAAAAAAAAAAAAAAAAAAAAEGAAECBBhggACBAQECAgMEBDIy/jEx/zAwBAIBAAAAgIABAQKCQyQUDzL+MTH/MDD/AAAAAACAgYJEKREpRYIDA7b/MjL+MTH/AACAQCAQCIQAAf54HwcAADjAAACA+H8HAAAAAAAAgPgHCAgPEBAfIP8wMP8xMf8xgEBAQP/PtrYMCg8Q+D/Y2DAw/7Bw/zE6REjQIGDgERMHDx8/f///////xMTE//////9HR0f///8AAAAAAAAAAAAAAAAAAAAA/38/Px8fDwf/////z8/3+////8Pb28N/z///DG1tDP8///8wtrYw/////8Pb28P/////DG1tDP////8/v78//8D/wP//////Bv4G/v7+gIAAAAAAAAAAAAAAAAAAAAAAAwEAAAAAAAD9/vg/HwcDAH9/f////////////////////////////////////////////////////////////////v78/Pj4AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQEB4AAAAAAAAAAAAAAAAAAAAAAAAACA4P36oAAAAAACA+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAX98QED4xsFAgPwAAAEO8AABAhRokyFAgDQqJSL/dCAgAAAAwDCMQyAAAAAAAAEG+AAAAEBw/ndAAAAAAAAAwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAfBgICAgQHB//sSERCQf70AQIECBAgwMAAAAAHAwMDASAgIP709O7pEAgEAgEAAAAAAAAHAoFCJEBAQPzoQEBAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAALCwn/HywgQPXu7P//8/HwLxEI/sIxDoD/q3wQYICAQf/6Z2Dw8PBo/qjwkEwnEgwYGCRHg//XPUBAQP709/7pAAAAAAD+qPAAAAAAAAAAAAAAAAAAAAAAAAAAAQI/CDBBgYIECP/Vf+BgYGBg//7xQCAQCAT/rfAhEQoGA4UFh2j49PT8a+r+DBIhQIAAAAABAgWJUiJSitjwaGhkZGRkAAAAAAAAAAAAAAAAA/xwHwABDnCAAAAAwAECBAgQIECBAgQIECFBgWhk8vHwaGhoAAAAAIBAIBBKKh8dFR8rLv31/27q/2XlAQIEiJCgwMAEBgkICBAQ/2JiYeFhYHD/AAAHCwuQkP4HAAAAAAAAAPB/BwEAAAAAgQL0//9wfz8CAgL//wD//2RkZPr+B///CAQCAQCB//8/VXV/qur///9idv9jf///4bOs//////8K+g///////6qq////////qqr+/Pz8/PAAAAAAAAAAAAAAAAAAAAAAPx8PBwMBAAD///////9/P///+fn////////n5////////56e////////eXn////////n5///////9f////////9V//7+/Pz8wAAAAAAAAAAwKHeevHcEBAAA4Hx+4QAAICB3/rx3AQAAAud9eOwGgyAgd568fxAgAADgfH7hAAAgIXeevncCAgCC53147AYDICF3nr13AAAAAOB8fuGAQDAod569dwEAAALnfXjsBgMgIHefvHcAAAAA4Px+4QAAPCR3nLx/ECAAAud9eOwGAwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAWixNVVANSlIgQlMNQjE6DUxEIEEsRA1DUCAoSVgrMTUpDUpSIFosQlMNQ1AgMw1DQUxMIFosTVVQDUJTOg1SRVQNTVJJOg1QVVNIIEJDDVBVU0ggREUNTEQgQywoSVgrMTMpDUxEIEIsKElYKzE0KQ1MRCBELChJWCs4KQ1MRCBFLDENTEQgQSwoSVgrMTUpDUNQIDMNSlIgWixOSUQxDUlOQyBEDU5JRDE6DUNBTEwgUFVUU1ENUE9QIERFDVBPUCBCQw1SRVQNTUxFOg1QVVNIIEJDDVBV2eXZrzJrXD4CzQEWPhUy01s601v+FfXMl6rxxPSqzUSrzQCpzR7XIQA8IjZcBgEOIM3ZDT4Q1z4H1zrT"
+      },
+      {
+        "address": 53806,
+        "length": 274,
+        "bytes": "WTY1VEdWTkpVNzRSRkNNS0k4M0VEWCBMTzkyV1NaICBQMDFRQc1vzcPjzT4U1z4B18ndISrdBgXF3X4K/gDKsdI+FNc+AdfdTgDdRgHN5SI+FNc+ANfdTgDdRgEMDAzdfgXdNAWAR/5wMBLdcQDdcAHN5SLBEQsA3RkQvMndNgoAGPHN1Nj+AzjqOj7T/gAo4+1LDtw+IZHLJ8snyyfGBt13AHg9PcsnyyfLJ/5wMMTddwHdNgoB3TYFAd1OAN1GAcOf0jo92eYPwCEu0iI2XAYCDhXN2Q0+ENc+Atc+Edc+Bdc6PtP+APXMUNXxKA09Mj7TRwQ+IPXX8RD7PiHXyQAA/////wAAAAAAAAAAAAATKg=="
+      },
+      {
+        "address": 55407,
+        "length": 1,
+        "bytes": "qg=="
+      },
+      {
+        "address": 55613,
+        "length": 121,
+        "bytes": "ACMKAwP/ACAEAgUAAwMjCgPMlQhAAAAAACMNAwP/ACADAgIAAwMjDQPMlgY4AAAAACMNAwP/ACADAgMAAwMjDQOMlwY4AAAAACMNAwP/ACACAgQAAwMjDQNMmAQwAAAAACMNAwP/ACABAQYAAwMjDQPMmAEkAAAAAA=="
+      },
+      {
+        "address": 56098,
+        "length": 638,
+        "bytes": "TRYVChIBU1BBQ0UgRVhJVFMSAP8AAAAAAAx/AAAAAAAAABQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPCgMDAAAgAgEHAQMDDwoDAAAAAAAAAMDxe///AAAAwfP/v/8QOFz3//3f/xg8eu/7//f/EDj8//f///8MHD7//7v//yAweO//u///AAAAh4/f/v8AAADA8Xv//wAAAMHz/7//EDhc9//93/8YPHrv+//3/xA4/P/3////DBw+//+7//8gMHjv/7v//wAAAIeP3/7/AAAAwPF7//8AAADB8/+//xA4XPf//d//GDx67/v/9/8QOPz/9////wwcPv//u///IDB47/+7//8AAACHj9/+/wAAAMDxe///AAAAwfP/v/8QOFz3//3f/xg8eu/7//f/EDj8//f///8MHD7//7v//yAweO//u///AAAAh4/f/v8AAADA8Xv//wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAgWBAIgICA="
+      }
+    ],
+    "passTStates": 429624,
+    "passFrames": 6.1473
+  }
+}
