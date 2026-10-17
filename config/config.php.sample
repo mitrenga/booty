@@ -1,0 +1,6 @@
+<?php
+
+  $dbHostname = 'localhost';
+  $dbName = 'booty';
+  $dbUser = 'your-user-name';
+  $dbPassword = 'your-password';
