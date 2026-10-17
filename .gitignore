@@ -1,0 +1,19 @@
+# generated: bundle, traces of the original, Python caches
+/js/
+build/
+node_modules/
+__pycache__/
+*.pyc
+*.html
+test*
+tmp*
+
+# local configuration with database credentials
+config/config.php
+
+# source material of the original (tape, disassembly, findings) - not distributed
+sources/
+
+# notes and settings for working with Claude
+CLAUDE.md
+.claude/
