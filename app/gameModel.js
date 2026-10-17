@@ -275,7 +275,8 @@ export class GameModel extends AbstractModel {
     switch (event.id) {
 
       case 'exitGame':
-        this.app.setModel('MenuModel');
+        // a game left early keeps its score too (R-049)
+        this.app.setModel(this.demo ? 'MenuModel' : 'GameExitModel');
         return true;
 
       case 'blurWindow':
@@ -379,7 +380,10 @@ export class GameModel extends AbstractModel {
     }
     this.sendWorkerMessage({id: 'pause'});
     this.sendEvent(0, {id: 'pauseAllAudioBuses'});
-    this.desktopEntity.addModalEntity(new PauseGameEntity(this.desktopEntity, 52, 34, 153, 97, 'PAUSE GAME', 'MenuModel'));
+    // EXIT GAME ends the game the way losing the last life does: the score
+    // is shown and stored in the hall of fame (R-049); the demo has none
+    this.desktopEntity.addModalEntity(new PauseGameEntity(this.desktopEntity, 52, 34, 153, 97, 'PAUSE GAME',
+                                                          this.demo ? 'MenuModel' : 'GameExitModel'));
   } // pauseGame
 
   handleWorkerMessage(event) {

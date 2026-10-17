@@ -483,6 +483,9 @@ export class GameApp extends AbstractApp {
         this.model = new GameModel(this, true);
         break;
       case 'GameOverModel':
+      case 'GameExitModel':
+        // the game is over either way: lost, or left through EXIT GAME; the
+        // score is stored in both cases (R-049, as manicminer / jetsetwilly)
         this.model = new GameOverModel(this, 'MenuModel');
         break;
       case 'TapeLoadingModel':
