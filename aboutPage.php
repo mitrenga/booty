@@ -39,7 +39,7 @@ class AboutPage extends AbstractAboutPage {
             'cassette, the two turbo blocks included — and the title screen with its rolling sea, the menu '.
             'and the hidden CATCH 20 GOLDFISH sub game are all there.</p>'.
             '<p>It runs directly in your browser — nothing to install, nothing to download. Keyboard with '.
-            'keys of your own choosing, touch controls and gamepads are supported.</p>',
+            'keys of your own choosing, touch controls and gamepads are supported.</p>'.$this->installNote(),
         ],
         [
           'heading' => 'Other games',
