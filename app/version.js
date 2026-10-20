@@ -1,3 +1,3 @@
 // begin code
 
-export const Version = '2026.10.17';
+export const Version = '2026.10.20';
