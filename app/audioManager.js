@@ -75,7 +75,7 @@ export class AudioManager extends AbstractAudioManager {
     super(app);
     this.id = 'AudioManager';
     this.volume = {};
-    this.volume.music = this.readVolume('audioBusMusicLevel', 2);
+    this.volume.music = this.readVolume('audioBusMusicLevel', 5);
     this.volume.sounds = this.readVolume('audioBusSoundsLevel', 5);
     // the original's sound (bootySound.js), made when data/global.json#sounds is there
     this.bootySound = null;
