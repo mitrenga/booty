@@ -44,32 +44,6 @@ All keys can be redefined in the menu, including the original's
 `5 8 7 6 A`.
 
 
-## How it is made
-Nothing is redrawn or guessed. The holds, sprites, panel, texts and music are
-extracted from the original program by the tools in `tools/`, and the game
-itself is the original's main loop rewritten in JavaScript pass by pass, over
-64 KB laid out as in the Spectrum's memory. It runs in a web worker at a
-constant pace measured on the original (1.632 frames a pass), and the
-attribute clash of the hardware is kept, not cleaned up.
-
-Every part is checked by a `match*` tool against the running original, and a
-milestone counts as done only when the tool reports zero differences:
-
-| what | tool | result |
-|---|---|---|
-| the main loop, pass by pass | `tools/matchphysics.mjs` | 426 886 passes / 0 differences |
-| whole recorded games (RZX) played again through the worker | `tools/matchrules.mjs` | 204 043 passes / 0 |
-| enemies: every byte of every entity after each pass | `tools/matchentities.mjs` | 611 302 passes / 0 |
-| a new game from the data = the original | `tools/matchstart.mjs` | 263 319 430 checks / 0 |
-| the 21 holds drawn from the data | `tools/matchholds.mjs` | 161 973 checks / 0 |
-| sprites in all positions | `tools/matchsprites.mjs` | 23 611 392 checks / 0 |
-| sound | `tools/matchsound.mjs` | 122 448 checks / 0 |
-| title screen and its sea | `tools/matchtitle.mjs` | 1 776 641 checks / 0 |
-
-The full list of tools is in [tools/README.md](tools/README.md), the
-milestones in [MILNIKY.md](MILNIKY.md) and the specification in
-[ZADANI.md](ZADANI.md) (both in Czech).
-
 
 ## Requirements
 - PHP 8.1+
