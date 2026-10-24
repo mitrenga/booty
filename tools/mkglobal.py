@@ -1,25 +1,27 @@
 #!/usr/bin/env python3
-"""Výchozí stav hry z běžícího originálu: `data/global.json#global`.
+"""Initial game state from the running original: `data/global.json#global`.
 
     ./tools/mkglobal.py                # → data/global.json#global
 
-Hra se spustí v simulátoru jako v `playtrace.py` (titulka → `SPACE` → menu →
-`0`) a na snímku `FRAME` se z paměti přečtou její vlastní proměnné:
+The game is started in the simulator as in `playtrace.py` (title → `SPACE` →
+menu → `0`) and on frame `FRAME` its own variables are read from memory:
 
-| klíč | odkud | |
+| key | from where | |
 |---|---|---|
-| `hold` | `$5BD3` | ★ podpalubí, ve kterém hra začíná |
-| `jim` | `$F231`, 20 B | ★ Jimův objekt, jak leží v paměti |
+| `hold` | `$5BD3` | ★ the hold the game starts in |
+| `jim` | `$F231`, 20 B | ★ Jim's object as it lies in memory |
 | `lives` | `$5BF1` | ★ |
-| `booty`, `treasure` | `$5BF4`, `$5BF2` | ★ sebraná a zbývající kořist |
+| `booty`, `treasure` | `$5BF4`, `$5BF2` | ★ collected and remaining loot |
 
-★ **Proč `jim` a ne jen šablona.** Šablona má Jima o řádek výš (B = 22);
-po startu hra Jima během ≈ 7 snímků spustí o řádek níž (B = 21, svislá
-fáze 3 → 2 → 1 → 0 → 3) a tam stojí – tam ho ukazuje i obrazovka originálu.
-Ten pád je fyzika a ta je **M3**. Do té doby remake kreslí Jima tam, kde ho
-originál po dopadu změřeně má. Šablonu (`$F245`, 20 B, kterou `$DECE` do
-`$F231` zkopíruje na začátku hry) nástroj jen ověří proti kazetě – do dat
-nejde, od M3 ji má worker v paměti originálu (sekce `memory`).
+★ **Why `jim` and not just the template.** The template has Jim one row
+higher (B = 22); after the start the game drops Jim one row down within ≈ 7
+frames (B = 21, vertical phase 3 → 2 → 1 → 0 → 3) and there he stands – that
+is where the original's screen shows him too. That fall is physics and that is
+**M3**. Until then the remake draws Jim where the original measurably has him
+after landing. The template (`$F245`, 20 B, which `$DECE` copies to `$F231`
+at game start) is only verified by the tool against the tape – it does not go
+into the data, from M3 on the worker has it in the original's memory (section
+`memory`).
 """
 import argparse, os, sys
 
@@ -58,9 +60,9 @@ def main():
         'treasure': word(0x5BF2),
     }
     if peek(0xF245, 20) != list(B.memory_image()[0xF245 - 0x4000:0xF245 - 0x4000 + 20]):
-        raise SystemExit('šablona Jima v běhu není táž jako na kazetě')
+        raise SystemExit("Jim's template in the run is not the same as on the tape")
     where = B.write_section('global', data)
-    print('%s: podpalubí %d, Jim %s, životy %d, kořist %d/%d'
+    print('%s: hold %d, Jim %s, lives %d, loot %d/%d'
           % (where, data['hold'], data['jim'][:4], data['lives'], data['booty'],
              data['treasure']))
 

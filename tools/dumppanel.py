@@ -1,28 +1,29 @@
 #!/usr/bin/env python3
-"""Vytáhne z programu panel: `data/global.json#panel`.
+"""Extracts the panel from the program: `data/global.json#panel`.
 
     ./tools/dumppanel.py                # → data/global.json#panel
 
-★ Panel tiskne `$E0A9` hned po podpalubí a `$E064` (životy a klíč), číslo
-neseného klíče pak hlavní smyčka v každém průchodu (`$DF5B`). Všechno, co
-soubor nese, se čte **z operandů instrukcí** na uvedených adresách, a nástroj
-nejdřív zkontroluje, že na té adrese opravdu je instrukce, kterou čeká –
-kdyby tam nebyla, spadne, místo aby tiše vzal jiný bajt:
+★ The panel is printed by `$E0A9` right after the hold and by `$E064` (lives
+and key), the number of the carried key then by the main loop in every pass
+(`$DF5B`). Everything the file carries is read **from instruction operands**
+at the stated addresses, and the tool first checks that the instruction it
+expects is really at that address – if it were not, it fails instead of
+silently taking another byte:
 
-| co | odkud |
+| what | from where |
 |---|---|
-| inkoust panelu 6, papír = border podpalubí (`$5BD0`) | `$E0B5` `LD A,$06`, `$E0BB` `LD A,($5BD0)` |
-| šablona řádku 23, 32 znaků ROM fontem | `$E0C8` `LD DE,$F2BB` |
-| sebraná kořist, sloupec 14 (C = $13), ROM `OUT-NUM-1` | `$E0D2`, `$E0D9` |
-| zbývající kořist, sloupec 28 (C = 5) | `$E0E0`, `$E0E7` |
-| životy od sloupce 0 (C = $21), znak `$21` sady `$F15B`, pak mezera ROM fontem | `$E064`–`$E088` |
-| ikona klíče ve sloupci 4 (C = $1D), znaky `$22 $23` sady `$F15B` | `$E08B`–`$E09F` |
-| číslo neseného klíče, sloupec 6 (C = $1B), `'0'` + `($F241)` | `$DF68`, `$DF7C` |
-| na začátku hry: 3 životy, 0 sebráno, 125 zbývá, klíč 0 | `$DEB2`, `$DEB8`, `$DEC3`, `$F255` (šablona Jimova objektu +$10) |
-| text, když zbývá 0: `FIND THE GOLD KEY IN    SECONDS!` na řádku 22 | `$E10D` `LD DE,$E6BC` |
+| panel ink 6, paper = hold border (`$5BD0`) | `$E0B5` `LD A,$06`, `$E0BB` `LD A,($5BD0)` |
+| row 23 template, 32 characters in the ROM font | `$E0C8` `LD DE,$F2BB` |
+| collected loot, column 14 (C = $13), ROM `OUT-NUM-1` | `$E0D2`, `$E0D9` |
+| remaining loot, column 28 (C = 5) | `$E0E0`, `$E0E7` |
+| lives from column 0 (C = $21), character `$21` of set `$F15B`, then a space in the ROM font | `$E064`–`$E088` |
+| key icon in column 4 (C = $1D), characters `$22 $23` of set `$F15B` | `$E08B`–`$E09F` |
+| number of the carried key, column 6 (C = $1B), `'0'` + `($F241)` | `$DF68`, `$DF7C` |
+| at game start: 3 lives, 0 collected, 125 remaining, key 0 | `$DEB2`, `$DEB8`, `$DEC3`, `$F255` (Jim's object template +$10) |
+| text when 0 remain: `FIND THE GOLD KEY IN    SECONDS!` on row 22 | `$E10D` `LD DE,$E6BC` |
 
-ROM font sám v souboru není: je ve svision (`ZXFonts8x8`), a ★ texty panelu
-se s ním shodují bajt po bajtu (`sources/docs/screen_layout.md`).
+The ROM font itself is not in the file: it is in svision (`ZXFonts8x8`), and
+★ the panel texts match it byte for byte (`sources/docs/screen_layout.md`).
 """
 import argparse, base64, os, sys
 
@@ -43,7 +44,7 @@ def main():
     def expect(address, opcode):
         got = bytes(at(address, len(opcode)))
         if got != bytes(opcode):
-            raise SystemExit('na $%04X čekám %s, je tam %s' % (address, bytes(opcode).hex(), got.hex()))
+            raise SystemExit('at $%04X expected %s, found %s' % (address, bytes(opcode).hex(), got.hex()))
 
     def ld_a(address):            # LD A,n
         expect(address, [0x3E])
@@ -83,7 +84,7 @@ def main():
                     'ink': ld_a(0xE0FA), 'b': ld_b(0xE104), 'c': ld_c(0xE106)},
     }
     where = B.write_section('panel', data)
-    print('%s: šablona %r, životy %d, kořist %d/%d, klíč %d'
+    print('%s: template %r, lives %d, loot %d/%d, key %d'
           % (where, data['template']['text'], data['lives']['start'],
              data['booty']['start'], data['treasure']['start'], data['keyNumber']['start']))
 

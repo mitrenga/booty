@@ -1,22 +1,24 @@
 #!/usr/bin/env node
 /**
- * Začne remake hru ze své výchozí paměti stejně jako originál?
+ * Does the remake start a game from its own default memory the way the original does?
  *
  *   ./tools/matchstart.mjs
  *
- * Paměť se složí tak, jak ji skládá worker: `data/global.json#memory` (datové
- * oblasti originálu, `tools/mkmemory.py`) a ROM font ze svision
- * (`ZXFonts8x8`). Pak:
+ * The memory is composed the way the worker composes it: `data/global.json#memory`
+ * (the original's data regions, `tools/mkmemory.py`) and the ROM font from
+ * svision (`ZXFonts8x8`). Then:
  *
- * 1. `BootyLogic.newGame()` – přepis `$DEA8` … `$DF13` – a porovnání všech
- *    oblastí z `regions.json` se stavem originálu na začátku prvního průchodu
- *    (`build/trace/walk/init.bin`)
- * 2. z té paměti se přehrají celé záznamy, které se od nové hry liší jen
- *    zápisy čísel (`walk`, `quietwalk`, `fuzz1`–`fuzz4`, `quiet1`,
- *    `quiet2`) – po každém průchodu porovnání jako v `matchphysics.mjs`
+ * 1. `BootyLogic.newGame()` – a port of `$DEA8` … `$DF13` – and a comparison of
+ *    all regions of `regions.json` with the original's state at the start of
+ *    the first pass (`build/trace/walk/init.bin`)
+ * 2. from that memory the whole recordings that differ from a new game only
+ *    by written numbers are replayed (`walk`, `quietwalk`, `fuzz1`–`fuzz4`,
+ *    `quiet1`, `quiet2`) – after every pass a comparison as in
+ *    `matchphysics.mjs`
  *
- * Nula tu říká, že v `global.json#memory` je všechno, co hra čte, a že remake
- * nepotřebuje nic z originálu, co v datech není – ani kód.
+ * Zero here says that `global.json#memory` holds everything the game reads,
+ * and that the remake needs nothing of the original that is not in the data
+ * – not even code.
  */
 import fs from 'node:fs';
 import path from 'node:path';
@@ -55,7 +57,7 @@ function compare(memory, reference, regions, label) {
     for (let a = lo; a < hi; a++) {
       checks++;
       if (memory[a] !== reference[a-lo]) {
-        console.log(`  ${label}, ${name}: ${hex(a)} remake ${hex(memory[a], 2)}, originál ${hex(reference[a-lo], 2)}`);
+        console.log(`  ${label}, ${name}: ${hex(a)} remake ${hex(memory[a], 2)}, original ${hex(reference[a-lo], 2)}`);
         return {checks, diff: true};
       }
     }
@@ -93,23 +95,23 @@ async function main() {
       if (res.diff) { r.diff = true; break; }
     }
     checks += r.checks;
-    if (r.diff) { diffs++; console.log(`${name}: start se liší`); continue; }
+    if (r.diff) { diffs++; console.log(`${name}: the start differs`); continue; }
     // 2. the passes
     let ok = true, done = 0;
     for (let i = 0; i < inputs.length && ok; i++) {
       logic.pass(inputs[i]);
       let off = i*size;
       for (const [lo, hi, region] of regions) {
-        const res = compare(memory, passes.subarray(off, off+hi-lo), [[lo, hi, region]], `${name} průchod ${i}`);
+        const res = compare(memory, passes.subarray(off, off+hi-lo), [[lo, hi, region]], `${name} pass ${i}`);
         checks += res.checks;
         off += hi-lo;
         if (res.diff) { ok = false; diffs++; break; }
       }
       done = i+1;
     }
-    console.log(`${name.padEnd(10)} start + ${done} průchodů z výchozí paměti remaku${ok ? '' : ' – ROZDÍL'}`);
+    console.log(`${name.padEnd(10)} start + ${done} passes from the remake's default memory${ok ? '' : ' – DIFFERENCE'}`);
   }
-  console.log(`celkem ${checks} kontrol, **${diffs} rozdílů**`);
+  console.log(`total ${checks} checks, **${diffs} differences**`);
   process.exit(diffs ? 1 : 0);
 }
 

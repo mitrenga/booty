@@ -1,24 +1,24 @@
 #!/usr/bin/env node
 /**
- * Porovná všechna podpalubí, jak je nakreslí remake, s tím, jak je nakreslí
- * originál.
+ * Compares all holds as the remake draws them with how the original draws
+ * them.
  *
  *   ./tools/matchholds.mjs [--verbose] [--hold N]
  *
- * Remake kreslí **skutečným kódem z prohlížeče** – `app/holdRenderer.js`
- * nad `data/global.json#holds` (`tools/dumpholds.py`). Referenci kreslí **kód
- * originálu** – `$AB44` + `$A900` puštěné v simulátoru Z80 ze stavu hry
- * ve chvíli, kdy sama kreslí první podpalubí (`tools/traceholds.py`,
- * `build/ref/holds/`).
+ * The remake draws with **the real code from the browser** –
+ * `app/holdRenderer.js` over `data/global.json#holds` (`tools/dumpholds.py`).
+ * The reference is drawn by **the original's code** – `$AB44` + `$A900` run
+ * in a Z80 simulator from the game's state at the moment it draws the first
+ * hold itself (`tools/traceholds.py`, `build/ref/holds/`).
  *
- * Pro každé z 21 podpalubí se porovná:
+ * For each of the 21 holds it compares:
  *
- * - **videopaměť**, všech 6912 bajtů (6144 bitmapy, 768 atributů)
- * - **mapa znaků** `$A1C4`, 800 bajtů (25 řádků po 32) – tu hra čte,
- *   když řeší, kde Jim stojí (M3); obrazovka je jen to, co je vidět
- * - **border**, který podpalubí nastaví
+ * - **the video RAM**, all 6912 bytes (6144 bitmap, 768 attributes)
+ * - **the char map** `$A1C4`, 800 bytes (25 rows of 32) – the game reads it
+ *   when working out where Jim stands (M3); the screen is only what is visible
+ * - **the border** the hold sets
  *
- * 21 × (6912 + 800 + 1) = **161 973 kontrol**.
+ * 21 × (6912 + 800 + 1) = **161,973 checks**.
  */
 import fs from 'node:fs';
 import path from 'node:path';
@@ -34,7 +34,7 @@ async function main() {
   const verbose = args.includes('--verbose');
   const only = args.includes('--hold') ? Number(args[args.indexOf('--hold')+1]) : null;
   if (!fs.existsSync(path.join(REF, 'global.json#holds'))) {
-    console.error(`chybí ${REF} – spusť ./tools/mksnapshot.sh a ./tools/traceholds.py`);
+    console.error(`${REF} is missing – run ./tools/mksnapshot.sh and ./tools/traceholds.py`);
     process.exit(2);
   }
   global.atob = (data) => Buffer.from(data, 'base64').toString('binary');
@@ -74,13 +74,13 @@ async function main() {
     const holdDiffs = bitmap+attrs+chars+border;
     checks += 6912+800+1;
     diffs += holdDiffs;
-    console.log(`podpalubí ${String(number).padStart(2)}: obraz ${bitmap}+${attrs}, mapa ${chars}, border ${border}`
-                + (holdDiffs ? '  ← ROZDÍL' : ''));
+    console.log(`hold ${String(number).padStart(2)}: picture ${bitmap}+${attrs}, map ${chars}, border ${border}`
+                + (holdDiffs ? '  ← DIFFERENCE' : ''));
     if (verbose && cells.size) {
-      console.log('    buňky: '+[...cells].slice(0, 40).join(' '));
+      console.log('    cells: '+[...cells].slice(0, 40).join(' '));
     }
   }
-  console.log(`celkem ${checks} kontrol, **${diffs} rozdílů**`);
+  console.log(`total ${checks} checks, **${diffs} differences**`);
   process.exit(diffs ? 1 : 0);
 }
 

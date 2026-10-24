@@ -1,15 +1,15 @@
 #!/usr/bin/env python3
-"""Pustí generátor náhody originálu `$E349` v simulátoru Z80 a vypíše, co dává.
+"""Runs the original's random generator `$E349` in the Z80 simulator and prints what it yields.
 
     ./tools/tracerand.py [--count N] [--seed 0xABCD] [--out FILE]
 
-Bere **skutečný kód z kazety** (`tools/bootylib.py` `memory_image()`), nastaví
-stav na `$F343` a volá `$E349` pořád dokola instrukci po instrukci
-(SkoolKit `Simulator`). Výstup je binární: za každé volání tři bajty – `A`
-(vrácené číslo) a nový stav `$F343` (nižší, vyšší bajt).
+Takes the **real code from the tape** (`tools/bootylib.py` `memory_image()`),
+sets the state at `$F343` and calls `$E349` over and over, instruction by
+instruction (SkoolKit `Simulator`). The output is binary: three bytes per
+call – `A` (the returned number) and the new state of `$F343` (low, high byte).
 
-Pro `tools/matchrand.mjs`, který tentýž počet volání udělá generátorem
-z `app/gameWorker.js` a porovná je bajt po bajtu.
+For `tools/matchrand.mjs`, which makes the same number of calls with the
+generator from `app/gameWorker.js` and compares them byte by byte.
 """
 import argparse, os, sys
 
@@ -20,10 +20,10 @@ sys.path.insert(0, B.SKOOLKIT)
 
 from skoolkit.simulator import Simulator                         # noqa: E402
 
-RAND = 0xE349           # ★ generátor (disasm_notes.md §5)
-STATE = 0xF343          # ★ jeho stav, C na $F343, B na $F344
-RETURN = 0x0000         # kam se vrací RET: adresa, na kterou kód nikdy neskočí
-A, PC, SP = 0, 24, 12   # indexy registrů SkoolKitu
+RAND = 0xE349           # ★ generator (disasm_notes.md §5)
+STATE = 0xF343          # ★ its state, C at $F343, B at $F344
+RETURN = 0x0000         # where RET returns to: an address the code never jumps to
+A, PC, SP = 0, 24, 12   # SkoolKit register indices
 
 
 def main():

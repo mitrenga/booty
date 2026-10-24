@@ -1,31 +1,30 @@
 #!/usr/bin/env python3
-"""Nechá **kód originálu** nakreslit každé podpalubí a uloží, co nakreslil.
+"""Lets the **original's code** draw every hold and saves what it drew.
 
     ./tools/traceholds.py [--out build/ref/holds]
 
-Referenční snímky pro `tools/matchholds.mjs`. Nic se tu nekreslí znovu:
+Reference screens for `tools/matchholds.mjs`. Nothing is redrawn here:
 
-1. hra se spustí v simulátoru jako v `playtrace.py` (titulka → `SPACE` →
-   menu → `0`) a zastaví se ve chvíli, kdy poprvé dojde na `$E0A9`
-   (`CALL $A804`) – jediné místo, odkud se podpalubí kreslí. Systémové
-   proměnné ROM (kanál, `TV-FLAG`, `DF-CC`), na kterých tisk závisí, jsou
-   tak přesně ty, se kterými kreslí hra
-2. pro každé podpalubí n = 1 … 21 se z té RAM udělá kopie, zavolá se
-   `$AA97` (zkopíruje tabulky do pracovní oblasti, jako to `$A804` udělá
-   při prvním vstupu), do `$5BD3` se zapíše n a od `$A811` se pustí kód
-   originálu: `CALL $AB44` (vybere podpalubí a rozbalí jeho tabulky do
-   `$BAD7`) a `JP $A900` (nakreslí ho přes ROM a nastaví border), až po
-   jeho `RET`
-3. uloží se videopaměť `$4000`–`$5AFF` (`holdNN.scr`), mapa znaků
-   `$A1C4` (`holdNN.map`, 800 B: kód znaku na buňku, 25 řádků po 32)
-   a barva borderu, kterou kód nastavil (`global.json#holds`)
+1. the game is started in the simulator as in `playtrace.py` (title → `SPACE`
+   → menu → `0`) and stopped the moment it first reaches `$E0A9`
+   (`CALL $A804`) – the only place the holds are drawn from. The ROM system
+   variables (channel, `TV-FLAG`, `DF-CC`) that printing depends on are thus
+   exactly the ones the game draws with
+2. for every hold n = 1 … 21 a copy of that RAM is made, `$AA97` is called
+   (copies the tables into the working area, as `$A804` does on first entry),
+   n is written into `$5BD3` and the original's code is run from `$A811`:
+   `CALL $AB44` (selects the hold and unpacks its tables into `$BAD7`) and
+   `JP $A900` (draws it through the ROM and sets the border), up to its `RET`
+3. the video memory `$4000`–`$5AFF` is saved (`holdNN.scr`), the character
+   map `$A1C4` (`holdNN.map`, 800 B: character code per cell, 25 rows of 32)
+   and the border colour the code set (`global.json#holds`)
 
-★ `$AAF4` (uložení stavu předchozího podpalubí zpátky do pracovní oblasti,
-volá ho `$A804`, když `$5BD3` ≠ 0) se přeskakuje schválně: každé podpalubí
-se kreslí z nedotčeného stavu na začátku hry. Co hra v podpalubí změní
-(sebraná kořist, otevřené dveře), je M4.
+★ `$AAF4` (saving the state of the previous hold back into the working area,
+called by `$A804` when `$5BD3` ≠ 0) is skipped on purpose: every hold is drawn
+from the untouched state at the start of the game. What the game changes in a
+hold (collected loot, opened doors) is M4.
 
-Adresy a jejich význam: `sources/docs/holds.md`.
+Addresses and their meaning: `sources/docs/holds.md`.
 """
 import argparse, json, os, sys
 
@@ -47,17 +46,17 @@ except ImportError:                                              # pragma: no co
     CSimulator = None
 
 SCRIPT = [(200, 210, 'SPACE'), (300, 310, '0')]
-GAME_START = 0xE0A9      # ★ CALL $A804 – jediné místo, odkud se podpalubí kreslí
-BUILD = 0xAA97           # ★ zkopíruje tabulky do pracovní oblasti, $5BD3 ← 1
-SENTINEL = 0x0001        # návratová adresa, na kterou kód nikdy neskočí
-STACK = 0x68F0           # pod RAMTOP z `CLEAR 26870` ($68F6)
+GAME_START = 0xE0A9      # ★ CALL $A804 – the only place the holds are drawn from
+BUILD = 0xAA97           # ★ copies the tables into the working area, $5BD3 ← 1
+SENTINEL = 0x0001        # return address the code never jumps to
+STACK = 0x68F0           # below RAMTOP from `CLEAR 26870` ($68F6)
 PC, SP, IY, IFF = 24, 12, 11, 26
 
 
 def game_ram(snapshot_path):
-    """RAM $4000–$FFFF ve chvíli, kdy hra poprvé zavolá `$E0A9` – start
-    hry, těsně před tím, než nakreslí první podpalubí. Systémové proměnné
-    (kanál, `TV-FLAG`, `DF-CC`) jsou tak přesně ty, se kterými kreslí ona."""
+    """RAM $4000–$FFFF at the moment the game first calls `$E0A9` – game
+    start, just before it draws the first hold. The system variables
+    (channel, `TV-FLAG`, `DF-CC`) are thus exactly the ones it draws with."""
     snapshot = Snapshot.get(snapshot_path)
     sim = from_snapshot(CSimulator or Simulator, snapshot, {}, {'ay': [None] * 16},
                         {'fast_djnz': False, 'fast_ldir': False}, None)
@@ -76,12 +75,12 @@ def game_ram(snapshot_path):
 
     tracer.run(snapshot.pc, GAME_START, 0, 0, True, draw, None, None, None, '$', '04X', '04X')
     if sim.registers[PC] != GAME_START:
-        raise SystemExit('hra na $%04X nedošla – zkontroluj SCRIPT' % GAME_START)
+        raise SystemExit('the game did not reach $%04X – check SCRIPT' % GAME_START)
     return bytes(sim.memory[0x4000:0x10000]), dict(enumerate(sim.registers))
 
 
 class BorderTracer:
-    """Zachytí OUT na port $FE – border, který podpalubí nastaví (`$229B`)."""
+    """Catches OUT to port $FE – the border the hold sets (`$229B`)."""
     def __init__(self):
         self.border = None
 
@@ -95,7 +94,7 @@ class BorderTracer:
 
 
 def call(memory, registers, address):
-    """Zavolá rutinu originálu a nechá ji doběhnout po její RET."""
+    """Calls the original's routine and lets it run up to its RET."""
     memory[STACK] = SENTINEL & 0xFF
     memory[STACK + 1] = SENTINEL >> 8
     sim = Simulator(memory, {'IY': registers[IY - 1] * 256 + registers[IY], 'SP': STACK})
@@ -131,10 +130,10 @@ def main():
         playtrace.write_png(os.path.join(args.out, 'hold%02d.png' % number),
                             playtrace.scr_to_rgb(scr), 256, 2)
         summary[number] = {'border': border}
-        print('podpalubí %2d: border %s' % (number, border))
+        print('hold %2d: border %s' % (number, border))
     with open(os.path.join(args.out, 'global.json#holds'), 'w') as f:
         json.dump(summary, f, indent=1)
-    print('%d podpalubí v %s' % (B.HOLD_COUNT, args.out))
+    print('%d holds in %s' % (B.HOLD_COUNT, args.out))
 
 
 if __name__ == '__main__':

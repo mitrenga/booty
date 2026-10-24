@@ -1,26 +1,28 @@
 #!/usr/bin/env node
 /**
- * Časy přechodu dveřmi pro remake: `build/transition/` → `data/global.json#transition`.
+ * The door-transition times for the remake: `build/transition/` → `data/global.json#transition`.
  *
  *   ./tools/tracetransition.py && ./tools/mktransition.mjs
  *
- * ★ Měření je z `tools/tracetransition.py`: originál bez melodie projde
- * dveřmi do každého podpalubí 1–20 a zaznamená T-stavy zastávek a průběh
- * mazání obrazovky. Odsud:
+ * ★ The measurement is from `tools/tracetransition.py`: the original, without
+ * the tune, goes through a door into each of the holds 1–20 and records the
+ * T-states of the stops and the progress of clearing the screen. From that:
  *
- * - `toCls` – od ENTER ROOM (`$EE84`) do ROM CL-LINE (`$A8DA`): **model**
- *   `base + records × záznamy + bytes × bajty` tabulek, které `$AAF4`
- *   a `$AB44` zkopírují, nejmenší čtverce
- * - `cls` – mazání: délka (průměr, i s přerušeními) a 48 bloků (24
- *   pixelových řádků třetin po 256 B, 24 řádků atributů po 32 B) s T
- *   začátku a konce od `$A8DA`; začátek a konec bloku jsou z přímky
- *   proložené časy, kdy bajty bloku zmizely (LDIR maže stejným tempem),
- *   v profilu bez přerušení natažené na délku s nimi
- * - `draw` – jak dlouho je obraz černý (`$A8DD` → `$AA85`): **model**
- *   `base + glyph × znaky + clSet × CL-SET + rst10 × RST $10`, nejmenší
- *   čtverce; počty dává kreslení **remaku** (`BootyLogic#cost`) z paměti
- *   originálu ve chvíli `$EE84`. Chyba modelu se vypíše
- * - `attrCopy` (`$AA85` → `$AA90`) a `panel` (`$AA90` → `$EEA2`), průměr
+ * - `toCls` – from ENTER ROOM (`$EE84`) to ROM CL-LINE (`$A8DA`): a **model**
+ *   `base + records × records + bytes × bytes` of the tables `$AAF4` and
+ *   `$AB44` copy, least squares
+ * - `cls` – the clearing: the length (mean, interrupts included) and 48
+ *   blocks (24 pixel lines of the thirds of 256 B, 24 attribute rows of 32 B)
+ *   with the T of their start and end from `$A8DA`; a block's start and end
+ *   come from a line fitted to the times its bytes vanished (LDIR clears at
+ *   a constant rate), in the profile without interrupts stretched to the
+ *   length with them
+ * - `draw` – how long the picture is black (`$A8DD` → `$AA85`): a **model**
+ *   `base + glyph × chars + clSet × CL-SET + rst10 × RST $10`, least squares;
+ *   the counts come from the **remake's** drawing (`BootyLogic#cost`) out of
+ *   the original's memory at the moment of `$EE84`. The model's error is
+ *   printed
+ * - `attrCopy` (`$AA85` → `$AA90`) and `panel` (`$AA90` → `$EEA2`), mean
  */
 import fs from 'node:fs';
 import path from 'node:path';
@@ -36,7 +38,7 @@ const require = createRequire(import.meta.url);
 const loadClassicScript = require(path.join(ROOT, 'app/svision/tools/classicScript.cjs'));
 const BootyLogic = loadClassicScript(path.join(ROOT, 'app/bootyLogic.js'));
 
-// zastávky tools/tracetransition.py
+// the stops of tools/tracetransition.py
 const [EE84, A900, A8DA, A8DD, AA85, AA90, E0AC, EEA2] = [0, 1, 2, 3, 4, 5, 6, 7];
 
 export function holdCost(hold) {
@@ -50,7 +52,7 @@ export function holdCost(hold) {
 export function loadRecord() {
   const file = path.join(SRC, 'global.json#transition');
   if (!fs.existsSync(file)) {
-    console.error(`chybí ${file} – spusť ./tools/tracetransition.py`);
+    console.error(`${file} is missing – run ./tools/tracetransition.py`);
     process.exit(2);
   }
   return JSON.parse(fs.readFileSync(file));
@@ -60,7 +62,7 @@ function mean(values) {
   return values.reduce((a, b) => a+b, 0)/values.length;
 }
 
-/** nejmenší čtverce: X (řádky) × c = y */
+/** least squares: X (rows) × c = y */
 function lstsq(X, y) {
   const n = X[0].length;
   const M = [];
@@ -92,7 +94,7 @@ function lstsq(X, y) {
 
 function clsBlocks(record, duration) {
   const profile = record.cls;
-  // ★ bez přerušení; natažené na délku mazání i s nimi
+  // ★ without interrupts; stretched to the length of the clearing with them
   const scale = duration/Math.max(...profile);
   const blocks = [];
   for (let line = 0; line < 8; line++) {
@@ -107,7 +109,7 @@ function clsBlocks(record, duration) {
     const X = [], y = [];
     for (let k = 0; k < length; k++) {
       X.push([1, k]);
-      // vzorek po STEP: bajt zmizel někdy v předchozím kroku
+      // sampled every STEP: the byte vanished somewhere in the previous step
       y.push(profile[address-0x4000+k]-record.step/2);
     }
     const [a, b] = lstsq(X, y);
@@ -144,14 +146,14 @@ function main() {
   const where = writeSection('transition', out);
   const worst = Math.max(...errors.map(Math.abs));
   const preWorst = Math.max(...preErrors.map(Math.abs));
-  console.log(`  model do CL-LINE nejvýš ±${preWorst.toFixed(0)} T`);
-  console.log(`${where}: ${holds.length} podpalubí; CL-LINE ${(out.cls.duration/FRAME).toFixed(2)} snímku, `+
-              `černo ${(Math.min(...black)/FRAME).toFixed(2)}–${(Math.max(...black)/FRAME).toFixed(2)} snímku, `+
-              `model černa nejvýš ±${worst.toFixed(0)} T (${(worst/FRAME).toFixed(3)} snímku)`);
+  console.log(`  model up to CL-LINE at most ±${preWorst.toFixed(0)} T`);
+  console.log(`${where}: ${holds.length} holds; CL-LINE ${(out.cls.duration/FRAME).toFixed(2)} frames, `+
+              `black ${(Math.min(...black)/FRAME).toFixed(2)}–${(Math.max(...black)/FRAME).toFixed(2)} frames, `+
+              `model of the black at most ±${worst.toFixed(0)} T (${(worst/FRAME).toFixed(3)} frames)`);
   ['A900', 'E0AC'].forEach((name, i) => {
     const k = [A900, E0AC][i];
     const spread = diff(k-1, k);
-    console.log(`  (kontrola: $${name} − předchozí zastávka ${Math.min(...spread)}–${Math.max(...spread)} T)`);
+    console.log(`  (check: $${name} − previous stop ${Math.min(...spread)}–${Math.max(...spread)} T)`);
   });
 }
 

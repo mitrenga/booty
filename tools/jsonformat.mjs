@@ -1,8 +1,8 @@
 /**
- * `data/global.json` z nástrojů v Node – tentýž tvar a tytéž sekce jako
- * `write_json` / `read_section` / `write_section` v `bootylib.py`:
- * odsazení 2, pole čísel na jeden řádek (dlouhá zalomená do `JSON_WIDTH`),
- * objekty rozbalené.
+ * `data/global.json` from the Node tools – the same shape and the same sections
+ * as `write_json` / `read_section` / `write_section` in `bootylib.py`:
+ * indent 2, arrays of numbers on one line (long ones wrapped to `JSON_WIDTH`),
+ * objects expanded.
  */
 import fs from 'node:fs';
 import path from 'node:path';
@@ -64,7 +64,7 @@ export function readSection(name) {
 
 /** writes section `name` of data/global.json, the others stay */
 export function writeSection(name, data) {
-  if (!DATA_SECTIONS.includes(name)) { throw new Error('neznámá sekce '+name); }
+  if (!DATA_SECTIONS.includes(name)) { throw new Error('unknown section '+name); }
   const sections = fs.existsSync(DATA) ? JSON.parse(fs.readFileSync(DATA, 'utf8')) : {};
   sections[name] = data;
   const ordered = {};

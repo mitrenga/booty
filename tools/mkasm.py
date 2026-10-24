@@ -1,17 +1,18 @@
 #!/usr/bin/env python3
-"""Disassembly Booty: obraz paměti → SkoolKit `.ctl` → `.skool`.
+"""Booty disassembly: memory image → SkoolKit `.ctl` → `.skool`.
 
-    ./tools/mkasm.py                 # sources/asm/booty.skool z booty.ctl
+    ./tools/mkasm.py                 # sources/asm/booty.skool from booty.ctl
     ./tools/mkasm.py --ctl-from-map build/cov/all.map [--force]
 
-Vstupem je **jen** `bootylib.code_image()` – obraz `$6900`–`$FFFE` složený
-z kazety (i s 62 B na `$CD14`), nikdy surový blok `bc` (`ZADANI.md` §1).
+The input is **only** `bootylib.code_image()` – the `$6900`–`$FFFE` image
+assembled from the tape (including the 62 B at `$CD14`), never the raw `bc`
+block (`ZADANI.md` §1).
 
-`sources/asm/booty.ctl` je ručně udržovaný podklad (STANDARDS.md: disassembly
-se commituje). Jeho první podobu vyrobí `--ctl-from-map` ze SkoolKit
-`sna2ctl.py` a mapy pokrytí z `playtrace.py --map`; co je ručně, se do
-souboru dopisuje a **znovu se negeneruje** (bez `--force` to nástroj odmítne).
-`booty.skool` se z `.ctl` dělá vždycky znovu.
+`sources/asm/booty.ctl` is a hand-maintained source (STANDARDS.md: the
+disassembly is committed). Its first form is produced by `--ctl-from-map` from
+SkoolKit `sna2ctl.py` and the coverage map from `playtrace.py --map`; what is
+done by hand is added to the file and **is never regenerated** (without
+`--force` the tool refuses). `booty.skool` is always made from the `.ctl` anew.
 """
 import argparse, os, subprocess, sys
 
@@ -25,11 +26,11 @@ SKOOL = os.path.join(ASM, 'booty.skool')
 BIN = os.path.join(B.ROOT, 'build', 'booty_code.bin')
 SCRIPTS = os.path.join(B.SKOOLKIT, 'skoolkit-10.1.data', 'scripts')
 
-# Co se ví předem a z mapy pokrytí nevyplyne – ★ doložené v sources/docs
+# What is known beforehand and does not follow from the coverage map – ★ documented in sources/docs
 FIXED = [
-    ('b', 0x6978, 'Titulní obrázek, 6912 B; $CD8A ho LDIR přesune na $4000 '
+    ('b', 0x6978, 'Title picture, 6912 B; $CD8A moves it to $4000 with LDIR '
                   '(disasm_notes.md §1)'),
-    ('c', 0x8478, None),   # konec obrázku = $6978 + 6912 = $8478
+    ('c', 0x8478, None),   # end of the picture = $6978 + 6912 = $8478
 ]
 
 
@@ -45,22 +46,22 @@ def run(script, *args, out=None):
 
 def ctl_from_map(path, force):
     if os.path.exists(CTL) and not force:
-        raise SystemExit('%s uz existuje a je rucne udrzovany – --force ho prepise' % CTL)
+        raise SystemExit('%s already exists and is maintained by hand – --force overwrites it' % CTL)
     raw = run('sna2ctl.py', '-h', '-o', '0x6900', '-m', path, BIN).decode()
     lines = [l for l in raw.splitlines() if l.strip()]
     lo, hi = 0x6978, 0x6978 + 6912
-    out = ['; Booty (Firebird 1984) – disassembly obrazu $6900-$FFFE z tools/bootylib.py',
-           '; Prvni podoba z mapy pokryti (tools/mkasm.py --ctl-from-map), dal rucne.']
+    out = ['; Booty (Firebird 1984) - disassembly of the image $6900-$FFFE from tools/bootylib.py',
+           '; First shape from the coverage map (tools/mkasm.py --ctl-from-map), then by hand.']
     for l in lines:
         parts = l.split()
         if len(parts) >= 2 and len(parts[0]) == 1 and parts[1].startswith('$'):
             a = int(parts[1][1:], 16)
             if lo <= a < hi:
-                continue            # obrázek: žádné t/c uvnitř
+                continue            # picture: no t/c inside
             if a == hi:
                 continue
         out.append(l)
-    # vložit pevné bloky na správné místo podle adresy
+    # insert the fixed blocks at the right place by address
     def key(l):
         p = l.split()
         if l.startswith(';'):
@@ -72,13 +73,13 @@ def ctl_from_map(path, force):
     head = [l for l in out if l.startswith(';')]
     for kind, addr, text in FIXED:
         if addr == hi:
-            # co bylo za obrázkem: typ podle mapy (kód, pokud se vykonal)
+            # what was after the picture: type by the map (code, if it was executed)
             executed = any(int(x.strip()[1:], 16) == addr for x in open(path))
             kind = 'c' if executed else 'b'
         body.append('%s $%04X%s' % (kind, addr, (' ' + text) if text else ''))
     body.sort(key=lambda l: (key(l), 0 if l.startswith('@') else 1))
     open(CTL, 'w').write('\n'.join(head + body) + '\n')
-    print('zapsano %s (%d radku)' % (CTL, len(head + body)))
+    print('written %s (%d lines)' % (CTL, len(head + body)))
 
 
 def main():
@@ -94,7 +95,7 @@ def main():
         ctl_from_map(args.ctl_from_map, args.force)
     run('sna2skool.py', '-H', '-o', '0x6900', '-c', CTL, BIN, out=SKOOL)
     n = sum(1 for l in open(SKOOL) if l[:1] in 'cbtswu*' or l[:1] == ' ')
-    print('zapsano %s (%d radku)' % (SKOOL, n))
+    print('written %s (%d lines)' % (SKOOL, n))
 
 
 if __name__ == '__main__':

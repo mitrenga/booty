@@ -51,8 +51,9 @@ export class BorderEntity extends AbstractEntity {
 
     this.leftControlEntity = null;
     this.rightControlEntity = null;
-    // Ikona toho, co která polovina obrazovky dělá: osmisměrná páčka na jedné
-    // a meč na druhé. Kreslí se **jen do okraje**, ne přes hrací plochu.
+    // An icon of what each half of the screen does: an eight-way stick on one
+    // and a sword on the other. Drawn **in the border only**, never over the
+    // playfield.
     this.leftIconEntity = null;
     this.rightIconEntity = null;
     this.gameControlIcons = false;
@@ -125,9 +126,9 @@ export class BorderEntity extends AbstractEntity {
   } // setFps
 
   /**
-   * Nastaví ikony dotykového ovládání pro obě poloviny obrazovky.
-   * @param {Object|false} left - Ikona levé poloviny (`controlsOptions.touchscreen.icons`).
-   * @param {Object|false} right - Ikona pravé poloviny.
+   * Sets the touch-control icons for the two halves of the screen.
+   * @param {Object|false} left - The left half's icon (`controlsOptions.touchscreen.icons`).
+   * @param {Object|false} right - The right half's icon.
    */
   setGameControlIcons(left, right) {
     if (!this.enableGameControls) {
@@ -146,9 +147,10 @@ export class BorderEntity extends AbstractEntity {
   } // setGameControlIcons
 
   /**
-   * Uloží ikony do okraje: když je okraj po stranách dost široký (telefon na
-   * šířku), jde každá ke své polovině; když je dost vysoký ten dolní (telefon
-   * na výšku), jdou obě pod hrací plochu. Jinak se nekreslí – přes hru ne.
+   * Places the icons in the border: when the side border is wide enough (phone
+   * in landscape), each goes beside its half; when the bottom one is tall
+   * enough (phone in portrait), both go under the playfield. Otherwise they
+   * are not drawn – never over the game.
    */
   layoutGameControlIcons() {
     if (!this.enableGameControls || !this.leftIconEntity || this.model == null) {
@@ -163,7 +165,7 @@ export class BorderEntity extends AbstractEntity {
     var beside = Math.max(...icons.map((icon) => icon.width))+2*margin;
     var below = Math.max(...icons.map((icon) => icon.height))+2*margin;
     if (this.model.borderWidth >= beside) {
-      // telefon na šířku: ke každé polovině její ikona, do postranního okraje
+      // phone in landscape: each half gets its icon in the side border
       icons.forEach((icon, i) => {
         icon.x = (i == 0 ? 0 : this.width-this.model.borderWidth)
                  +Math.floor((this.model.borderWidth-icon.width)/2);
@@ -171,7 +173,7 @@ export class BorderEntity extends AbstractEntity {
         icon.hide = false;
       });
     } else if (this.model.borderHeight >= below) {
-      // telefon na výšku: obě do dolního okraje, každá nad svou polovinu
+      // phone in portrait: both in the bottom border, each over its half
       var top = this.height-this.model.borderHeight;
       icons.forEach((icon, i) => {
         icon.x = Math.floor(this.width*(1+2*i)/4-icon.width/2);
@@ -179,7 +181,7 @@ export class BorderEntity extends AbstractEntity {
         icon.hide = false;
       });
     } else {
-      // na okraj se nevejdou a přes hrací plochu se nekreslí
+      // they do not fit the border and are not drawn over the playfield
       icons.forEach((icon) => { icon.hide = true; });
     }
   } // layoutGameControlIcons

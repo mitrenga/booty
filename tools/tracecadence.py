@@ -1,21 +1,22 @@
 #!/usr/bin/env python3
-"""Změří kadenci hlavní smyčky Booty: kolik T-stavů (a snímků) trvá průchod.
+"""Measures the cadence of Booty's main loop: how many T-states (and frames) a pass takes.
 
     ./tools/tracecadence.py [--frames N] [--script "..."] [--loop ADDR] [--csv FILE]
 
-Hlavní smyčka hry je `$DF13`–`$DF8F` (`sources/docs/disasm_notes.md` §3)
-a **na snímek nečeká** – nemá `HALT` a nečte čítač přerušení `$FE88`.
-Kadence tedy není vlastnost kódu, ale **toho, kolik práce průchod udělá**,
-a dá se jen změřit: simulátor se zastaví na každém vstupu do `ADDR`,
-zapíše T-stav, a z rozdílů vyjde délka průchodu. Snímek ZX 48K má
-69 888 T-stavů.
+The game's main loop is `$DF13`–`$DF8F` (`sources/docs/disasm_notes.md` §3)
+and **does not wait for the frame** – it has no `HALT` and does not read the
+interrupt counter `$FE88`. The cadence is therefore not a property of the
+code but of **how much work a pass does**, and can only be measured: the
+simulator stops at every entry into `ADDR`, records the T-state, and the pass
+length comes out of the differences. A ZX 48K frame has 69 888 T-states.
 
-Skript kláves je jako u `playtrace.py` (`od:do:klavesa`, snímky od začátku
-běhu). Výchozí: klávesa, `0` = START GAME, pak chůze po palubě.
-Přerušení se počítají (obsluha IM 2 hraje zvuk a volá ROM `$0038`), takže
-změřený čas je **včetně** času, který stroj stráví v přerušení – tak jako
-na skutečném Spectru. Sporná paměť se počítá jen s `--cmio`; bez něj je
-měření o zdržení ULA rychlejší než skutečný stroj (`hw_notes.md`).
+The key script is as in `playtrace.py` (`from:to:key`, frames from the start
+of the run). Default: a key, `0` = START GAME, then walking the deck.
+Interrupts are counted (the IM 2 handler plays sound and calls ROM `$0038`),
+so the measured time is **including** the time the machine spends in the
+interrupt – as on a real Spectrum. Contended memory is counted only with
+`--cmio`; without it the measurement is faster than the real machine by the
+ULA delay (`hw_notes.md`).
 """
 import argparse, os, sys
 from collections import Counter
@@ -41,7 +42,7 @@ def main():
     ap.add_argument('--loop', default='$DF13')
     ap.add_argument('--csv')
     ap.add_argument('--cmio', action='store_true',
-                    help='simulovat spornou paměť a I/O (pomalejší, blíž skutečnému stroji)')
+                    help='simulate contended memory and I/O (slower, closer to the real machine)')
     args = ap.parse_args()
     loop = int(args.loop.lstrip('$'), 16)
     script = P.parse_script(args.script)
@@ -50,7 +51,7 @@ def main():
     else:
         cls = P.CSimulator
     if cls is None or not hasattr(cls, 'trace'):
-        raise SystemExit('potrebuju C simulator (skoolkit.csimulator / ccmiosimulator)')
+        raise SystemExit('the C simulator is needed (skoolkit.csimulator / ccmiosimulator)')
 
     snap = Snapshot.get(args.snapshot)
     sim = from_snapshot(cls, snap, {}, {'ay': [None] * 16},
@@ -58,7 +59,7 @@ def main():
     tracer = Tracer(sim, snap.border, snap.out7ffd, snap.outfffd, list(snap.ay),
                     snap.outfe, True)
     sim.set_tracer(tracer)
-    keyboard = tracer.keyboard = [0] * 8     # porty čte tracer, ne náš seznam
+    keyboard = tracer.keyboard = [0] * 8     # the tracer reads the ports, not our list
     state = {'frame': 0}
 
     def draw(scr, frame, border, kb):
@@ -78,28 +79,28 @@ def main():
         cond, _ = sim.trace(pc, loop, 0, 0, 1, draw, None, keyboard, None, None)
         pc = regs[24]
         if pc != loop:
-            break                                   # konec běhu (draw vrátil False)
+            break                                   # end of the run (draw returned False)
         stamps.append((state['frame'], regs[25]))
-        # o jednu instrukci dál, ať se příště nezastaví hned
+        # one instruction further, so that it does not stop right away next time
         cond, _ = sim.trace(pc, -1, 1, 0, 1, draw, None, keyboard, None, None)
         pc = regs[24]
 
     if len(stamps) < 2:
-        raise SystemExit('smycka $%04X se za %d snimku nevykonala' % (loop, args.frames))
+        raise SystemExit('loop $%04X was not executed within %d frames' % (loop, args.frames))
     rows = [(f0, t1 - t0) for (f0, t0), (_, t1) in zip(stamps, stamps[1:])]
     if args.csv:
         with open(args.csv, 'w') as f:
             f.write('frame,tstates\n')
             for fr, dt in rows:
                 f.write('%d,%d\n' % (fr, dt))
-    print('smyčka $%04X: %d průchodů, první na snímku %d'
+    print('loop $%04X: %d passes, the first on frame %d'
           % (loop, len(stamps), stamps[0][0]))
     hist = Counter(round(dt / FRAME, 1) for _, dt in rows)
-    print('průchod ve snímcích (zaokrouhleno na 0,1) : počet')
+    print('pass in frames (rounded to 0.1) : count')
     for k in sorted(hist):
         print('  %4.1f : %d' % (k, hist[k]))
     dts = sorted(dt for _, dt in rows)
-    print('T-stavy: min %d, medián %d, max %d (snímek %d)'
+    print('T-states: min %d, median %d, max %d (frame %d)'
           % (dts[0], dts[len(dts) // 2], dts[-1], FRAME))
 
 

@@ -2,23 +2,23 @@
 
 class DataCommand {
 
-  // Co se posílá při startu aplikace: sekce `data/global.json`. Každou
-  // sekci zapisuje nástroj z tools/ z originálu:
+  // What is sent at application start: the sections of `data/global.json`.
+  // Every section is written by a tool from tools/ out of the original:
   //
-  // - `global`   – výchozí stav hry z běhu originálu (mkglobal.py)
-  // - `holds`    – tabulky všech 21 podpalubí a glyfy kulisy (dumpholds.py)
-  // - `sprites`  – grafika spritů: Jim, piráti (dumpsprites.py)
-  // - `panel`    – panel z operandů kódu (dumppanel.py)
-  // - `texts`    – texty: proudy pro ROM tisk, menu (dumptexts.py)
-  // - `memory`   – výchozí paměť hry pro bootyLogic.js, jen data (mkmemory.py)
-  // - `transition` – časy přechodu dveřmi (tracetransition.py, mktransition.mjs)
-  // - `loading`  – loading screen z kazety (mkscreen.py)
-  // - `tape`     – scénář pro LOAD TAPE (mktape.py)
-  // - `title`    – titulka s mořem pro MainModel (tracetitle.py, mktitle.py)
-  // - `sounds`   – zvuk originálu: melodie, sloty, šum (tracesound.py, mksounds.py)
-  // - `goldfish` – skrytá minihra: SECRET SUB GAME a pozadí menu (tracegoldfish.py, mkgoldfish.py)
+  // - `global`   – the initial game state from a run of the original (mkglobal.py)
+  // - `holds`    – the tables of all 21 holds and the scenery glyphs (dumpholds.py)
+  // - `sprites`  – sprite graphics: Jim, pirates (dumpsprites.py)
+  // - `panel`    – the panel from the code's operands (dumppanel.py)
+  // - `texts`    – texts: streams for ROM printing, menu (dumptexts.py)
+  // - `memory`   – the initial game memory for bootyLogic.js, data only (mkmemory.py)
+  // - `transition` – door transition timings (tracetransition.py, mktransition.mjs)
+  // - `loading`  – the loading screen from the tape (mkscreen.py)
+  // - `tape`     – the script for LOAD TAPE (mktape.py)
+  // - `title`    – the title with the sea for MainModel (tracetitle.py, mktitle.py)
+  // - `sounds`   – the original's sound: tune, slots, noise (tracesound.py, mksounds.py)
+  // - `goldfish` – the hidden sub game: SECRET SUB GAME and the menu background (tracegoldfish.py, mkgoldfish.py)
   //
-  // Chybějící sekce dorazí jako null a aplikace to musí přežít.
+  // Missing sections arrive as null and the application must survive that.
   var $sections = ['global', 'holds', 'sprites', 'panel', 'texts', 'memory', 'transition', 'loading', 'tape', 'title', 'sounds', 'goldfish'];
 
   public function execute($postData) {

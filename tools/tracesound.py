@@ -1,30 +1,32 @@
 #!/usr/bin/env python3
-"""Zvuk originálu v simulátoru: každá hrana reproduktoru v T-stavech.
+"""Sound of the original in the simulator: every speaker edge in T-states.
 
     ./tools/tracesound.py [--frames N] [--out DIR]
 
-★ Booty hraje jen v obsluze přerušení IM 2 `$FE69` (`disasm_notes.md` §2)
-a třikrát ROM `BEEPER` z hlavní smyčky. Nástroj bere **skutečný kód**
-ze snapshotu (`./tools/mksnapshot.sh`) ve stavu, v jakém je na titulce
-(`$CDAF`: `$FFF7`, `$FFF9`, `$FE86` a vektor `$FEFE` nastavené kódem
-`$CD14`), a zapisuje:
+★ Booty plays only in the IM 2 interrupt handler `$FE69` (`disasm_notes.md` §2)
+and three times ROM `BEEPER` from the main loop. The tool takes the **real
+code** from the snapshot (`./tools/mksnapshot.sh`) in the state it has on the
+title (`$CDAF`: `$FFF7`, `$FFF9`, `$FE86` and the vector `$FEFE` set by the
+code at `$CD14`), and writes:
 
-1. `paths.json` – **obsluha přerušení po cestách**: simulátor (SkoolKit,
-   bez sporné paměti) pustí `$FE69` pro každou cestu zvlášť – melodie na
-   každé notě tabulky `$FA00` i na `$FF`, sloty `$FFFB`+`$FFFC`, `$FFFF`
-   1/2, `$FFFD` 1/2 (šum ve více polohách ukazatele `$FE86`, i přes konec
-   ROM), `$FFFE` 1–7, s `$FE88` na obou fázích – a zapíše každý `OUT` na
-   port `$FE` (T od vstupu na `$FE69`, bit 4), délku až po návrat a stav
-   paměti, který obsluha změnila. Navíc ROM `BEEPER` s parametry, se
-   kterými ho volá hra (`$EB8D`, `$E2xx`, `$E3A4`), a ROM `$0038` samotná
-   (délka bez stisknuté klávesy). A **utonutí** `$E361` až po `$E3A3`
-   pro několik stavů generátoru `$F343` (bez přerušení).
-2. `global.json#title` – **melodie na titulce**: běh od `$CD14` bez kláves,
-   každý vstup do obsluhy (T, `$FE88`, `$FFF9`, `$FE86`) a každá změna
-   bitu 4 portu `$FE` (T, nová úroveň). Z toho `tools/matchsound.mjs` dokládá, kdy obsluha
-   proběhne a kdy se přerušení ztratí, protože ho dlouhá nota přeběhla.
+1. `paths.json` – **the interrupt handler by paths**: the simulator (SkoolKit,
+   without contended memory) runs `$FE69` for each path separately – the tune
+   on every note of the `$FA00` table and on `$FF`, slots `$FFFB`+`$FFFC`,
+   `$FFFF` 1/2, `$FFFD` 1/2 (noise at several positions of the `$FE86`
+   pointer, even past the end of the ROM), `$FFFE` 1–7, with `$FE88` in both
+   phases – and records every `OUT` to port `$FE` (T from entry at `$FE69`,
+   bit 4), the length up to the return and the memory state the handler
+   changed. In addition ROM `BEEPER` with the parameters the game calls it with
+   (`$EB8D`, `$E2xx`, `$E3A4`), and ROM `$0038` itself (length with no key
+   pressed). And **drowning** `$E361` up to `$E3A3` for several states of the
+   generator `$F343` (without interrupts).
+2. `global.json#title` – **the tune on the title**: a run from `$CD14` without
+   keys, every entry into the handler (T, `$FE88`, `$FFF9`, `$FE86`) and every
+   change of bit 4 of port `$FE` (T, new level). From this `tools/matchsound.mjs`
+   proves when the handler runs and when an interrupt is lost because a long
+   note overran it.
 
-Pro `tools/mksounds.py` (data) a `tools/matchsound.mjs` (kontrola).
+For `tools/mksounds.py` (data) and `tools/matchsound.mjs` (check).
 """
 import argparse, json, os, sys
 
@@ -38,22 +40,22 @@ from skoolkit.simutils import from_snapshot                     # noqa: E402
 from skoolkit.trace import Tracer                               # noqa: E402
 
 FRAME = 69888
-TITLE = 0xCDAF          # ★ smyčka titulky – tady je stav zvuku nastavený
-HANDLER = 0xFE69        # ★ obsluha IM 2 (za JP na $FEFE)
-SENTINEL = 0x0000       # návrat: adresa, na kterou kód nikdy nevrací
+TITLE = 0xCDAF          # ★ title loop – here the sound state is set
+HANDLER = 0xFE69        # ★ IM 2 handler (after the JP at $FEFE)
+SENTINEL = 0x0000       # return: an address the code never returns to
 STACK = 0xFF40
 T, PC, SP = 25, 24, 12
 A, F, B_, C_, D_, E_, H_, L_ = 0, 1, 2, 3, 4, 5, 6, 7
 IY = 10                 # SkoolKit: IXh 8, IXl 9, IYh 10, IYl 11
-BEEPERS = [            # ★ (DE, HL) volání ROM BEEPER ve hře (app/bootyLogic.js)
-    (0x32, 0xC8),       # $EB8D dveře
-    (0xC8, 0xC8),       # zlatý klíč
-    (0xC8, 0x64),       # $E3A4 smrt
+BEEPERS = [            # ★ (DE, HL) of the ROM BEEPER calls in the game (app/bootyLogic.js)
+    (0x32, 0xC8),       # $EB8D door
+    (0xC8, 0xC8),       # gold key
+    (0xC8, 0x64),       # $E3A4 death
 ]
 
 
 def title_state(frames=None, log=None):
-    """C simulátor od $CD14 na první $CDAF; s `frames` poběží dál a loguje."""
+    """C simulator from $CD14 to the first $CDAF; with `frames` it runs on and logs."""
     snap = Snapshot.get(os.path.join(B.ROOT, 'build', 'booty.z80'))
     sim = from_snapshot(P.CSimulator, snap, {}, {'ay': [None] * 16},
                         {'fast_djnz': False, 'fast_ldir': False}, None)
@@ -80,7 +82,7 @@ def title_state(frames=None, log=None):
     pc = snap.pc
     sim.trace(pc, TITLE, 0, 0, 1, draw, None, keyboard, None, None)
     if regs[PC] != TITLE:
-        raise SystemExit('titulka $%04X se nevykonala' % TITLE)
+        raise SystemExit('title $%04X was not executed' % TITLE)
     if frames is None:
         return sim
     entries = []
@@ -110,12 +112,12 @@ class Ports:
             self.outs.append([registers[T], (value >> 4) & 1])
 
     def read_port(self, registers, port):
-        return 0xFF             # žádná klávesa
+        return 0xFF             # no key
 
 
 def run(memory, start, regs=None, stop=SENTINEL):
-    """Pustí `start` až po návrat na SENTINEL (nebo po `stop`); vrátí OUTy,
-    délku a paměť."""
+    """Runs `start` until the return to SENTINEL (or until `stop`); returns the
+    OUTs, the length and the memory."""
     mem = bytearray(memory)
     sim = Simulator(mem, config={'fast_djnz': False, 'fast_ldir': False})
     ports = Ports()
@@ -126,8 +128,8 @@ def run(memory, start, regs=None, stop=SENTINEL):
     r[SP] = STACK - 2
     mem[STACK - 2] = SENTINEL & 0xFF
     mem[STACK - 1] = SENTINEL >> 8
-    # obsluha čeká na zásobníku i AF a IY, které vstup uložil; tady se
-    # vstupuje na $FE69, takže to udělá sám
+    # the handler expects AF and IY on the stack too, pushed by the entry;
+    # here the entry is at $FE69, so it does that itself
     r[T] = 0
     sim.run(start, stop)
     return [[t, b] for t, b in ports.outs], r[T], mem
@@ -163,11 +165,11 @@ def main():
              'FE86': base[0xFE86] | (base[0xFE87] << 8), 'FE88': base[0xFE88],
              '5BD0': base[0x5BD0], 'FEFE': list(base[0xFEFE:0xFF01])}
     mask = base[0xFFF7]
-    play = (-1) & 0xFF          # FE88, které po INC dá fázi 0
-    other = 0                   # … a fázi 1
+    play = (-1) & 0xFF          # FE88 that gives phase 0 after INC
+    other = 0                   # … and phase 1
 
     cases = {}
-    # melodie: každá položka tabulky (i $FF) na fázi, kdy hraje, a jedna mimo
+    # tune: every table entry (including $FF) in the phase when it plays, and one outside it
     a = 0xFA00
     tune = []
     while True:
@@ -180,7 +182,7 @@ def main():
             base, {0xFFF8: 1, 0xFE88: play, 0xFFF9: addr & 0xFF, 0xFFFA: addr >> 8})
     cases['tune off-phase'] = handler_case(base, {0xFFF8: 1, 0xFE88: other})
     cases['tune off'] = handler_case(base, {0xFFF8: 0, 0xFE88: play})
-    # sloty
+    # slots
     for name, fe88 in (('0', play), ('1', other), ('7', 6), ('15', 14)):
         cases['FFFB+FFFC fe88+1=%s' % name] = handler_case(base, {0xFFFB: 1, 0xFFFC: 1, 0xFE88: fe88})
         cases['FFFB only fe88+1=%s' % name] = handler_case(base, {0xFFFB: 1, 0xFE88: fe88, 0xFFF8: 1})
@@ -191,15 +193,15 @@ def main():
                     base, {0xFFFD: v, 0xFE88: fe88, 0xFE86: ptr & 0xFF, 0xFE87: ptr >> 8})
         for v in range(1, 9):
             cases['FFFE=%d fe88+1=%s' % (v, name)] = handler_case(base, {0xFFFE: v, 0xFE88: fe88, 0xFFF8: 1})
-    # ROM $0038 samotná, bez klávesy
+    # ROM $0038 itself, without a key
     _, rom_t, _ = run(base, 0x0038, {IY: 0x5C, IY + 1: 0x3A})
-    # ROM BEEPER z hlavní smyčky
+    # ROM BEEPER from the main loop
     beepers = {}
     for de, hl in BEEPERS:
         outs, t, _ = run(base, 0x03B5, {D_: de >> 8, E_: de & 0xFF, H_: hl >> 8, L_: hl & 0xFF})
         beepers['%d,%d' % (de, hl)] = {'de': de, 'hl': hl, 'outs': outs, 'tstates': t}
 
-    # ★ utonutí $E361 (z hlavní smyčky): po $E3A3, kde začíná smrt
+    # ★ drowning $E361 (from the main loop): up to $E3A3, where death begins
     drown = {}
     for seed in (0x0000, 0x1234, 0xBEEF, 0xFFFF):
         mem = bytearray(base)
@@ -214,9 +216,9 @@ def main():
               open(os.path.join(args.out, 'paths.json'), 'w'))
     title = title_state(args.frames)
     json.dump(title, open(os.path.join(args.out, 'global.json#title'), 'w'))
-    print('obsluha: %d cest, ROM $0038 %d T, BEEPER %d volání; titulka %d obsluh, %d hran'
+    print('handler: %d paths, ROM $0038 %d T, BEEPER %d calls; title %d handler runs, %d edges'
           % (len(cases), rom_t, len(beepers), len(title['entries']), len(title['edges'])))
-    print('stav na titulce: %s' % state)
+    print('state on the title: %s' % state)
 
 
 if __name__ == '__main__':

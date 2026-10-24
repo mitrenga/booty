@@ -1,52 +1,54 @@
 # data/
 
-Data, která jdou do prohlížeče: **jediný soubor `global.json`**, v něm sekce
-v pevném pořadí. Server je posílá pod týmiž klíči (`../db/appData.php`)
-a aplikace si každou bere přes `loadDataFile('<sekce>')`.
+The data that goes to the browser: **a single file `global.json`** with its
+sections in a fixed order. The server sends them under the same keys
+(`../db/appData.php`) and the application takes each one via
+`loadDataFile('<section>')`.
 
-**Každou sekci zapisuje nástroj z `../tools/` z originálu**
-(`bootylib.write_section()`, v Node `jsonformat.mjs` `writeSection()`) a
-ostatní sekce nechává být. Nic se needituje ručně a nic neobsahuje číslo,
-které by někdo odhadl. V odkazech se sekce píše `data/global.json#holds`.
+**Every section is written by a tool from `../tools/` out of the original**
+(`bootylib.write_section()`, in Node `jsonformat.mjs` `writeSection()`) and
+leaves the other sections alone. Nothing is edited by hand and nothing holds a
+number somebody guessed. In references a section is written `data/global.json#holds`.
 
-V datech jsou **jen hodnoty, které hra nebo nástroje čtou**, bez poznámek.
-Odkud která hodnota je (adresy, kdo text tiskne, kdo nastavuje sadu
-spritů, co je v které oblasti paměti), je v nástroji, který sekci
-zapisuje, a v tabulce níž.
+The data holds **only the values the game or the tools read**, no notes. Where
+each value comes from (addresses, who prints the text, who selects the sprite
+set, what is in which memory region) is in the tool that writes the section,
+and in the table below.
 
-| sekce | co v ní je | dělá ji | doloženo |
+| section | what is in it | made by | proven by |
 |---|---|---|---|
-| `global` | ★ výchozí stav hry z běhu originálu (snímek 399 po startu klávesou `0`): podpalubí, Jimův objekt (po dopadu), životy, kořist – pro statickou obrazovku z M2 | `tools/mkglobal.py` | `tools/matchscreen.mjs` |
-| `holds` | ★ tabulky všech **21 podpalubí** od `$ABD6` do `$BAA0` (11 tabulek, jména autorova, souřadnice ROM `CL-SET`) a glyfy kulisy od `$8378` | `tools/dumpholds.py` | `tools/matchholds.mjs` — **161 973 kontrol, 0 rozdílů** proti kreslení originálu |
-| `sprites` | ★ grafika spritů a bloků, osm sad (Jim, piráti, tvor z časovače, plošiny, okénka, výbuch, prázdné znaky, ikony a úlomek) z paměti běžící hry | `tools/dumpsprites.py` | `tools/matchsprites.mjs` — **23 611 392 kontrol, 0 rozdílů** |
-| `panel` | ★ panel z operandů kódu: šablona `$F2BB`, polohy, inkoust, ikony `$F15B`, počáteční hodnoty, text o zlatém klíči | `tools/dumppanel.py` | `tools/matchpanel.mjs` — **870 912 kontrol, 0 rozdílů** |
-| `texts` | ★ proudy pro ROM tisk (menu, `PRESS FIRE BUTTON`, úvod skryté hry), jak leží v paměti | `tools/dumptexts.py` | `tools/matchscreen.mjs` — celé menu originálu **6912 / 0** |
-| `memory` | ★ **výchozí paměť hry** pro `app/bootyLogic.js` ve workeru: 13 datových oblastí paměti originálu při startu hry (12 688 B) – tabulky, glyfy, sprity, šablony, texty, proměnné; **kód v ní není** (ověřeno proti `booty.ctl`) | `tools/mkmemory.py` | `tools/matchstart.mjs` — **0 rozdílů** |
-| `transition` | ★ přechod dveřmi bez melodie: T do mazání a délka černa jako model z práce kreslení, 48 bloků mazání ROM CL-LINE, kopie atributů, panel | `tools/tracetransition.py` → `tools/mktransition.mjs` | `tools/matchtransition.mjs` — **197 snímků, 0 rozdílů** (nejvýš 0,045 snímku vedle) |
-| `loading` | loading screen z kazety: videopaměť `$4000–$5AFF` tak, jak leží v paměti stroje (6144 B bitmapy v nelineárním adresování ULA + 768 B atributů, base64) | `tools/mkscreen.py sources/media/screens/loading_screen.scr` | `tools/matchloading.py` — **112 128 kontrol, 0 rozdílů** |
-| `tape` | scénář pro LOAD TAPE: osm bloků kazety v jejím pořadí, u každého pilot (délka a **počet pulzů** – turbo bloky 497), synchronizace, bity, pauza z TZX a bajty, jak jdou po pásce; SCREEN$ odkazuje na sekci `loading`, z bloku kódu jen první kilobajt | `tools/mktape.py` | z kazety přes `tools/bootylib.py`; časování sedí se simulovaným nahráním (`tools/traceloading.py`) |
-| `title` | ★ titulka pro `MainModel`: obrázek z kopie na `$6978` (moře v něm je značka `$05`), prahy moře z operandů `$D0AC`, semínko `$D86F`, border z `$CD93` a tempo smyčky `$CDAF` bez melodie (483 501 T = 6,92 snímku) | `tools/tracetitle.py` → `tools/mktitle.py` | `tools/matchtitle.mjs` — **1 776 641 kontrol, 0 rozdílů** |
-| `sounds` | ★ zvuk originálu: melodie `$FA00` (`[DE, BC]` pro `$F648`), maska `$FFF7`, parametry slotů obsluhy IM 2 z operandů kódu, volání ROM `BEEPER`, ROM `$0000`–`$1FFF` pro šum `$F618` a změřená délka ROM `$0038` | `tools/tracesound.py` → `tools/mksounds.py` | `tools/matchsound.mjs` — **122 448 kontrol, 0 rozdílů** |
-| `goldfish` | ★ skrytá minihra `CATCH 20 GOLDFISH` pro SECRET SUB GAME a pozadí menu: datové oblasti paměti originálu při prvním vstupu do `$CF36` (obrazovka, grafika, objekty, potápěč, písek, bubliny), kód ne; tempo = medián průchodu bez melodie a zvuků | `tools/tracegoldfish.py` → `tools/mkgoldfish.py` | `tools/matchgoldfish.mjs` — **47 574 000 kontrol, 0 rozdílů** |
+| `global` | ★ the initial game state from a run of the original (frame 399 after starting with key `0`): hold, Jim's object (after landing), lives, booty – for the static screen of M2 | `tools/mkglobal.py` | `tools/matchscreen.mjs` |
+| `holds` | ★ the tables of all **21 holds** from `$ABD6` to `$BAA0` (11 tables, the author's names, ROM `CL-SET` coordinates) and the scenery glyphs from `$8378` | `tools/dumpholds.py` | `tools/matchholds.mjs` — **161 973 checks, 0 differences** against the original's drawing |
+| `sprites` | ★ the graphics of the sprites and blocks, eight sets (Jim, pirates, the timer creature, platforms, hatches, explosion, blank characters, icons and fragment) from the running game's memory | `tools/dumpsprites.py` | `tools/matchsprites.mjs` — **23 611 392 checks, 0 differences** |
+| `panel` | ★ the panel from the code's operands: template `$F2BB`, positions, ink, icons `$F15B`, initial values, the golden key text | `tools/dumppanel.py` | `tools/matchpanel.mjs` — **870 912 checks, 0 differences** |
+| `texts` | ★ the streams for ROM printing (menu, `PRESS FIRE BUTTON`, the hidden game's intro) as they lie in memory | `tools/dumptexts.py` | `tools/matchscreen.mjs` — the original's whole menu **6912 / 0** |
+| `memory` | ★ **the initial game memory** for `app/bootyLogic.js` in the worker: 13 data regions of the original's memory at game start (12 688 B) – tables, glyphs, sprites, templates, texts, variables; **no code in it** (checked against `booty.ctl`) | `tools/mkmemory.py` | `tools/matchstart.mjs` — **0 differences** |
+| `transition` | ★ the door transition without the tune: T to the clearing and the length of the blackout as a model from the drawing work, 48 ROM CL-LINE clearing blocks, attribute copy, panel | `tools/tracetransition.py` → `tools/mktransition.mjs` | `tools/matchtransition.mjs` — **197 frames, 0 differences** (at most 0.045 frame off) |
+| `loading` | the loading screen from the tape: video memory `$4000–$5AFF` as it lies in the machine's memory (6144 B of bitmap in the ULA's non-linear addressing + 768 B of attributes, base64) | `tools/mkscreen.py sources/media/screens/loading_screen.scr` | `tools/matchloading.py` — **112 128 checks, 0 differences** |
+| `tape` | the script for LOAD TAPE: the eight tape blocks in their order, for each the pilot (length and **pulse count** – turbo blocks 497), sync, bits, the pause from the TZX and the bytes as they come off the tape; the SCREEN$ refers to the `loading` section, of the code block only the first kilobyte | `tools/mktape.py` | from the tape via `tools/bootylib.py`; the timing agrees with the simulated loading (`tools/traceloading.py`) |
+| `title` | ★ the title for `MainModel`: the picture from the copy at `$6978` (the sea in it is the marker `$05`), the sea thresholds from the operands of `$D0AC`, seed `$D86F`, border from `$CD93` and the rate of the loop `$CDAF` without the tune (483 501 T = 6.92 frames) | `tools/tracetitle.py` → `tools/mktitle.py` | `tools/matchtitle.mjs` — **1 776 641 checks, 0 differences** |
+| `sounds` | ★ the original's sound: the tune `$FA00` (`[DE, BC]` for `$F648`), mask `$FFF7`, the IM 2 handler's slot parameters from the code's operands, ROM `BEEPER` calls, ROM `$0000`–`$1FFF` for the noise `$F618` and the measured length of ROM `$0038` | `tools/tracesound.py` → `tools/mksounds.py` | `tools/matchsound.mjs` — **122 448 checks, 0 differences** |
+| `goldfish` | ★ the hidden sub game `CATCH 20 GOLDFISH` for SECRET SUB GAME and the menu background: the data regions of the original's memory on first entering `$CF36` (screen, graphics, objects, diver, sand, bubbles), no code; rate = the median pass without the tune and sounds | `tools/tracegoldfish.py` → `tools/mkgoldfish.py` | `tools/matchgoldfish.mjs` — **47 574 000 checks, 0 differences** |
 
-Tempo hry (průměrná délka průchodu) v datech není: je to jedno číslo,
-`PASS_TSTATES` v `app/gameWorker.js`, a `tools/measurecadence.py` ověřuje,
-že sedí.
+The game's rate (average pass length) is not in the data: it is a single
+number, `PASS_TSTATES` in `app/gameWorker.js`, and `tools/measurecadence.py`
+checks that it agrees.
 
-## ★ Herní obrazovka se od M2 skládá z dat
+## ★ Since M2 the game screen is composed from data
 
-`app/screenComposer.js` skládá herní obrazovku tak, jak ji staví originál:
-podpalubí ze sekce `holds` (`$A900`), panel z `panel` (`$E0A9`),
-Jima přes sprite rutinu (`$EED7`) ze `sprites` v poloze z
-`global`. `tools/matchscreen.mjs` ji porovnává s **většinovým hlasem
-nad běžícím originálem** (`build/ref/screen.scr`, `tools/mkhold.py`), který
-o formátu nic nepředpokládá – a je to nula.
-Hlavička menu se tiskne z proudu originálu (sekce `texts`) přes svision
-`ZXRomPrint`. **Fotka v `data/` už není žádná** – `screen.json` z M1 je
-zrušený.
+`app/screenComposer.js` composes the game screen the way the original builds
+it: the hold from the `holds` section (`$A900`), the panel from `panel`
+(`$E0A9`), Jim through the sprite routine (`$EED7`) from `sprites` at the
+position from `global`. `tools/matchscreen.mjs` compares it with a **majority
+vote over the running original** (`build/ref/screen.scr`, `tools/mkhold.py`),
+which assumes nothing about the format – and it is zero.
+The menu heading is printed from the original's stream (section `texts`) via
+svision `ZXRomPrint`. **There is no photo in `data/` any more** – the
+`screen.json` of M1 is gone.
 
-## Co tu zatím není
+## What is not here yet
 
-Nic, co by čekalo na měření: od M6 je tu i zvuk (sekce `sounds`). Další
-sekce **nevzniknou dřív, než bude co změřit**. Server chybějící sekce
-posílá jako `null` a aplikace to musí přežít (`../db/appData.php`).
+Nothing that would be waiting to be measured: since M6 the sound is here too
+(section `sounds`). Further sections **are not created before there is
+something to measure**. The server sends missing sections as `null` and the
+application must survive that (`../db/appData.php`).

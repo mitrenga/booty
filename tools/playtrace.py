@@ -1,17 +1,18 @@
 #!/usr/bin/env python3
-"""Spustí Booty v Z80 simulátoru, odsimuluje stisky kláves a uloží snímky.
+"""Runs Booty in the Z80 simulator, simulates key presses and saves screenshots.
 
     ./tools/playtrace.py [--frames N] [--out DIR] [--map FILE] [--script "..."]
 
-Klávesnice se adresuje po půlřádcích jako na skutečném Spectru. Skript kláves
-se dá zadat na příkazové řádce jako `od:do:klavesa,od:do:klavesa,...`
-(snímky se počítají od začátku běhu), jinak platí `SCRIPT` níž.
+The keyboard is addressed by half-rows as on a real Spectrum. The key script
+can be given on the command line as `from:to:key,from:to:key,...` (frames are
+counted from the start of the run), otherwise `SCRIPT` below applies.
 
-Výchozí skript je prázdný: běh bez kláves. Které klávesy vedou úvodní
-obrazovkou, se měří tímhle nástrojem a zapisuje do
-`sources/docs/disasm_notes.md` – ne od oka do výchozího skriptu.
+The default script is empty: a run without keys. Which keys lead through the
+title screen is measured with this tool and written into
+`sources/docs/disasm_notes.md` – not guessed into the default script.
 
-Snapshot je z `./tools/mksnapshot.sh`: PC `$CD14`, těsně před instalací IM 2.
+The snapshot comes from `./tools/mksnapshot.sh`: PC `$CD14`, just before IM 2
+is installed.
 """
 import argparse, os, sys
 
@@ -46,7 +47,7 @@ KEYS = {
     'SPACE': ('$7FFE', 0), 'SYMSHIFT': ('$7FFE', 1), 'M': ('$7FFE', 2), 'N': ('$7FFE', 3), 'B': ('$7FFE', 4),
 }
 
-# (od snímku, do snímku, klávesa)
+# (from frame, to frame, key)
 SCRIPT = []
 SHOTS = (50, 100, 200, 400, 800)
 
@@ -64,7 +65,7 @@ def parse_script(text):
 def run(snapshot_path, frames, out_dir, map_path, script, shots, dump=None):
     snapshot = Snapshot.get(snapshot_path)
     if snapshot is None:
-        raise SystemExit('nelze nacist snapshot %s' % snapshot_path)
+        raise SystemExit('cannot load snapshot %s' % snapshot_path)
     cls = CSimulator or Simulator
     simulator = from_snapshot(cls, snapshot, {}, {'ay': [None] * 16},
                               {'fast_djnz': False, 'fast_ldir': False}, None)
@@ -94,12 +95,12 @@ def run(snapshot_path, frames, out_dir, map_path, script, shots, dump=None):
     exec_map = set() if map_path else None
     tracer.run(snapshot.pc, -1, 0, 0, True, draw, exec_map, None, None, '$', '04X', '04X')
     for p in saved:
-        print('ulozeno', p)
+        print('saved', p)
     if exec_map is not None:
         with open(map_path, 'w') as f:
             for a in sorted(exec_map):
                 f.write('$%04X\n' % a)
-        print('mapa pokryti: %s (%d adres)' % (map_path, len(exec_map)))
+        print('coverage map: %s (%d addresses)' % (map_path, len(exec_map)))
     return simulator
 
 
@@ -112,7 +113,7 @@ def main():
     ap.add_argument('--map')
     ap.add_argument('--script')
     ap.add_argument('--shots')
-    ap.add_argument('--dump', help='snimky, ve kterych se ulozi cela RAM $4000-$FFFF')
+    ap.add_argument('--dump', help='frames in which the whole RAM $4000-$FFFF is saved')
     args = ap.parse_args()
     script = parse_script(args.script) if args.script else SCRIPT
     shots = tuple(int(x) for x in args.shots.split(',')) if args.shots else SHOTS

@@ -192,12 +192,14 @@ export class MenuModel extends AbstractModel {
     this.checkServerVersion();
 
 
-    // Menu je **němé**, a to schválně: prohlížeč pustí zvuk až po gestu
-    // uživatele, a do menu se přijde hned po načtení stránky, kdy žádné gesto
-    // ještě být nemuselo. Sběrnice se proto zavřou a zvuk začíná až o patro
-    // níž, za položkou menu, kterou hráč zvolil — tam už gesto proběhlo a
-    // ZXWaitForAudioEventEntity si ho v handleEvent umí vyžádat. ? Melodie
-    // originálu je M6; do té doby jsou němé i ABOUT GAME a hall of fame.
+    // The menu is **silent**, on purpose: the browser lets sound through only
+    // after a user gesture, and the menu is reached right after the page
+    // loads, when there need not have been any gesture yet. So the buses are
+    // closed and the sound starts one level down, behind the menu item the
+    // player chose — by then the gesture has happened and
+    // ZXWaitForAudioEventEntity can ask for it in handleEvent. ? The
+    // original's tune is M6; until then ABOUT GAME and the hall of fame are
+    // silent too.
     // the flash clock of the ZX attributes (app.stack.flashState, 330 ms like
     // the ROM's 16 frames): the blinking cursor of the remap dialog and of the
     // player name input reads it, so the menu has to keep it going like every

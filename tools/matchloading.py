@@ -1,20 +1,20 @@
 #!/usr/bin/env python3
-"""Ověří, že loading screen je **doopravdy to, co kazeta nahraje** – a co je
-po nahrání vidět.
+"""Verifies that the loading screen is **really what the tape loads** – and
+what is visible after loading.
 
     ./tools/matchloading.py
 
-1. blok SCREEN$ `bs` z kazety (`tools/bootylib.py`) proti
-   `sources/media/screens/loading_screen.scr` – bajt po bajtu
-2. proti `data/global.json#loading`, pokud už je (M1) – bajt po bajtu
-3. proti **paměti simulátoru** v okamžiku `RANDOMIZE USR 52500`
-   (`build/booty.bin`) – **po pixelech, s rozlišenými barvami** (49 152
-   pixelů, FLASH v obou fázích). Bajtově se tu lišit smí a liší: BASIC
-   natiskne na řádek 20 hlášení ROM `Bytes: bc`, ale do buněk s atributem
-   `$00`, takže ho nikdo neuvidí (`sources/docs/tape_layout.md`). Kontroluje
-   se tedy to, co stroj ukáže, ne co má v paměti
+1. the SCREEN$ block `bs` from the tape (`tools/bootylib.py`) against
+   `sources/media/screens/loading_screen.scr` – byte by byte
+2. against `data/global.json#loading`, if it exists already (M1) – byte by byte
+3. against the **simulator's memory** at the moment of `RANDOMIZE USR 52500`
+   (`build/booty.bin`) – **by pixels, with colours resolved** (49 152 pixels,
+   FLASH in both phases). Byte-wise it may differ here and does: BASIC prints
+   the ROM report `Bytes: bc` on row 20, but into cells with attribute `$00`,
+   so nobody sees it (`sources/docs/tape_layout.md`). What is checked is
+   therefore what the machine shows, not what it has in memory
 
-Akceptační kritérium: nula rozdílů ve všech porovnáních.
+Acceptance criterion: zero differences in all comparisons.
 """
 import base64, json, os, sys
 
@@ -27,7 +27,7 @@ JSON = B.DATA
 
 
 def pixels(scr, phase):
-    """256×192 indexů barev (0–15) tak, jak je ukáže ULA."""
+    """256×192 colour indices (0–15) as the ULA shows them."""
     out = []
     for y in range(192):
         o = ((y >> 6) << 11) | ((y & 7) << 8) | (((y >> 3) & 7) << 5)
@@ -47,28 +47,28 @@ def main():
 
     for name, path in (('sources/.../loading_screen.scr', SCR), ('data/global.json#loading', JSON)):
         if not os.path.exists(path):
-            print('%-34s tu není – přeskočeno' % name)
+            print('%-34s is not here – skipped' % name)
             continue
         buf = (base64.b64decode(B.read_section('loading')['videoRAM'])
                if path.endswith('.json') else open(path, 'rb').read())
         d = 6912 if len(buf) != 6912 else sum(1 for a, b in zip(tape, buf) if a != b)
-        print('%-34s %6d kontrol, %d rozdílů (bajty)' % (name, 6912, d))
+        print('%-34s %6d checks, %d differences (bytes)' % (name, 6912, d))
         total += 6912
         bad += d
 
     snap = os.path.join(B.ROOT, 'build', 'booty.bin')
     if not os.path.exists(snap):
-        raise SystemExit('chybi %s – spust ./tools/mksnapshot.sh' % snap)
+        raise SystemExit('%s is missing – run ./tools/mksnapshot.sh' % snap)
     mem = open(snap, 'rb').read()[:6912]
     raw = sum(1 for a, b in zip(tape, mem) if a != b)
     for phase in (0, 1):
         d = sum(1 for a, b in zip(pixels(tape, phase), pixels(mem, phase)) if a != b)
-        print('%-34s %6d kontrol, %d rozdílů (pixely, FLASH fáze %d)'
-              % ('simulátor po nahrání', 49152, d, phase))
+        print('%-34s %6d checks, %d differences (pixels, FLASH phase %d)'
+              % ('simulator after loading', 49152, d, phase))
         total += 49152
         bad += d
-    print('   (bajtově se paměť liší ve %d B – neviditelné `Bytes: bc`)' % raw)
-    print('celkem %d kontrol, **%d rozdílů**' % (total, bad))
+    print('   (byte-wise the memory differs in %d B – the invisible `Bytes: bc`)' % raw)
+    print('total %d checks, **%d differences**' % (total, bad))
     return 1 if bad else 0
 
 

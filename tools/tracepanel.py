@@ -1,21 +1,21 @@
 #!/usr/bin/env python3
-"""Nechá **kód originálu** vytisknout panel a uloží, co vytiskl.
+"""Lets the **original's code** print the panel and saves what it printed.
 
     ./tools/tracepanel.py [--out build/ref/panel]
 
-Referenční snímky pro `tools/matchpanel.mjs`. Ze stavu hry ve chvíli, kdy
-sama kreslí první podpalubí (`tools/traceholds.py`), se pro každé
-podpalubí 1 … 21 a každý stav z `STATES`:
+Reference screens for `tools/matchpanel.mjs`. From the game state at the
+moment it draws the first hold itself (`tools/traceholds.py`), for every hold
+1 … 21 and every state from `STATES`:
 
-1. nakreslí podpalubí kódem originálu (`$AA97`, `$A811`) – tím se nastaví
-   i jeho barvy, a papír panelu je border podpalubí (`$5BD0`)
-2. do proměnných se zapíše stav: životy `$5BF1`, sebraná kořist `$5BF4`,
-   zbývající `$5BF2`, číslo klíče `$F241`
-3. pustí se **zbytek `$E0A9` od `$E0AC`** – šablona, čísla, `$E064`
-   (životy a klíč) a při nule zbývající kořisti text o zlatém klíči – až
-   po jeho `RET`, a pak **úsek hlavní smyčky `$DF5B`–`$DF80`**, který
-   tiskne číslo klíče
-4. uloží se videopaměť
+1. the hold is drawn with the original's code (`$AA97`, `$A811`) – this also
+   sets its colours, and the panel paper is the hold border (`$5BD0`)
+2. the state is written into the variables: lives `$5BF1`, collected loot
+   `$5BF4`, remaining `$5BF2`, key number `$F241`
+3. **the rest of `$E0A9` from `$E0AC`** is run – template, numbers, `$E064`
+   (lives and key) and, with zero loot remaining, the gold key text – up to
+   its `RET`, and then **the main-loop section `$DF5B`–`$DF80`**, which
+   prints the key number
+4. the video memory is saved
 """
 import argparse, json, os, sys
 
@@ -25,10 +25,10 @@ import bootylib as B                                             # noqa: E402
 import traceholds as T                                           # noqa: E402
 from skoolkit import ROM48, read_bin_file                       # noqa: E402
 
-PANEL = 0xE0AC           # ★ zbytek $E0A9 po CALL $A804
-KEY_FROM, KEY_TO = 0xDF5B, 0xDF81   # ★ číslo klíče v hlavní smyčce
-# (životy, sebráno, zbývá, klíč): začátek hry, prázdné, plné, po padesáti,
-# poslední kus, **nula** – tehdy přibude text o zlatém klíči
+PANEL = 0xE0AC           # ★ the rest of $E0A9 after CALL $A804
+KEY_FROM, KEY_TO = 0xDF5B, 0xDF81   # ★ key number in the main loop
+# (lives, collected, remaining, key): game start, empty, full, after fifty,
+# the last piece, **zero** – then the gold key text appears
 STATES = [(3, 0, 125, 0), (0, 1, 124, 9), (4, 50, 75, 5), (2, 124, 1, 3),
           (1, 125, 0, 7), (3, 100, 25, 1)]
 
@@ -70,7 +70,7 @@ def main():
     open(os.path.join(args.out, 'panel.scr'), 'wb').write(screens)
     with open(os.path.join(args.out, 'cases.json'), 'w') as f:
         json.dump(cases, f)
-    print('%d případů v %s' % (len(cases), args.out))
+    print('%d cases in %s' % (len(cases), args.out))
 
 
 if __name__ == '__main__':

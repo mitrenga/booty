@@ -1,41 +1,44 @@
 #!/usr/bin/env python3
-"""Změří, jak originál při přechodu dveřmi překresluje obrazovku.
+"""Measures how the original redraws the screen on a door transition.
 
     ./tools/tracetransition.py [--holds 1-20] [--tune] [--shots DIR]
 
-Hra se spustí v simulátoru se spornou pamětí (`CCMIOSimulator`, jako
-`tracecadence.py --cmio`), v prvním průchodu se Jim postaví před první velké
-dveře podpalubí 1 s cílem N (`tracephysics.to_hold`) a stiskne `A`. Na
-cestě přechodem se zaznamená T-stav na zastávkách kódu:
+The game is started in the simulator with contended memory (`CCMIOSimulator`,
+as `tracecadence.py --cmio`), in the first pass Jim is placed in front of the
+first big door of hold 1 with target N (`tracephysics.to_hold`) and `A` is
+pressed. Along the transition the T-state is recorded at stops in the code:
 
-- `$EE84` ENTER ROOM se rozhodl: nové podpalubí
-- `$A900` kreslení podpalubí začíná
-- `$A8DA` ROM CL-LINE (`$0E44`) maže 24 řádků; `$A8DD` obraz je černý
-  (atributy 0), dál se kreslí neviditelně
-- `$AA85` pixely podpalubí hotové (pod atributy 0, tedy neviditelné)
-- `$AA90` atributy z `$A4E4` zkopírované na `$5800` (podpalubí vidět)
-- `$E0AC` panel se začíná tisknout přes ROM
-- `$EEA2` panel hotový
-- `$DF13` další průchod
+- `$EE84` ENTER ROOM has decided: new hold
+- `$A900` drawing of the hold begins
+- `$A8DA` ROM CL-LINE (`$0E44`) clears 24 rows; `$A8DD` the image is black
+  (attributes 0), drawing continues invisibly
+- `$AA85` pixels of the hold done (under attributes 0, i.e. invisible)
+- `$AA90` attributes copied from `$A4E4` to `$5800` (the hold is visible)
+- `$E0AC` the panel begins to print through the ROM
+- `$EEA2` panel done
+- `$DF13` next pass
 
-a k tomu obrazovka na konci každého snímku (co ULA ukázala).
+plus the screen at the end of every frame (what the ULA showed).
 
-**Průběh mazání** se měří zvlášť, jedním během navíc (CL-LINE dělá pořád
-totéž): v `$A8DA` se obrazovka vyplní `$FF`, ať se změní každý bajt,
-a mazání se pustí **bez přerušení** po `STEP` T-stavech – kdy který bajt
-zmizel. Přerušení by do tempa LDIR vložila zastávky v té jediné fázi
-vůči snímku, kterou běh náhodou má; jejich čas je v délce mazání
-z ostatních běhů a remake ho rozloží rovnoměrně.
+**The course of clearing** is measured separately, with one extra run
+(CL-LINE always does the same): at `$A8DA` the screen is filled with `$FF`,
+so that every byte changes, and clearing is run **without interrupts** in
+steps of `STEP` T-states – when which byte disappeared. Interrupts would
+insert stops into the LDIR tempo at the one phase relative to the frame the
+run happens to have; their time is in the clearing length from the other
+runs and the remake spreads it evenly.
 
-★ Melodie je vypnutá (`$FFF8` = 0), pokud se nezadá `--tune`: noty hraje
-přerušení a jedna nota mazání obrazovky protáhne i o snímek. Remake tempo
-melodie nesimuluje (konstantní tempo, ZADANI §10, `PASS_TSTATES` workeru je
-také bez melodie), tak se i přechod měří bez ní. Výstup je
-tabulka fází v T-stavech a ve snímcích pro každé N a souhrn; s `--shots`
-se snímky přechodu uloží jako PNG. Do `build/transition/` jde
-`global.json#transition` (zastávky, průběh mazání, obrazovky snímků) a paměť ve
-chvíli `$EE84` pro každé N (`holdNN.bin`) – z nich `tools/mktransition.mjs`
-dělá `data/global.json#transition` a `tools/matchtransition.mjs` porovnává.
+★ The tune is off (`$FFF8` = 0) unless `--tune` is given: notes are played by
+the interrupt and a single note stretches the screen clearing by up to a
+frame. The remake does not simulate the tune's tempo (constant cadence,
+ZADANI §10, the worker's `PASS_TSTATES` is without the tune too), so the
+transition is measured without it as well. The output is a table of phases
+in T-states and in frames for every N and a summary; with `--shots` the
+transition frames are saved as PNG. `global.json#transition` (stops, course of
+clearing, frame screens) and the memory at the moment of `$EE84` for every N
+(`holdNN.bin`) go to `build/transition/` – `tools/mktransition.mjs` makes
+`data/global.json#transition` from them and `tools/matchtransition.mjs`
+compares.
 """
 import argparse, base64, json, os, sys
 
@@ -50,10 +53,10 @@ from skoolkit.trace import Tracer                               # noqa: E402
 
 FRAME = 69888
 STEP = 32
-STOPS = [(0xEE84, 'ENTER ROOM'), (0xA900, 'kreslení'), (0xA8DA, 'CLS'),
-         (0xA8DD, 'CLS hotový'), (0xAA85, 'pixely'),
-         (0xAA90, 'atributy'), (0xE0AC, 'panel'), (0xEEA2, 'panel hotový'),
-         (PASS, 'další průchod')]
+STOPS = [(0xEE84, 'ENTER ROOM'), (0xA900, 'drawing'), (0xA8DA, 'CLS'),
+         (0xA8DD, 'CLS done'), (0xAA85, 'pixels'),
+         (0xAA90, 'attributes'), (0xE0AC, 'panel'), (0xEEA2, 'panel done'),
+         (PASS, 'next pass')]
 
 
 def measure(hold, shots_dir=None, tune=False, profile=False):
@@ -84,8 +87,8 @@ def measure(hold, shots_dir=None, tune=False, profile=False):
     pc = [snap.pc]
 
     def cls_profile():
-        """T od začátku CL-LINE, kdy který bajt obrazovky dostal konečnou
-        hodnotu (s rozlišením STEP)"""
+        """T from the start of CL-LINE at which each screen byte got its final
+        value (with STEP resolution)"""
         start = regs[25]
         shots = []
         while pc[0] != 0xA8DD:
@@ -110,7 +113,7 @@ def measure(hold, shots_dir=None, tune=False, profile=False):
         sim.trace(pc[0], address, 0, 0, 1, draw, None, keyboard, None, None)
         pc[0] = regs[24]
         if pc[0] != address:
-            raise SystemExit('podpalubí %d: $%04X nedosaženo' % (hold, address))
+            raise SystemExit('hold %d: $%04X not reached' % (hold, address))
         return regs[25]
 
     run_to(NEW_GAME)
@@ -139,12 +142,12 @@ def measure(hold, shots_dir=None, tune=False, profile=False):
 
 
 def describe(scr, old, final):
-    """co je na obrazovce: shoda se starou a s novou (atributy, pixely)"""
+    """what is on the screen: match with the old and with the new (attributes, pixels)"""
     attrs = scr[0x1800:]
     black = sum(1 for a in attrs if a & 0x3F == 0)
     same_new = sum(1 for a, b in zip(scr, final) if a == b)
     same_old = sum(1 for a, b in zip(scr, old) if a == b)
-    return '%5.1f %% nové, %5.1f %% staré, %3d/768 buněk černých' % (
+    return '%5.1f %% new, %5.1f %% old, %3d/768 cells black' % (
         100 * same_new / len(final), 100 * same_old / len(old), black)
 
 
@@ -160,7 +163,7 @@ def main():
     ap = argparse.ArgumentParser(description=__doc__,
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument('--holds', default='1-20')
-    ap.add_argument('--tune', action='store_true', help='s melodií')
+    ap.add_argument('--tune', action='store_true', help='with the tune')
     ap.add_argument('--shots')
     ap.add_argument('--out', default=os.path.join(B.ROOT, 'build', 'transition'))
     args = ap.parse_args()
@@ -168,29 +171,29 @@ def main():
     phases = []
     record = {'frame': FRAME, 'step': STEP, 'tune': args.tune,
               'stops': ['$%04X' % a for a, n in STOPS], 'holds': {}}
-    # T od $A8DA bez přerušení, kdy který bajt obrazovky zmizel
+    # T from $A8DA without interrupts, when which screen byte disappeared
     record['cls'] = measure(2, tune=args.tune, profile=True)
     for hold in parse_range(args.holds):
         times, screens, old, final, memory = measure(hold, args.shots, args.tune)
-        # paměť ve chvíli $EE84 – z ní kreslí podpalubí remake (matchtransition)
+        # memory at the moment of $EE84 – the remake draws the hold from it (matchtransition)
         open(os.path.join(args.out, 'hold%02d.bin' % hold), 'wb').write(memory)
         b64 = lambda data: base64.b64encode(data).decode('ascii')
         record['holds'][hold] = {
             'tstates': [t - times[0] for t in times],
-            # co ULA ukázala na konci snímků přechodu: [T od $EE84, obrazovka]
+            # what the ULA showed at the end of the transition frames: [T from $EE84, screen]
             'frames': [[t - times[0], b64(scr)] for frame, t, scr in screens],
             'final': b64(final)}
         t0 = times[0]
-        print('podpalubí %2d' % hold)
+        print('hold %2d' % hold)
         for (address, name), t in zip(STOPS, times):
-            print('  $%04X %-14s %+9d T  %6.2f snímku' % (address, name, t - t0, (t - t0) / FRAME))
+            print('  $%04X %-14s %+9d T  %6.2f frames' % (address, name, t - t0, (t - t0) / FRAME))
         for frame, t, scr in screens:
-            print('  snímek %4d (%+6.2f): %s' % (frame, (t - t0) / FRAME, describe(scr, old, final)))
+            print('  frame %4d (%+6.2f): %s' % (frame, (t - t0) / FRAME, describe(scr, old, final)))
         phases.append([t - t0 for t in times])
     with open(os.path.join(args.out, 'global.json#transition'), 'w') as f:
         json.dump(record, f)
     if len(phases) > 1:
-        print('souhrn (snímky): min / průměr / max od $EE84')
+        print('summary (frames): min / mean / max from $EE84')
         for k, (address, name) in enumerate(STOPS):
             values = [p[k] / FRAME for p in phases]
             print('  $%04X %-14s %6.2f %6.2f %6.2f' % (address, name, min(values),

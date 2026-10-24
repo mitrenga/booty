@@ -1,13 +1,14 @@
 #!/usr/bin/env python3
-"""Co záznamy `tools/tracephysics.py` pokryly – aby nula `matchphysics.mjs`
-něco znamenala.
+"""What the `tools/tracephysics.py` recordings covered – so that the zero of
+`matchphysics.mjs` means something.
 
     ./tools/physicscoverage.py
 
-Z oblastí paměti po každém průchodu (`build/trace/*/passes.xor.gz`) spočítá,
-kolikrát se stalo to, na čem pravidla stojí: navštívená podpalubí, smrti,
-sebraná kořist, výbuchy, tvor z časovače, klíče, otevřené dveře, pád (a
-smrtelný), žebřík, plošiny pod Jimem, padací dveře, odpočet zlatého klíče.
+From the memory areas after every pass (`build/trace/*/passes.xor.gz`) it
+counts how many times the things the rules rest on happened: holds visited,
+deaths, loot collected, explosions, creature from the timer, keys, doors
+opened, fall (and a fatal one), ladder, platforms under Jim, trapdoors, gold
+key countdown.
 """
 import glob, gzip, json, os, sys
 
@@ -43,9 +44,9 @@ def main():
 
         init = open(os.path.join(d, 'init.bin'), 'rb').read()
         outcomes = json.load(open(os.path.join(d, 'inputs.json'))).get('outcomes', [])
-        c = {'průchodů': n}
+        c = {'passes': n}
         if 'gameover' in outcomes:
-            c['konec hry'] = 1
+            c['game over'] = 1
         holds = set()
         keys = (('hold', 0x5BD3), ('lives', 0x5BF1), ('booty', 0x5BF4), ('left', 0x5BF2),
                 ('boom', 0xE479), ('creature', 0xF31C), ('splinter', 0xF2DB), ('key', 0xF241),
@@ -58,42 +59,42 @@ def main():
                 def inc(k):
                     c[k] = c.get(k, 0) + 1
                 if s['hold'] != prev['hold']:
-                    inc('přechod podpalubí')
+                    inc('hold transition')
                 if s['lives'] < prev['lives'] or (s['lives'] == 255 and prev['lives'] != 255):
-                    inc('smrt')
+                    inc('death')
                 if s['hold'] == 1 and prev['left'] == 0 and s['left'] == 125 and i:
-                    inc('nové kolo (zlatý klíč)')
+                    inc('new round (gold key)')
                 if s['booty'] > prev['booty']:
-                    inc('kořist')
+                    inc('loot')
                 if s['boom'] and not prev['boom']:
-                    inc('výbuch')
+                    inc('explosion')
                 if s['creature'] and not prev['creature']:
-                    inc('tvor z časovače')
+                    inc('creature from the timer')
                 if s['splinter'] and not prev['splinter']:
-                    inc('úlomky')
+                    inc('fragments')
                 if s['key'] != prev['key'] and s['key']:
-                    inc('klíč sebrán')
+                    inc('key collected')
                 if prev['key'] and not s['key'] and s['hold'] == prev['hold']:
-                    inc('dveře otevřeny')
+                    inc('door opened')
                 if s['state'] == 3 and prev['state'] != 3:
-                    inc('na žebřík')
+                    inc('onto a ladder')
                 if s['state'] == 2 and prev['state'] != 2:
-                    inc('smrtelný pád')
+                    inc('fatal fall')
                 if s['lift'] and not prev['lift']:
-                    inc('plošina pod Jimem')
+                    inc('platform under Jim')
                 if s['left'] == 0 and prev['left'] != 0:
-                    inc('odpočet zlatého klíče')
+                    inc('gold key countdown')
                 if s['gold'] != prev['gold'] and s['left'] == 0:
-                    inc('sekunda odpočtu')
+                    inc('countdown second')
             prev = s
-        c['podpalubí'] = sorted(holds)
+        c['holds'] = sorted(holds)
         holds_all |= holds
         print('%-10s %s' % (os.path.basename(d), json.dumps(c, ensure_ascii=False)))
         for k, v in c.items():
             if isinstance(v, int):
                 total[k] = total.get(k, 0) + v
-    print('celkem    ', json.dumps(total, ensure_ascii=False))
-    print('podpalubí  %d z 21: %s' % (len(holds_all), sorted(holds_all)))
+    print('total     ', json.dumps(total, ensure_ascii=False))
+    print('holds      %d of 21: %s' % (len(holds_all), sorted(holds_all)))
 
 
 if __name__ == '__main__':

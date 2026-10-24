@@ -1,26 +1,28 @@
 #!/usr/bin/env python3
-"""Převede ZX `.scr` (6912 B) na datový soubor remaku.
+"""Converts a ZX `.scr` (6912 B) into a data file of the remake.
 
-    ./tools/mkscreen.py <vstup.scr>   # → data/global.json#loading
+    ./tools/mkscreen.py <input.scr>   # → data/global.json#loading
 
-Uloží obrazovku **tak, jak leží v paměti stroje** – 6912 B od `$4000` do
-`$5AFF`, tedy 6144 B bitmapy v nelineárním adresování ULA a 768 B atributů za
-ní, base64. Přesně to, co je v `.scr`, a přesně to, co jde po kazetě: přehazovat
-pixelové řádky do lineárního pořadí by znamenalo je v prohlížeči zase rozházet
-zpátky, protože `ZXVideoRAM` drží paměť v pořadí stroje a `ZXMachineSounds`
-posílá bajty datovým blokem v pořadí adres.
+Stores the screen **as it lies in the machine's memory** – 6912 B from `$4000`
+to `$5AFF`, i.e. 6144 B of bitmap in the non-linear ULA addressing and 768 B
+of attributes after it, base64. Exactly what is in the `.scr`, and exactly
+what goes over the tape: reshuffling the pixel rows into linear order would
+mean shuffling them back again in the browser, because `ZXVideoRAM` keeps the
+memory in machine order and `ZXMachineSounds` sends the bytes of a data block
+in address order.
 
-Použité na loading screen originálu:
+Used on the loading screen of the original:
 
-- `data/global.json#loading` z `sources/media/screens/loading_screen.scr` – loading
-  screen z kazety (blok SCREEN$ `bs`, 6912 B na `$4000`; viz
-  `sources/docs/tape_layout.md`). Nahrává ho `tapeLoadingModel` – doopravdy,
-  bajt po bajtu, jak je přehraje datový blok.
+- `data/global.json#loading` from `sources/media/screens/loading_screen.scr` –
+  the loading screen from the tape (SCREEN$ block `bs`, 6912 B at `$4000`; see
+  `sources/docs/tape_layout.md`). `tapeLoadingModel` loads it – for real, byte
+  by byte, as the data block plays them.
 
-★ Vyřezávat z tohohle obrázku kusy kulisy nemá smysl a nástroj to schválně
-neumí: grafika hry se bere z programu (M2), ne z pixelů
-titulní obrazovky. Výřez nese, co přes něj originál zrovna natiskl, a neví,
-kde končí jeden kus a začíná druhý.
+★ Cutting pieces of scenery out of this picture makes no sense and the tool
+deliberately cannot do it: the game graphics come from the program (M2), not
+from the pixels of the title screen. A cut-out carries whatever the original
+happened to print over it and does not know where one piece ends and the next
+begins.
 """
 import argparse, base64, os, sys
 
@@ -38,7 +40,7 @@ def main():
 
     scr = open(args.src, 'rb').read()
     if len(scr) != SCREEN_BYTES:
-        raise SystemExit('cekam %d B .scr, mam %d' % (SCREEN_BYTES, len(scr)))
+        raise SystemExit('expected a %d B .scr, got %d' % (SCREEN_BYTES, len(scr)))
 
     data = {
         'width': 256, 'height': 192,

@@ -1,27 +1,28 @@
 #!/usr/bin/env python3
-"""Zvuk originálu jako data → `data/global.json#sounds`.
+"""Sound of the original as data → `data/global.json#sounds`.
 
     ./tools/mksounds.py
 
-★ Všechno z kódu na kazetě (`tools/bootylib.py` `memory_image()`), z ROM
-a z měření `tools/tracesound.py` (`build/sound/paths.json`):
+★ Everything from the code on the tape (`tools/bootylib.py` `memory_image()`),
+from the ROM and from the measurement of `tools/tracesound.py`
+(`build/sound/paths.json`):
 
-- `tune` – melodie: tabulka na `$FA00`, čtveřice `E D C B` až po `$FF`,
-  tedy `[DE, BC]` pro `$F648` (DE půlvln po dvou, BC zpoždění); `[0, 0]`
-  je pauza. `tuneMask` je `$FFF7` (nota každé `mask + 1` obsluze) a
-  `tuneOn` `$FFF8` – oboje nastaví `$CD14` za běhu, bere se z titulky
-- `slots` – parametry rutin slotů z operandů (`LD BC,nn` / `LD DE,nn` /
-  `LD B,n`, s kontrolou opcodu), tak jak je obsluha `$FE69` volá:
-  `$FFFB`+`$FFFC` smrt, `$FFFF` 1/2 tvor, `$FFFD` 1/2 výbuch a úlomky,
-  `$FFFE` 1–6 jednorázové
-- `beeper` – ★ `(DE, HL)` volání ROM `BEEPER` ve hře
-- `noise` – ROM `$0000`–`$1FFF` (base64): šum `$F618` bere délku půlvlny
-  z bajtů ROM přes ukazatel `$FE86` (`$F8AF`) a AND B; `noisePointer`
-  je stav `$FE86` na titulce
-- `romInterrupt` – ★ změřená délka ROM `$0038` bez stisknuté klávesy (T)
-- `border` – `$5BD0` na titulce: bit 4 je úroveň „nízké“ hrany
+- `tune` – the tune: table at `$FA00`, quadruples `E D C B` up to `$FF`,
+  i.e. `[DE, BC]` for `$F648` (DE half-waves in pairs, BC delay); `[0, 0]`
+  is a rest. `tuneMask` is `$FFF7` (a note every `mask + 1` handler runs) and
+  `tuneOn` `$FFF8` – both are set by `$CD14` at run time, taken from the title
+- `slots` – parameters of the slot routines from operands (`LD BC,nn` /
+  `LD DE,nn` / `LD B,n`, with an opcode check), as the handler `$FE69` calls
+  them: `$FFFB`+`$FFFC` death, `$FFFF` 1/2 creature, `$FFFD` 1/2 explosion
+  and fragments, `$FFFE` 1–6 one-shot
+- `beeper` – ★ `(DE, HL)` of the ROM `BEEPER` calls in the game
+- `noise` – ROM `$0000`–`$1FFF` (base64): the noise `$F618` takes the
+  half-wave length from ROM bytes through the pointer `$FE86` (`$F8AF`) and
+  AND B; `noisePointer` is the state of `$FE86` on the title
+- `romInterrupt` – ★ measured length of ROM `$0038` with no key pressed (T)
+- `border` – `$5BD0` on the title: bit 4 is the level of the "low" edge
 
-Kontrolu dělá `tools/matchsound.mjs`.
+The check is done by `tools/matchsound.mjs`.
 """
 import base64, json, os, sys
 
@@ -40,12 +41,12 @@ def main():
 
     def word(addr, opcode):
         if peek(addr) != opcode:
-            raise SystemExit('na $%04X čekám opcode $%02X, je tam $%02X' % (addr, opcode, peek(addr)))
+            raise SystemExit('at $%04X expected opcode $%02X, found $%02X' % (addr, opcode, peek(addr)))
         return peek(addr + 1) | (peek(addr + 2) << 8)
 
     def byte(addr, opcode):
         if peek(addr) != opcode:
-            raise SystemExit('na $%04X čekám opcode $%02X, je tam $%02X' % (addr, opcode, peek(addr)))
+            raise SystemExit('at $%04X expected opcode $%02X, found $%02X' % (addr, opcode, peek(addr)))
         return peek(addr + 1)
 
     BC, DE, LDB = 0x01, 0x11, 0x06
@@ -59,21 +60,21 @@ def main():
         return {'routine': routine, 'bc': word(bc_at, BC), 'de': word(de_at, DE)}
 
     slots = {
-        # $F888: obě nenulové → $F66C, oba sloty vynuluje
+        # $F888: both non-zero → $F66C, clears both slots
         'death': [call('F66C', 0xF899, 0xF896)],
-        # $F80D: 1 – každá obsluha s ($FE88) AND 7 = 0; 2 – AND $0F = 0
+        # $F80D: 1 – every handler run with ($FE88) AND 7 = 0; 2 – AND $0F = 0
         'creature': {
             '1': {'mask': byte(0xF81B, 0xE6), 'calls': [call('F648', 0xF822, 0xF825)]},
             '2': {'mask': byte(0xF83A, 0xE6), 'calls': [call('F648', 0xF844, 0xF841)]},
         },
-        # $F855: 1 – $F7D8: AND 7 = 0 tón $F7C2, jinak šum; 2 – $F7F6 šum
+        # $F855: 1 – $F7D8: AND 7 = 0 tone $F7C2, otherwise noise; 2 – $F7F6 noise
         'explosion': {
             '1': {'mask': byte(0xF7DD, 0xE6),
                   'tone': [call('F648', 0xF7C2, 0xF7C5)],
                   'noise': {'b': byte(0xF7E6, LDB), 'de': word(0xF7E3, DE)}},
             '2': {'noise': {'b': byte(0xF7F9, LDB), 'de': word(0xF7FB, DE)}},
         },
-        # $F863: 1–6, po zahrání vynuluje; 7 a víc nic nehraje a zůstane
+        # $F863: 1–6, cleared after playing; 7 and above plays nothing and stays
         'oneShot': {
             '1': {'repeat': byte(0xF7A6, LDB), 'calls': [call('F66C', 0xF7A9, 0xF7AC)]},
             '2': {'calls': [call('F6B5', 0xF755, 0xF758), call('F66C', 0xF761, 0xF75E)]},
@@ -85,7 +86,7 @@ def main():
     }
     paths = os.path.join(B.ROOT, 'build', 'sound', 'paths.json')
     if not os.path.exists(paths):
-        raise SystemExit('chybí %s – spusť ./tools/tracesound.py' % paths)
+        raise SystemExit('%s is missing – run ./tools/tracesound.py' % paths)
     measured = json.load(open(paths))
     state = measured['state']
     rom = open(ROM, 'rb').read()[:0x2000]
@@ -100,7 +101,7 @@ def main():
         'romInterrupt': measured['romInterrupt'],
         'border': state['5BD0'],
     }
-    print('%s: melodie %d položek, maska %d, ROM $0038 %d T, šum od $%04X'
+    print('%s: tune %d entries, mask %d, ROM $0038 %d T, noise from $%04X'
           % (B.write_section('sounds', out), len(tune), out['tuneMask'], out['romInterrupt'], out['noisePointer']))
 
 

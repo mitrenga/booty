@@ -1,30 +1,30 @@
 #!/usr/bin/env python3
-"""Titulka originálu v simulátoru: moře průchod po průchodu.
+"""The original's title in the simulator: the sea pass by pass.
 
     ./tools/tracetitle.py [--frames N] [--out DIR]
 
-★ Titulka je `$CD86` (`sources/docs/disasm_notes.md` §1): `BORDER 3`,
-`LDIR` obrázku z `$6978` na `$4000` a smyčka `$CDAF`, která v každém
-průchodu zavolá `$D0AC` – **moře** – a ROM `KEY-SCAN`. `$D0AC` projde
-bitmapu `$4000`–`$57FF` a bajt, který má kopie na `$6978` rovný `$05`,
-přepíše číslem z generátoru `$D8D4` (stav `$D86F`, `A ← 5·A + 1`):
-pod `$80` ho zapíše, jinak zapíše 0. Na snímek nečeká; po 1024 snímcích
-(`FRAMES` = `$0400`) odejde do ukázky `$D602` – kdy, se změří v obou
-během (`demoTStates`; s melodií se přerušení pod notami ztrácejí
-a `FRAMES` jde pomaleji).
+★ The title is `$CD86` (`sources/docs/disasm_notes.md` §1): `BORDER 3`,
+`LDIR` of the picture from `$6978` to `$4000` and the loop `$CDAF`, which in
+every pass calls `$D0AC` – **the sea** – and ROM `KEY-SCAN`. `$D0AC` walks
+the bitmap `$4000`–`$57FF` and every byte whose copy at `$6978` equals `$05`
+it overwrites with a number from the generator `$D8D4` (state `$D86F`,
+`A ← 5·A + 1`): below `$80` it writes it, otherwise it writes 0. It does not
+wait for the frame; after 1024 frames (`FRAMES` = `$0400`) it leaves for the
+demo `$D602` – when, is measured in both runs (`demoTStates`; with the tune
+interrupts get lost under the notes and `FRAMES` runs slower).
 
-Nástroj pustí snapshot z `./tools/mksnapshot.sh` (PC `$CD14`) bez kláves
-a na každém vstupu do `$CDAF` zapíše T-stav, videopaměť `$4000`–`$5AFF`
-a stav `$D86F`. Dva běhy, oba se spornou pamětí (`--cmio` z
-`tracecadence.py`):
+The tool runs the snapshot from `./tools/mksnapshot.sh` (PC `$CD14`) without
+keys and on every entry into `$CDAF` writes the T-state, the video memory
+`$4000`–`$5AFF` and the state of `$D86F`. Two runs, both with contended
+memory (`--cmio` from `tracecadence.py`):
 
-- `tune/` – jak originál běží, s melodií v přerušení (`$FFF8` = 3)
-- `quiet/` – melodie vypnutá (`$FFF8` = 0, jako `M`): z něj bere
-  `tools/mktitle.py` tempo remaku, stejně jako `PASS_TSTATES` u hry
+- `tune/` – as the original runs, with the tune in the interrupt (`$FFF8` = 3)
+- `quiet/` – tune off (`$FFF8` = 0, as `M`): `tools/mktitle.py` takes the
+  remake's cadence from it, just like `PASS_TSTATES` for the game
 
-Výstup `DIR/<běh>/passes.bin`: za každý průchod 4 B T-stavu (LE), 1 B
-`$D86F` a 6912 B videopaměti; `DIR/<běh>/info.json` souhrn. Pro
-`tools/matchtitle.mjs` a `tools/mktitle.py`.
+Output `DIR/<run>/passes.bin`: per pass 4 B of T-state (LE), 1 B of `$D86F`
+and 6912 B of video memory; `DIR/<run>/info.json` summary. For
+`tools/matchtitle.mjs` and `tools/mktitle.py`.
 """
 import argparse, json, os, struct, sys
 
@@ -37,16 +37,16 @@ from skoolkit.simutils import from_snapshot                     # noqa: E402
 from skoolkit.trace import Tracer                               # noqa: E402
 
 FRAME = 69888
-LOOP = 0xCDAF           # ★ smyčka titulky
-SEED = 0xD86F           # ★ stav generátoru moře $D8D4
-TUNE = 0xFFF8           # ★ melodie zapnutá (≠ 0), `M` ji přepíná
+LOOP = 0xCDAF           # ★ title loop
+SEED = 0xD86F           # ★ state of the sea generator $D8D4
+TUNE = 0xFFF8           # ★ tune on (≠ 0), `M` toggles it
 
 
-DEMO = 0xD602           # ★ titulka po 1024 přerušeních: ukázka
+DEMO = 0xD602           # ★ title after 1024 interrupts: demo
 
 
 def demo_start(tune):
-    """T od prvního vstupu do smyčky $CDAF po skok do ukázky $D602."""
+    """T from the first entry into the loop $CDAF to the jump into the demo $D602."""
     from skoolkit import CCMIOSimulator as cls
     snap = Snapshot.get(os.path.join(B.ROOT, 'build', 'booty.z80'))
     sim = from_snapshot(cls, snap, {}, {'ay': [None] * 16},
@@ -66,7 +66,7 @@ def demo_start(tune):
     start = regs[25]
     sim.trace(regs[24], DEMO, 0, 0, 1, draw, None, keyboard, None, None)
     if regs[24] != DEMO:
-        raise SystemExit('ukázka $%04X nezačala' % DEMO)
+        raise SystemExit('demo $%04X did not start' % DEMO)
     return regs[25] - start
 
 
@@ -92,7 +92,7 @@ def run(frames, tune):
         if pc != LOOP:
             break
         if not tune:
-            # $CD14 zapíše 3 dřív, než se do smyčky dojde; vypnutí jako `M`
+            # $CD14 writes 3 before the loop is reached; switching off as `M`
             sim.memory[TUNE] = 0
         passes.append((regs[25], sim.memory[SEED], bytes(sim.memory[0x4000:0x5B00])))
         sim.trace(pc, -1, 1, 0, 1, draw, None, keyboard, None, None)
@@ -103,21 +103,21 @@ def run(frames, tune):
 def main():
     ap = argparse.ArgumentParser(description=__doc__,
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
-    # před ukázkou: FRAMES dojde na $0400 po 1024 snímcích
+    # before the demo: FRAMES reaches $0400 after 1024 frames
     ap.add_argument('--frames', type=int, default=1000)
     ap.add_argument('--out', default=os.path.join(B.ROOT, 'build', 'title'))
     args = ap.parse_args()
     for name, tune in (('tune', True), ('quiet', False)):
         passes = run(args.frames, tune)
         if len(passes) < 3:
-            raise SystemExit('smyčka $%04X se za %d snímků nevykonala' % (LOOP, args.frames))
+            raise SystemExit('loop $%04X was not executed within %d frames' % (LOOP, args.frames))
         out = os.path.join(args.out, name)
         os.makedirs(out, exist_ok=True)
         with open(os.path.join(out, 'passes.bin'), 'wb') as f:
             for t, seed, screen in passes:
                 f.write(struct.pack('<IB', t, seed) + screen)
-        # první průchod (obrázek po LDIR) se do tempa nepočítá: před ním
-        # je inicializace, ne práce smyčky
+        # the first pass (picture after LDIR) does not count towards the
+        # cadence: before it is initialisation, not the loop's work
         durations = [b[0] - a[0] for a, b in zip(passes[1:], passes[2:])]
         info = {
             'tune': tune,
@@ -127,11 +127,11 @@ def main():
             'passTStates': round(sum(durations) / len(durations)),
             'minTStates': min(durations),
             'maxTStates': max(durations),
-            # ★ kdy titulka odejde do ukázky (FRAMES = $0400)
+            # ★ when the title leaves for the demo (FRAMES = $0400)
             'demoTStates': demo_start(tune),
         }
         json.dump(info, open(os.path.join(out, 'info.json'), 'w'), indent=1)
-        print('%-5s %d průchodů, průchod průměrně %d T = %.3f snímku (%d–%d T), ukázka po %.2f s'
+        print('%-5s %d passes, a pass on average %d T = %.3f frames (%d–%d T), demo after %.2f s'
               % (name, len(passes), info['passTStates'], info['passTStates'] / FRAME,
                  info['minTStates'], info['maxTStates'], info['demoTStates'] / 3500000))
 

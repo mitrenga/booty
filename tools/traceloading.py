@@ -1,24 +1,24 @@
 #!/usr/bin/env python3
-"""Snímky obrazovky **během** nahrávání kazety – co ROM a zavaděč opravdu ukážou.
+"""Screenshots **during** tape loading – what the ROM and the loader really show.
 
     ./tools/traceloading.py [--out build/loading] [--fast]
 
-Pustí totéž simulované nahrání jako `tools/mksnapshot.sh` (SkoolKit
-`tap2sna.py`, ROM 48K, všech osm bloků i s oběma turbo bloky) a v každém
-snímku ULA se podívá na videopaměť. Kdykoli se obraz změní, uloží ho
-(`.scr` + `.png`) a vypíše, **co je na něm napsané ROM fontem** – každá
-znaková buňka se porovná bajt po bajtu se znaky ROM na `$3D00` a v obou
-barevných polaritách. Vedle textu vypíše barvu borderu a atribut buněk
-s textem, takže je vidět i to, co je **napsané, ale neviditelné** (inkoust
-= papír).
+Runs the same simulated load as `tools/mksnapshot.sh` (SkoolKit `tap2sna.py`,
+48K ROM, all eight blocks including both turbo blocks) and looks at the video
+memory in every ULA frame. Whenever the image changes it saves it
+(`.scr` + `.png`) and prints **what is written on it in the ROM font** – every
+character cell is compared byte by byte with the ROM characters at `$3D00`,
+in both colour polarities. Next to the text it prints the border colour and
+the attribute of the cells with text, so that what is **written but
+invisible** (ink = paper) can be seen too.
 
-Na tohle se ptá `MILNIKY.md` M1: nápisy, které LOAD TAPE v remaku ukazuje
-(`Program: BOOTY`, `Bytes: …`), se neopisují od sourozenců, ale **ověří se
-snímky z nahrávání**. `app/tapeLoadingModel.js` cituje výstup tohohle
-nástroje.
+This is what `MILNIKY.md` M1 asks for: the captions LOAD TAPE shows in the
+remake (`Program: BOOTY`, `Bytes: …`) are not copied from the siblings but
+**verified against the loading screenshots**. `app/tapeLoadingModel.js`
+quotes the output of this tool.
 
-Bez `--fast` se nahrává rychlostí pásky (fast-load=0), aby se obraz
-zachytil i uprostřed bloků; trvá to déle.
+Without `--fast` the load runs at tape speed (fast-load=0), so that the image
+is captured in the middle of blocks too; it takes longer.
 """
 import argparse, hashlib, os, sys
 
@@ -46,7 +46,7 @@ def cell(scr, row, col):
 
 
 def read_text(scr):
-    """[(řádek, sloupec, text, atribut)] – souvislé úseky znaků ROM fontu."""
+    """[(row, column, text, attribute)] – contiguous runs of ROM-font characters."""
     out = []
     for row in range(24):
         line, start, attrs = '', None, set()
@@ -78,8 +78,8 @@ class Recorder:
 
     @staticmethod
     def colour(border):
-        """Barva borderu na konci snímku. SkoolKit předává buď číslo, nebo
-        seznam změn `(T-stav, hodnota portu $FE)` během snímku."""
+        """Border colour at the end of the frame. SkoolKit passes either a
+        number or a list of changes `(T-state, port $FE value)` during the frame."""
         if isinstance(border, list):
             return border[-1][1] & 7 if border else None
         return border
@@ -101,7 +101,7 @@ def main():
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument('--out', default=os.path.join(B.ROOT, 'build', 'loading'))
     ap.add_argument('--fast', action='store_true',
-                    help='fast-load=1: bloky se nahrají naráz, snímky jen mezi nimi')
+                    help='fast-load=1: blocks load at once, screenshots only between them')
     args = ap.parse_args()
     os.makedirs(args.out, exist_ok=True)
 
@@ -117,8 +117,8 @@ def main():
             '-c', 'fast-load=%d' % (1 if args.fast else 0), B.TAPE, snap]
     tap2sna.main(argv)
 
-    # jen snímky, kde se změnil text nebo border: změny bajt po bajtu
-    # uprostřed bloku SCREEN$ jsou tisíce a text se v nich nemění
+    # only frames where the text or the border changed: byte-by-byte changes
+    # in the middle of the SCREEN$ block are thousands and the text does not change in them
     previous = None
     for frame, border, scr in recorder.shots:
         text = read_text(scr)
@@ -126,13 +126,13 @@ def main():
         if key == previous:
             continue
         previous = key
-        print('snímek %5d  (%.2f s)  border %s' % (frame, frame / 50.08, border))
+        print('frame %5d  (%.2f s)  border %s' % (frame, frame / 50.08, border))
         for row, col, t, attrs in text:
             visible = all((a & 7) != ((a >> 3) & 7) for a in attrs)
-            print('    řádek %2d sloupec %2d  %-32s atribut %s%s'
+            print('    row %2d column %2d  %-32s attribute %s%s'
                   % (row, col, repr(t), ' '.join('$%02X' % a for a in attrs),
-                     '' if visible else '  ← inkoust = papír, NEVIDITELNÉ'))
-    print('%d snímků s jiným obrazem v %s' % (len(recorder.shots), args.out))
+                     '' if visible else '  ← ink = paper, INVISIBLE'))
+    print('%d frames with a different image in %s' % (len(recorder.shots), args.out))
 
 
 if __name__ == '__main__':

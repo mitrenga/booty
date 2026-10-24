@@ -1,26 +1,27 @@
 #!/usr/bin/env python3
-"""Společné čtení kazety a obrazu paměti Booty.
+"""Shared reading of the Booty tape and memory image.
 
-Jedno místo, kde je napsané, co je na kazetě, jak se z ní skládá obraz paměti
-a kde v něm co leží. Nástroje `dump*`, `trace*` a `match*` to berou odsud,
-aby se ta znalost nemusela opakovat (a rozcházet).
+One place that states what is on the tape, how the memory image is assembled
+from it and where things lie in it. The `dump*`, `trace*` and `match*` tools
+take it from here so that knowledge is not repeated (and does not drift apart).
 
-**Booty není od Ultimate a zavaděč nemá nic společného s `RRD`.** Kód na
-kazetě zamíchaný není, ale zavaděč je vrstvený (`sources/docs/tape_layout.md`):
+**Booty is not by Ultimate and the loader has nothing to do with `RRD`.** The
+code on the tape is not scrambled, but the loader is layered
+(`sources/docs/tape_layout.md`):
 
-1. BASIC `BOOTY` skočí `RANDOMIZE USR (VARS-116)` do strojového kódu
-   schovaného v řádku 65295 (čísla viditelná v textu jsou podvržená)
-2. ten najde **krátký pilot** (turbo blok, ID $11) přes rutiny ROM
-   `LD-EDGE` / `LD-SYNC`, nahraje 71 B na `$5B01` a 62 B z nich přepíše
-   začátek programu v BASICu – vznikne řádek 10, který pokračuje zbytkem
-   starého řádku: `LOAD "" SCREEN$` / `LOAD "" CODE 26880` /
+1. BASIC `BOOTY` jumps `RANDOMIZE USR (VARS-116)` into machine code hidden in
+   line 65295 (the numbers visible in the text are fake)
+2. that one finds a **short pilot** (turbo block, ID $11) through the ROM
+   routines `LD-EDGE` / `LD-SYNC`, loads 71 B to `$5B01` and 62 B of them
+   overwrite the start of the BASIC program – line 10 appears, continuing with
+   the rest of the old line: `LOAD "" SCREEN$` / `LOAD "" CODE 26880` /
    `RANDOMIZE USR 26880` / `RANDOMIZE USR 52500`
-3. `LOAD "" CODE 26880` **přebije adresu z hlavičky** (`$6518`): 38 655 B
-   leží na `$6900`–`$FFFE`
-4. `USR 26880` je kopie téhož zavaděče: nahraje druhý turbo blok na `$5B01`
-   a 62 B z něj zkopíruje na adresu, kterou si přečte **z jeho vlastních
-   dat** (`$5B3F` → `$CD14`) – doprostřed kódu hry
-5. `USR 52500` (`$CD14`) nastaví IM 2 a propadne do hry
+3. `LOAD "" CODE 26880` **overrides the address from the header** (`$6518`):
+   38 655 B lie at `$6900`–`$FFFE`
+4. `USR 26880` is a copy of the same loader: it loads the second turbo block
+   to `$5B01` and copies 62 B of it to an address it reads **from its own
+   data** (`$5B3F` → `$CD14`) – into the middle of the game code
+5. `USR 52500` (`$CD14`) sets IM 2 and falls through into the game
 """
 import json
 import os
@@ -28,7 +29,7 @@ import os
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 TAPE = os.path.join(ROOT, 'sources', 'tape', 'Booty.tzx')
 
-# šířka řádku, do které se v data/*.json skládají pole čísel
+# line width into which arrays of numbers are wrapped in data/*.json
 JSON_WIDTH = 100
 
 
@@ -53,7 +54,7 @@ def _json_value(value, indent):
             one = '[' + ', '.join(parts) + ']'
             if len(pad) + len(one) <= JSON_WIDTH:
                 return one
-            # dlouhé pole čísel: po řádcích do JSON_WIDTH
+            # long array of numbers: line by line up to JSON_WIDTH
             lines, line = [], ''
             for part in parts:
                 if line and len(inner) + len(line) + len(part) + 2 > JSON_WIDTH:
@@ -66,15 +67,15 @@ def _json_value(value, indent):
     return json.dumps(value, ensure_ascii=False)
 
 
-# data/global.json: všechna data hry v jednom souboru, sekce v tomhle pořadí
-# (posílá je db/appData.php pod týmiž klíči); každou sekci zapisuje jeden nástroj
+# data/global.json: all game data in one file, sections in this order
+# (db/appData.php sends them under the same keys); each section is written by one tool
 DATA = os.path.join(ROOT, 'data', 'global.json')
 DATA_SECTIONS = ('global', 'holds', 'sprites', 'panel', 'texts', 'memory', 'transition',
                  'loading', 'tape', 'title', 'sounds', 'goldfish')
 
 
 def read_section(name):
-    """Sekce `name` z data/global.json, None když tam není."""
+    """Section `name` from data/global.json, None when it is not there."""
     if not os.path.exists(DATA):
         return None
     with open(DATA, encoding='utf8') as f:
@@ -82,9 +83,9 @@ def read_section(name):
 
 
 def write_section(name, data):
-    """Zapíše sekci `name` do data/global.json, ostatní sekce nechá být."""
+    """Writes section `name` into data/global.json, leaves the other sections alone."""
     if name not in DATA_SECTIONS:
-        raise ValueError('neznámá sekce %s' % name)
+        raise ValueError('unknown section %s' % name)
     sections = {}
     if os.path.exists(DATA):
         with open(DATA, encoding='utf8') as f:
@@ -96,60 +97,63 @@ def write_section(name, data):
 
 
 def write_json(path, data):
-    """Zapíše data/*.json čitelně: odsazení 2, čeština bez escapování,
-    pole čísel na jeden řádek (dlouhá zalomená do JSON_WIDTH), objekty
-    rozbalené. Dlouhé řetězce (base64, hex) zůstávají na jednom řádku.
-    Stejný tvar dělá `jsonformat.mjs` pro nástroje v Node."""
+    """Writes data/*.json readably: indent 2, non-ASCII text unescaped,
+    arrays of numbers on one line (long ones wrapped to JSON_WIDTH), objects
+    expanded. Long strings (base64, hex) stay on one line.
+    `jsonformat.mjs` produces the same shape for the Node tools."""
     with open(path, 'w', encoding='utf8') as f:
         f.write(_json_value(data, 0) + '\n')
 
 
 def _skoolkit():
-    """SkoolKit vendorovaný ve svision (R-008) – přes symlink `app/svision`,
-    a dokud `app/` není (M0), přímo ze sdíleného checkoutu vedle projektu."""
+    """SkoolKit vendored in svision (R-008) – through the `app/svision` symlink,
+    and while `app/` does not exist yet (M0), directly from the shared checkout
+    next to the project."""
     for base in (os.path.join(ROOT, 'app', 'svision'),
                  os.path.join(ROOT, '..', 'svision')):
         p = os.path.join(base, 'sources', 'skoolkit')
         if os.path.isdir(p):
             return os.path.normpath(p)
-    raise FileNotFoundError('SkoolKit ve svision/sources/skoolkit neni '
-                            '(stahne ho svision/tools/retro/fetchsources.py)')
+    raise FileNotFoundError('SkoolKit is not in svision/sources/skoolkit '
+                            '(svision/tools/retro/fetchsources.py downloads it)')
 
 
 SKOOLKIT = _skoolkit()
 # the shared offline tools of svision (scr2png, pngread …)
 RETRO = os.path.normpath(os.path.join(SKOOLKIT, '..', '..', 'tools', 'retro'))
 
-# --- kazeta -----------------------------------------------------------------
+# --- tape -------------------------------------------------------------------
 
 TYPES = {0: 'Program', 1: 'Number array', 2: 'Character array', 3: 'Bytes'}
 
 
 def tzx_version(path=TAPE):
-    """Verze obalu TZX jako (major, minor) – např. (1, 0)."""
+    """Version of the TZX container as (major, minor) – e.g. (1, 0)."""
     raw = open(path, 'rb').read(10)
     if raw[:8] != b'ZXTape!\x1a':
-        raise ValueError('%s neni TZX' % path)
+        raise ValueError('%s is not a TZX' % path)
     return raw[8], raw[9]
 
 
 def tzx_blocks(path=TAPE):
-    """TZX → seznam bloků jako slovníky.
+    """TZX → list of blocks as dicts.
 
-    Klíče: `id` ($10 standardní, $11 turbo), `flag`, `data` (bez flagu
-    a součtu), `ok` (součet XOR sedí), `header` (u hlaviček ROM, jinak None),
-    `pause` (ms) a u turbo bloku `timing` (délky pulzů v T-stavech).
+    Keys: `id` ($10 standard, $11 turbo), `flag`, `data` (without the flag
+    and checksum), `ok` (XOR checksum matches), `header` (for ROM headers,
+    otherwise None), `pause` (ms) and for a turbo block `timing` (pulse
+    lengths in T-states).
 
-    Na kazetě Booty jsou jen ID $10 a $11; na cokoli jiného nástroj schválně
-    spadne, aby se nestalo, že se blok tiše přeskočí.
+    The Booty tape has only IDs $10 and $11; on anything else the tool
+    deliberately fails, so that a block is never silently skipped.
 
-    `pause` je pauza za blokem zapsaná v TZX. **Není to vlastnost hry, ale
-    obalu** (u Lunar Jetmana se dva dumpy téže kazety v pauzách lišily při
-    totožných datech) – `tapeLoadingModel` se o ni opře jen řádově.
+    `pause` is the pause after the block as written in the TZX. **It is not a
+    property of the game but of the container** (with Lunar Jetman two dumps
+    of the same tape differed in the pauses with identical data) –
+    `tapeLoadingModel` relies on it only as an order of magnitude.
     """
     raw = open(path, 'rb').read()
     if raw[:8] != b'ZXTape!\x1a':
-        raise ValueError('%s neni TZX' % path)
+        raise ValueError('%s is not a TZX' % path)
     out, i = [], 10
     while i < len(raw):
         bid = raw[i]
@@ -168,7 +172,7 @@ def tzx_blocks(path=TAPE):
             length = h[15] | (h[16] << 8) | (h[17] << 16)
             i += 18
         else:
-            raise NotImplementedError('blok ID $%02X na offsetu %d' % (bid, i - 1))
+            raise NotImplementedError('block ID $%02X at offset %d' % (bid, i - 1))
         blk = raw[i:i + length]
         i += length
         acc = 0
@@ -195,60 +199,60 @@ def _after_header(name, path=TAPE):
     for i, b in enumerate(blocks):
         if b['header'] and b['header']['name'].strip() == name:
             return b['header'], blocks[i + 1]['data']
-    raise LookupError('blok %r na kazete neni' % name)
+    raise LookupError('block %r is not on the tape' % name)
 
 
 def basic_program(path=TAPE):
-    """Zavaděč `BOOTY`, tak jak ho nahraje ROM (252 B na PROG)."""
+    """The `BOOTY` loader as the ROM loads it (252 B at PROG)."""
     return _after_header('BOOTY', path)[1]
 
 
 def turbo_blocks(path=TAPE):
-    """Dva bezhlavičkové turbo bloky po 71 B dat – v pořadí na kazetě."""
+    """The two headerless turbo blocks of 71 B of data each – in tape order."""
     return [b['data'] for b in tzx_blocks(path) if b['id'] == 0x11]
 
 
 def loading_screen(path=TAPE):
-    """6912 B bloku SCREEN$ `bs` – přesně to, co kazeta nahraje na $4000."""
+    """6912 B of the SCREEN$ block `bs` – exactly what the tape loads to $4000."""
     hdr, data = _after_header('bs', path)
     assert hdr['param1'] == 0x4000 and len(data) == 6912, (hdr, len(data))
     return data
 
 
-# --- obraz paměti -----------------------------------------------------------
+# --- memory image -----------------------------------------------------------
 
-PROG = 23755            # začátek programu v BASICu (bez mikrodrivu)
-LOADER_BUF = 0x5B01     # kam oba turbo bloky nahrají svých 71 B
-LOADER_COPY = 62        # kolik z nich zavaděč kopíruje (LD BC,62 / LDIR)
-LOADER_DEST = 0x5B3F    # slovo uvnitř bufferu: kam se kopíruje (druhý blok)
+PROG = 23755            # start of the BASIC program (without Microdrive)
+LOADER_BUF = 0x5B01     # where both turbo blocks load their 71 B
+LOADER_COPY = 62        # how much of them the loader copies (LD BC,62 / LDIR)
+LOADER_DEST = 0x5B3F    # word inside the buffer: where it is copied to (second block)
 
-CODE_HEADER = 0x6518    # adresa v hlavičce `bc` – BASIC ji přebije
+CODE_HEADER = 0x6518    # address in the `bc` header – BASIC overrides it
 CODE_LOAD = 0x6900      # `LOAD "" CODE 26880`
 CODE_LEN = 38655        # $6900–$FFFE
 ENTRY = 0xCD14          # `RANDOMIZE USR 52500`
 
 
 def patch_target(path=TAPE):
-    """Kam zavaděč na `$6900` zkopíruje 62 B druhého turbo bloku."""
+    """Where the loader at `$6900` copies the 62 B of the second turbo block."""
     data = turbo_blocks(path)[1]
     o = LOADER_DEST - LOADER_BUF
     return data[o] | (data[o + 1] << 8)
 
 
 def memory_image(path=TAPE):
-    """Obraz RAM $4000–$FFFF ve chvíli, kdy BASIC skočí na `USR 52500`.
+    """Image of RAM $4000–$FFFF at the moment BASIC jumps to `USR 52500`.
 
-    Složené **jen z kazety, bez simulátoru**:
+    Assembled **from the tape only, without a simulator**:
 
     - `$4000` SCREEN$ `bs`
-    - `$5B01` druhý turbo blok (71 B) – leží v bufferu tiskárny, kam ho
-      nahrál zavaděč; první turbo blok je tím přepsaný
-    - `$6900` kód `bc` (38 655 B)
-    - `$CD14` 62 B druhého turbo bloku **přes** kód z `bc`
+    - `$5B01` second turbo block (71 B) – lies in the printer buffer, where the
+      loader put it; the first turbo block is overwritten by it
+    - `$6900` code `bc` (38 655 B)
+    - `$CD14` 62 B of the second turbo block **over** the code from `bc`
 
-    Systémové proměnné a program v BASICu (`$5C00`–`$68FF`) tu nejsou:
-    nejsou vlastností hry, ale ROM a zavaděče, a `matchimage.py` je proto
-    nekontroluje.
+    System variables and the BASIC program (`$5C00`–`$68FF`) are not here:
+    they are not a property of the game but of the ROM and the loader, and
+    `matchimage.py` therefore does not check them.
     """
     mem = bytearray(0xC000)          # $4000–$FFFF
     mem[0:6912] = loading_screen(path)
@@ -263,7 +267,7 @@ def memory_image(path=TAPE):
 
 
 def code_image(path=TAPE):
-    """Jen kód a data hry: $6900–$FFFE, i s 62 B na `$CD14`."""
+    """Game code and data only: $6900–$FFFE, including the 62 B at `$CD14`."""
     mem = memory_image(path)
     return mem[CODE_LOAD - 0x4000:CODE_LOAD - 0x4000 + CODE_LEN]
 
@@ -277,30 +281,30 @@ def word(mem, addr):
     return b[0] | (b[1] << 8)
 
 
-# --- podpalubí (sources/docs/holds.md) ----------------------------------------
+# --- holds (sources/docs/holds.md) --------------------------------------------
 
-HOLD_DATA = 0xABD6      # ★ tabulky všech podpalubí, jak leží na kazetě
-HOLD_COUNT = 21         # ★ $AA97 jich napočítá 21 (konec: $FF místo tabulky)
-HOLD_CURRENT = 0x5BD3   # číslo podpalubí, které $A804 / $AB44 vybere
-HOLD_DRAW = 0xA811      # CALL $AB44 / JP $A900 – vyber a nakresli
-CHAR_MAP = 0xA1C4       # mapa znaků 25 × 32, za ní na +$320 mapa atributů
-CHARS_SCENERY = 0x8378  # CHARS pro paluby, žebříky, dveře, klíče, kořist
-CHARS_CRATES = 0x8678   # CHARS pro bedny (BDAT)
+HOLD_DATA = 0xABD6      # ★ tables of all holds as they lie on the tape
+HOLD_COUNT = 21         # ★ $AA97 counts 21 of them (end: $FF instead of a table)
+HOLD_CURRENT = 0x5BD3   # number of the hold that $A804 / $AB44 selects
+HOLD_DRAW = 0xA811      # CALL $AB44 / JP $A900 – select and draw
+CHAR_MAP = 0xA1C4       # character map 25 × 32, followed at +$320 by the attribute map
+CHARS_SCENERY = 0x8378  # CHARS for decks, ladders, doors, keys, loot
+CHARS_CRATES = 0x8678   # CHARS for crates (BDAT)
 
-# ★ jedenáct tabulek každého podpalubí v pořadí, v jakém je prochází $AA97
-# a $AB44, s délkou záznamu; každá končí $FF. Jména jsou autorova ze zbytku
-# zdrojáku (sources/docs/source_remnant.md).
+# ★ the eleven tables of each hold in the order $AA97 and $AB44 walk them,
+# with the record length; each ends with $FF. The names are the author's, from
+# the source remnant (sources/docs/source_remnant.md).
 HOLD_TABLES = (('COLDAT', 1), ('DKDAT', 3), ('EODAT', 4), ('LDAT', 2),
                ('SDDAT', 6), ('PHDAT', 3), ('OPST', 16), ('TDAT', 7),
                ('BDAT', 4), ('LIDAT', 16), ('TDDAT', 6))
 
 
 def holds(path=TAPE):
-    """Tabulky podpalubí z kazety: {číslo: {'address': …, jméno: [záznamy]}}.
+    """Hold tables from the tape: {number: {'address': …, name: [records]}}.
 
-    ★ V paměti leží sestupně – první od `$ABD6` je podpalubí 21, poslední
-    podpalubí 1: `$AB44` bere ukazatel z `$BAA9 + 2·(22 − n)` a `$AA97` je
-    ukládá od `$BAAB` v pořadí, v jakém tabulky prochází.
+    ★ In memory they lie in descending order – the first from `$ABD6` is hold
+    21, the last is hold 1: `$AB44` takes the pointer from `$BAA9 + 2·(22 − n)`
+    and `$AA97` stores them from `$BAAB` in the order it walks the tables.
     """
     mem = memory_image(path)
     a = HOLD_DATA

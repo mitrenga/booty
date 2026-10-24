@@ -1,44 +1,48 @@
 #!/usr/bin/env node
 /**
- * Nepřátelé a všechno, co se v podpalubí hýbe (M5): tabulka entit po každém
- * průchodu, remake proti originálu, a dráhy, otáčení, tempo, animace
- * a kolizní obálky ověřené **na datech originálu**.
+ * The enemies and everything else that moves in a hold (M5): the entity table
+ * after every pass, the remake against the original, and the paths, turns,
+ * pace, animation and touch envelopes verified **on the original's data**.
  *
  *   ./tools/matchentities.mjs [--base build/trace] [--script hold12] [--verbose]
  *
- * Bez `--base` jde přes oba druhy záznamů: `build/trace/` (tracephysics.py)
- * a `build/rules/` (celé partie z RZX, tracerules.py).
+ * Without `--base` it goes over both kinds of recordings: `build/trace/`
+ * (tracephysics.py) and `build/rules/` (whole games from RZX, tracerules.py).
  *
- * **Tabulka entit** (`sources/docs/enemies.md`) – co se v podpalubí hýbe
- * samo, rozložené na záznamy, jak je čte kód originálu:
+ * **The entity table** (`sources/docs/enemies.md`) – what moves in a hold on
+ * its own, split into the records the original's code reads:
  *
- * - piráti: `OPST` v bufferu podpalubí (ukazatel `$5BDE`, 16 B)
- * - tvor z časovače: `$F31C` (16 B)
- * - plošiny: `LIDAT` (ukazatel `$5BE4`, 16 B)
- * - okénka: `PHDAT` (ukazatel `$5BDC`, 3 B)
- * - výbuch nastražené kořisti: `$E46F`–`$E479` a fáze `$F341`
- * - úlomky výbuchu: `$F2DB`, 5 × 6 B
- * - Jim: `$F231` (20 B) – protějšek kolizí
+ * - pirates: `OPST` in the hold buffer (pointer `$5BDE`, 16 B)
+ * - the creature from the timer: `$F31C` (16 B)
+ * - lifts: `LIDAT` (pointer `$5BE4`, 16 B)
+ * - portholes: `PHDAT` (pointer `$5BDC`, 3 B)
+ * - the explosion of booby-trapped booty: `$E46F`–`$E479` and phase `$F341`
+ * - the splinters of the explosion: `$F2DB`, 5 × 6 B
+ * - Jim: `$F231` (20 B) – the other side of the collisions
  *
- * Po každém průchodu se tabulka remaku (`BootyLogic.pass`, kód, který jde do
- * prohlížeče) porovná s tabulkou originálu – počet záznamů, každý bajt
- * a **obraz každé entity na obrazovce** (bitmapa a atributy buněk, které
- * zabírá). Rozdíl = konec, jako `matchphysics.mjs`.
+ * After every pass the remake's table (`BootyLogic.pass`, the code that goes
+ * into the browser) is compared with the original's – the number of records,
+ * every byte and **the image of every entity on the screen** (the bitmap and
+ * attributes of the cells it covers). A difference = the end, as in
+ * `matchphysics.mjs`.
  *
- * **Na datech originálu** (paměť před průchodem a po něm, nic z remaku) se
- * navíc ověří pravidla z `enemies.md`; každé porušení je rozdíl:
+ * **On the original's data** (the memory before the pass and after it, nothing
+ * of the remake) the rules of `enemies.md` are verified as well; every
+ * violation is a difference:
  *
- * - pirát se hýbe každý druhý průchod (`$F334` ≠ 0) o jednu jemnou polohu
- *   (2 px), snímek + 6 dokola; **otočí se právě tehdy**, když je další krok
- *   za okrajem, v zavřených číslovaných dveřích, nebo nad mezerou v mapě
- *   znaků – Jim v tom nehraje roli
- * - tvor se hýbe každý průchod o jemnou polohu, po palubě, do zmizení za okrajem
- * - plošina se hýbe každý druhý průchod (`$F334` = 0) a otočí se na mezích
- *   +10/+11 a +12/+13
+ * - a pirate moves every other pass (`$F334` ≠ 0) by one fine position
+ *   (2 px), frame + 6 cyclically; **it turns exactly when** the next step is
+ *   beyond the edge, in a closed numbered door, or over a gap in the char
+ *   map – Jim plays no part in it
+ * - the creature moves every pass by a fine position, along its deck, until it
+ *   vanishes beyond the edge
+ * - a lift moves every other pass (`$F334` = 0) and turns at the limits
+ *   +10/+11 and +12/+13
  *
- * A z remaku (který je s originálem v paměti shodný) se v okamžiku kontroly
- * dotyku zapíše vzájemná poloha Jima a piráta / tvora: **kolizní obálka**
- * z `enemies.md` musí rozdělit všechny případy na smrt a nesmrt bez výjimky.
+ * And from the remake (whose memory equals the original's) the relative
+ * position of Jim and the pirate / creature is recorded at the moment of the
+ * touch test: the **touch envelope** of `enemies.md` must split all cases
+ * into death and no death without exception.
  */
 import fs from 'node:fs';
 import path from 'node:path';
@@ -72,17 +76,17 @@ function entities(rd) {
   const out = [];
   const list = (kind, pointer, size) => {
     for (let a = rd16(pointer), k = 0; rd(a) !== 0xFF; a += size, k++) {
-      if (k > 32) { throw new Error(`${kind}: tabulka bez konce`); }
+      if (k > 32) { throw new Error(`${kind}: table without an end`); }
       out.push({kind, at: a, size});
     }
   };
-  list('pirát', 0x5BDE, 16);
-  list('plošina', 0x5BE4, 16);
-  list('okénko', 0x5BDC, 3);
-  out.push({kind: 'tvor', at: 0xF31C, size: 16});
-  out.push({kind: 'výbuch', at: 0xE46F, size: 11});
-  out.push({kind: 'fáze výbuchu', at: 0xF341, size: 1});
-  for (let k = 0; k < 5; k++) { out.push({kind: 'úlomek', at: 0xF2DB+6*k, size: 6}); }
+  list('pirate', 0x5BDE, 16);
+  list('lift', 0x5BE4, 16);
+  list('porthole', 0x5BDC, 3);
+  out.push({kind: 'creature', at: 0xF31C, size: 16});
+  out.push({kind: 'explosion', at: 0xE46F, size: 11});
+  out.push({kind: 'explosion phase', at: 0xF341, size: 1});
+  for (let k = 0; k < 5; k++) { out.push({kind: 'splinter', at: 0xF2DB+6*k, size: 6}); }
   out.push({kind: 'Jim', at: 0xF231, size: 20});
   for (const e of out) {
     e.bytes = [];
@@ -96,13 +100,13 @@ function entities(rd) {
 function box(e) {
   const [c, b, fe, fd] = e.bytes;
   switch (e.kind) {
-    case 'pirát': case 'plošina': case 'Jim':
+    case 'pirate': case 'lift': case 'Jim':
       return [33-c, 24-b, e.bytes[7]+(fe !== 3), e.bytes[8]+(fd !== 3)];
-    case 'tvor':
+    case 'creature':
       return c ? [33-c, 24-b, e.bytes[7]+(fe !== 3), e.bytes[8]+(fd !== 3)] : null;
-    case 'okénko': case 'výbuch':
+    case 'porthole': case 'explosion':
       return [33-c, 24-b, 2, 2];
-    case 'úlomek':
+    case 'splinter':
       return c ? [33-c, 24-b, 1, 1] : null;
     default:
       return null;
@@ -139,7 +143,7 @@ function load(dir) {
   const init = new Uint8Array(fs.readFileSync(path.join(dir, 'init.bin')));
   // the original's memory after pass i (-1: before the first)
   const after = (i) => i < 0 ? (a) => init[a] : (a) => {
-    if (offset[a] < 0) { throw new Error(`${hex(a)} záznam nemá`); }
+    if (offset[a] < 0) { throw new Error(`${hex(a)} is not in the recording`); }
     return passes[i*size+offset[a]];
   };
   return {inputs, init, after};
@@ -174,19 +178,19 @@ function checkPirates(pre, post, cov, where, verbose) {
     const right = pre(ix+4) === 0xFF;
     let reason = null;
     if (p.c === 0x22 || p.c === 3) {
-      reason = 'okraj';
+      reason = 'edge';
     } else {
       const cc = right ? (p.c-2) & 0xFF : p.c;
       const door = doors.find((d) => d.c === cc && ((d.b-2) & 0xFF) === p.b);
       if (door && door.closed) {
-        reason = 'zavřené dveře';
+        reason = 'closed door';
       } else {
         // ★ $F074: the char map under the next step ((24 − (B − 3)) × 32 + 33 − C)
         const place = (((24-((p.b-3) & 0xFF)) << 5)+33-cc) & 0xFFFF;
         if (pre((0xA1C4+place) & 0xFFFF) < 0x21) {
-          reason = 'konec paluby';
+          reason = 'end of deck';
         } else if (door) {
-          count(cov, 'pirát: krok otevřenými dveřmi');
+          count(cov, 'pirate: step through an open door');
         }
       }
     }
@@ -197,17 +201,17 @@ function checkPirates(pre, post, cov, where, verbose) {
     if (reason) {
       const dir = p.c === 0x22 ? 0xFF : p.c === 3 ? 1 : right ? 1 : 0xFF;
       want = {c: pre(ix), b: pre(ix+1), e: pre(ix+2), d: pre(ix+3), dir, frame: dir === 0xFF ? 0x20 : 0x50};
-      count(cov, `pirát: otočka – ${reason}`);
+      count(cov, `pirate: turn – ${reason}`);
     } else {
       want = Object.assign({}, p, {dir: pre(ix+4), frame});
-      count(cov, 'pirát: krok');
+      count(cov, 'pirate: step');
     }
     const got = {c: post(ix), b: post(ix+1), e: post(ix+2), d: post(ix+3), dir: post(ix+4), frame: post(ix+6)};
     if (JSON.stringify(got) !== JSON.stringify(want)) {
       bad++;
       if (verbose || bad === 1) {
-        console.log(`  ${where}, podpalubí ${hold}, pirát ${hex(ix)}: originál ${JSON.stringify(got)}, `
-                    +`pravidlo ${JSON.stringify(want)} (${reason || 'krok'})`);
+        console.log(`  ${where}, hold ${hold}, pirate ${hex(ix)}: original ${JSON.stringify(got)}, `
+                    +`rule ${JSON.stringify(want)} (${reason || 'step'})`);
       }
     }
     cov.pirateHolds.add(hold);
@@ -222,13 +226,13 @@ function checkCreature(pre, post, cov, where, verbose) {
     if (post(ix) !== 0) {
       const rat = post(ix+7) === 4;
       const deck = (post(ix+1)-(rat ? 1 : 3)) & 0xFF;
-      const from = post(ix) === 2 ? 'zprava' : 'zleva';
-      count(cov, `tvor: ${rat ? 'krysa' : 'papoušek'} ${from}`);
+      const from = post(ix) === 2 ? 'from the right' : 'from the left';
+      count(cov, `creature: ${rat ? 'rat' : 'parrot'} ${from}`);
       cov.creatureDecks.add(deck);
       const ok = [3, 8, 13, 18].includes(deck)
         && (post(ix) === 2 ? post(ix+4) === 1 : post(ix) === 0x25 && post(ix+4) === 0xFF);
       if (!ok) {
-        console.log(`  ${where}: tvor vypuštěn mimo pravidlo: ${JSON.stringify(Array.from({length: 16}, (_, k) => post(ix+k)))}`);
+        console.log(`  ${where}: creature released against the rule: ${JSON.stringify(Array.from({length: 16}, (_, k) => post(ix+k)))}`);
         return 1;
       }
     }
@@ -236,9 +240,9 @@ function checkCreature(pre, post, cov, where, verbose) {
   }
   const p = newPlace(pre, ix);
   if (p.c === 0x26 || p.c === 1) {
-    count(cov, 'tvor: odešel za okraj');
+    count(cov, 'creature: left beyond the edge');
     if (post(ix) !== 0) {
-      console.log(`  ${where}: tvor měl odejít, originál ho má na ${hex(post(ix), 2)}`);
+      console.log(`  ${where}: the creature should have left, the original has it at ${hex(post(ix), 2)}`);
       return 1;
     }
     return 0;
@@ -247,10 +251,10 @@ function checkCreature(pre, post, cov, where, verbose) {
   if (f >= 0x25) { f = (f+8) & 0xFF; if (f >= 0x47) { f = (f-0x20) & 0xFF; } }
   const want = [p.c, p.b, p.e, p.d, f];
   const got = [post(ix), post(ix+1), post(ix+2), post(ix+3), post(ix+6)];
-  count(cov, 'tvor: krok');
+  count(cov, 'creature: step');
   if (want.join() !== got.join()) {
-    if (verbose) { console.log(`  ${where}: tvor ${got} místo ${want}`); }
-    console.log(`  ${where}: tvor originálu ${got}, pravidlo ${want}`);
+    if (verbose) { console.log(`  ${where}: creature ${got} instead of ${want}`); }
+    console.log(`  ${where}: the original's creature ${got}, rule ${want}`);
     return 1;
   }
   return 0;
@@ -274,20 +278,20 @@ function checkLifts(pre, post, cov, where) {
       const [lim, limFine, next] = dir === 0xFF ? [pre(ix+12), pre(ix+13), 1] : [pre(ix+10), pre(ix+11), 0xFF];
       if (pos === lim && fine === limFine) {
         if (vertical) { dy = next; } else { dx = next; }
-        count(cov, `plošina: otočka (${vertical ? 'svislá' : 'vodorovná'})`);
+        count(cov, `lift: turn (${vertical ? 'vertical' : 'horizontal'})`);
       }
-      count(cov, `plošina: krok (${vertical ? 'svislá' : 'vodorovná'})`);
+      count(cov, `lift: step (${vertical ? 'vertical' : 'horizontal'})`);
       want = [p.c, p.b, p.e, p.d, dx, dy];
       cov.liftHolds.add(hold);
     }
     const got = [post(ix), post(ix+1), post(ix+2), post(ix+3), post(ix+4), post(ix+5)];
     if (want.join() !== got.join()) {
       bad++;
-      console.log(`  ${where}, podpalubí ${hold}, plošina ${hex(ix)}: originál ${got}, pravidlo ${want}`);
+      console.log(`  ${where}, hold ${hold}, lift ${hex(ix)}: original ${got}, rule ${want}`);
     }
   }
   // ★ $E821 sets $E820 to 2 and $DF13 takes one off in the same pass
-  if (moving && post(0xE820) === 1) { count(cov, 'plošina: veze Jima'); }
+  if (moving && post(0xE820) === 1) { count(cov, 'lift: carries Jim'); }
   return bad;
 }
 
@@ -307,7 +311,7 @@ function instrument(logic, cov) {
     if (!pending) { return; }
     const {kind, j, e} = pending;
     pending = null;
-    const inside = ENVELOPE[kind === 'pirát' ? 'pirate' : 'creature'](j, e);
+    const inside = ENVELOPE[kind === 'pirate' ? 'pirate' : 'creature'](j, e);
     const key = `${kind}${e.w ? ` ${e.w}×${e.h}` : ''}`;
     const t = cov.touch[key] = cov.touch[key] || {kills: 0, misses: 0, wrong: 0, d4: [99, -99], db: [99, -99], near: 0};
     const d4 = (4*j.c+j.e)-(4*e.c+e.e), db = j.b-e.b;
@@ -321,7 +325,7 @@ function instrument(logic, cov) {
     }
     if (inside !== killed) {
       t.wrong++;
-      if (t.wrong === 1) { console.log(`  obálka ${key}: Jim ${JSON.stringify(j)}, ${JSON.stringify(e)}, smrt ${killed}`); }
+      if (t.wrong === 1) { console.log(`  envelope ${key}: Jim ${JSON.stringify(j)}, ${JSON.stringify(e)}, death ${killed}`); }
     }
   };
   const remember = logic.remember.bind(logic);
@@ -330,7 +334,7 @@ function instrument(logic, cov) {
     if (!testing) { return; }
     settle(false);
     const e = {c: m[ix], b: m[ix+1], e: m[ix+2]};
-    if (testing === 'tvor') { e.w = m[ix+7]; e.h = m[ix+8]; }
+    if (testing === 'creature') { e.w = m[ix+7]; e.h = m[ix+8]; }
     pending = {kind: testing, j: {c: m[0xF231], b: m[0xF232], e: m[0xF233]}, e};
   };
   const wrap = (name, kind) => {
@@ -345,19 +349,19 @@ function instrument(logic, cov) {
       }
     };
   };
-  wrap('pirates', 'pirát');
-  wrap('creature', 'tvor');
+  wrap('pirates', 'pirate');
+  wrap('creature', 'creature');
   const death = logic.death.bind(logic);
   logic.death = () => {
-    const cause = {1: 'tvor', 2: 'pirát', 3: 'úlomek'}[m[0xFFFE]];
+    const cause = {1: 'creature', 2: 'pirate', 3: 'splinter'}[m[0xFFFE]];
     if (testing && pending) {
       settle(true);
-    } else if (cause === 'úlomek') {
+    } else if (cause === 'splinter') {
       // ★ $E448: the splinter on Jim's cell or one to his left / below
       const j = {c: m[0xF231], b: m[0xF232]};
       const hit = [0, 1, 2, 3, 4].map((k) => 0xF2DB+6*k)
         .filter((ix) => m[ix] && ((j.b-m[ix+1]) & 0xFF) < 2 && ((j.c-m[ix]) & 0xFF) < 2);
-      count(cov, hit.length ? 'smrt: úlomek (v obálce)' : 'smrt: úlomek MIMO OBÁLKU');
+      count(cov, hit.length ? 'death: splinter (inside the envelope)' : 'death: splinter OUTSIDE THE ENVELOPE');
     }
     return death();
   };
@@ -371,7 +375,7 @@ function instrument(logic, cov) {
     rands = 0;
     const result = timer();
     if (rands && !m[0xF31C]) {
-      count(cov, rands === 1 ? 'tvor: nevypuštěn – zavřené dveře na palubě' : 'tvor: nevypuštěn – paluba není celá');
+      count(cov, rands === 1 ? 'creature: not released – a closed door on the deck' : 'creature: not released – the deck is not whole');
     }
     return result;
   };
@@ -390,7 +394,7 @@ function runScript(dir, cov, verbose) {
     try {
       outcome = logic.pass(inputs[i]);
     } catch (error) {
-      console.log(`  průchod ${i}: ${error.message}`);
+      console.log(`  pass ${i}: ${error.message}`);
       if (verbose) { console.log(error.stack); }
       return {checks, diffs: 1, passes: i};
     }
@@ -400,7 +404,7 @@ function runScript(dir, cov, verbose) {
     const theirs = entities(post);
     checks++;
     if (mine.length !== theirs.length || mine.some((e, k) => e.kind !== theirs[k].kind || e.at !== theirs[k].at)) {
-      console.log(`  průchod ${i}: tabulka entit remaku ${mine.map((e) => e.kind)}, originálu ${theirs.map((e) => e.kind)}`);
+      console.log(`  pass ${i}: the remake's entity table ${mine.map((e) => e.kind)}, the original's ${theirs.map((e) => e.kind)}`);
       return {checks, diffs: 1, passes: i};
     }
     for (let k = 0; k < mine.length; k++) {
@@ -408,15 +412,15 @@ function runScript(dir, cov, verbose) {
       for (let n = 0; n < a.size; n++) {
         checks++;
         if (a.bytes[n] !== b.bytes[n]) {
-          console.log(`  průchod ${i} (${outcome}): ${a.kind} ${hex(a.at)} +${n}: remake ${hex(a.bytes[n], 2)}, originál ${hex(b.bytes[n], 2)}`);
+          console.log(`  pass ${i} (${outcome}): ${a.kind} ${hex(a.at)} +${n}: remake ${hex(a.bytes[n], 2)}, original ${hex(b.bytes[n], 2)}`);
           return {checks, diffs: 1, passes: i};
         }
       }
       for (const addr of boxBytes(a.box)) {
         checks++;
         if (memory[addr] !== post(addr)) {
-          console.log(`  průchod ${i} (${outcome}): ${a.kind} ${hex(a.at)} na obrazovce ${hex(addr)}: `
-                      +`remake ${hex(memory[addr], 2)}, originál ${hex(post(addr), 2)}`);
+          console.log(`  pass ${i} (${outcome}): ${a.kind} ${hex(a.at)} on the screen ${hex(addr)}: `
+                      +`remake ${hex(memory[addr], 2)}, original ${hex(post(addr), 2)}`);
           return {checks, diffs: 1, passes: i};
         }
       }
@@ -426,7 +430,7 @@ function runScript(dir, cov, verbose) {
     if (outcome !== 'pass' || pre(0x5BD3) !== post(0x5BD3) || pre(0x5BDE) !== post(0x5BDE)) {
       continue;
     }
-    const where = `průchod ${i}`;
+    const where = `pass ${i}`;
     let bad = 0;
     if (pre(0xF334) !== 0) { bad += checkPirates(pre, post, cov, where, verbose); }
     bad += checkCreature(pre, post, cov, where, verbose);
@@ -435,8 +439,8 @@ function runScript(dir, cov, verbose) {
     if (bad) {
       return {checks, diffs: bad, passes: i};
     }
-    if (!pre(0xE479) && post(0xE479)) { count(cov, 'výbuch'); }
-    if (!pre(0xF2DB) && post(0xF2DB)) { count(cov, 'úlomky vyletěly'); }
+    if (!pre(0xE479) && post(0xE479)) { count(cov, 'explosion'); }
+    if (!pre(0xF2DB) && post(0xF2DB)) { count(cov, 'splinters flew'); }
   }
   return {checks, diffs: 0, passes: inputs.length};
 }
@@ -450,7 +454,7 @@ function main() {
   let checks = 0, diffs = 0, total = 0;
   for (const base of bases) {
     if (!fs.existsSync(base)) {
-      console.log(`${path.relative(ROOT, base)}/ chybí`);
+      console.log(`${path.relative(ROOT, base)}/ is missing`);
       process.exit(2);
     }
     const scripts = args.includes('--script') ? [args[args.indexOf('--script')+1]]
@@ -458,27 +462,27 @@ function main() {
     for (const name of scripts) {
       if (!fs.existsSync(path.join(base, name, 'inputs.json'))) { continue; }
       const r = runScript(path.join(base, name), cov, verbose);
-      console.log(`${path.basename(base)}/${name.padEnd(10)} ${String(r.passes).padStart(6)} průchodů, ${r.checks} kontrol, ${r.diffs} rozdílů`);
+      console.log(`${path.basename(base)}/${name.padEnd(10)} ${String(r.passes).padStart(6)} passes, ${r.checks} checks, ${r.diffs} differences`);
       checks += r.checks;
       diffs += r.diffs;
       total += r.passes;
       if (r.diffs) { break; }
     }
   }
-  console.log('\npokrytí:');
+  console.log('\ncoverage:');
   for (const key of Object.keys(cov.counts).sort()) {
     console.log(`  ${key.padEnd(46)} ${cov.counts[key]}`);
   }
-  console.log(`  podpalubí s piráty: ${[...cov.pirateHolds].sort((a, b) => a-b).join(' ')}`);
-  console.log(`  podpalubí s plošinami: ${[...cov.liftHolds].sort((a, b) => a-b).join(' ')}`);
-  console.log(`  paluby tvora (B): ${[...cov.creatureDecks].sort((a, b) => a-b).join(' ')}`);
-  console.log('\ndotyk (d4 = Jim − nepřítel v jemných polohách, 4C + E; dB = Jim − nepřítel v řádcích):');
+  console.log(`  holds with pirates: ${[...cov.pirateHolds].sort((a, b) => a-b).join(' ')}`);
+  console.log(`  holds with lifts: ${[...cov.liftHolds].sort((a, b) => a-b).join(' ')}`);
+  console.log(`  the creature's decks (B): ${[...cov.creatureDecks].sort((a, b) => a-b).join(' ')}`);
+  console.log('\ntouch (d4 = Jim − enemy in fine positions, 4C + E; dB = Jim − enemy in rows):');
   for (const [key, t] of Object.entries(cov.touch)) {
     if (t.wrong) { diffs += t.wrong; }
-    console.log(`  ${key.padEnd(14)} smrtí ${t.kills} (d4 ${t.d4[0]}…${t.d4[1]}, dB ${t.db[0]}…${t.db[1]}), `
-                +`bez smrti ${t.misses} (z toho blízko ${t.near}), mimo obálku ${t.wrong}`);
+    console.log(`  ${key.padEnd(14)} deaths ${t.kills} (d4 ${t.d4[0]}…${t.d4[1]}, dB ${t.db[0]}…${t.db[1]}), `
+                +`no death ${t.misses} (${t.near} of them close), outside the envelope ${t.wrong}`);
   }
-  console.log(`\ncelkem ${total} průchodů, ${checks} kontrol, **${diffs} rozdílů**`);
+  console.log(`\ntotal ${total} passes, ${checks} checks, **${diffs} differences**`);
   process.exit(diffs ? 1 : 0);
 }
 

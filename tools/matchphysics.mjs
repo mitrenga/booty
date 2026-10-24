@@ -1,23 +1,24 @@
 #!/usr/bin/env node
 /**
- * Přehraje záznam originálu průchod po průchodu proti `app/bootyLogic.js`.
+ * Replays a recording of the original pass by pass against `app/bootyLogic.js`.
  *
  *   ./tools/matchphysics.mjs [--script walk] [--all] [--verbose] [--base build/rules]
  *
- * Záznam dělá `tools/tracephysics.py` (`build/trace/<skript>/`), nebo
- * z nahrávky RZX `tools/tracerules.py` (`--base build/rules`): paměť
- * originálu na začátku prvního průchodu (`init.bin`), vstupy každého
- * průchodu (klávesa z `KEY-SCAN`, `FRAMES` časovače) a oblasti paměti po
- * každém průchodu (`passes.xor.gz`, `regions.json`).
+ * The recording is made by `tools/tracephysics.py` (`build/trace/<script>/`),
+ * or from an RZX recording by `tools/tracerules.py` (`--base build/rules`):
+ * the original's memory at the start of the first pass (`init.bin`), the
+ * inputs of every pass (the key from `KEY-SCAN`, the timer's `FRAMES`) and
+ * the memory regions after every pass (`passes.xor.gz`, `regions.json`).
  *
- * Remake začne **z téže paměti** a s týmiž vstupy udělá týž počet průchodů
- * **skutečným kódem, který jde do prohlížeče** (`BootyLogic.pass`). Po
- * každém se porovnají všechny oblasti – obrazovka, proměnné hry, systémové
- * proměnné tisku, buffery, pracovní oblast podpalubí, objekty – bajt po
- * bajtu. Jim je v nich celý (`$F231`, 20 B), a s ním všechno, co ho ovlivňuje.
+ * The remake starts **from the same memory** and with the same inputs makes
+ * the same number of passes with **the real code that goes into the browser**
+ * (`BootyLogic.pass`). After each one all regions are compared – the screen,
+ * game variables, the print system variables, buffers, the hold's work area,
+ * objects – byte by byte. Jim is in them whole (`$F231`, 20 B), and with him
+ * everything that affects him.
  *
- * U prvního rozdílu nástroj vypíše průchod, oblast, adresu a obě hodnoty
- * a skončí – další průchody by už začínaly z jiné paměti.
+ * At the first difference the tool prints the pass, the region, the address
+ * and both values and stops – further passes would start from different memory.
  */
 import fs from 'node:fs';
 import path from 'node:path';
@@ -48,13 +49,13 @@ function runScript(dir, verbose) {
     try {
       outcome = logic.pass(inputs[i]);
     } catch (error) {
-      console.log(`  průchod ${i}: ${error.message}`);
+      console.log(`  pass ${i}: ${error.message}`);
       if (verbose) { console.log(error.stack); }
       return {checks, diffs: 1, passes: i};
     }
     // ★ the end of the game must come where the original's came
     if ((outcome === 'gameover') !== (outcomes[i] === 'gameover')) {
-      console.log(`  průchod ${i}: remake ${outcome}, originál ${outcomes[i]}`);
+      console.log(`  pass ${i}: remake ${outcome}, original ${outcomes[i]}`);
       return {checks, diffs: 1, passes: i};
     }
     checks++;
@@ -65,8 +66,8 @@ function runScript(dir, verbose) {
         if (memory[a] !== passes[at]) {
           let count = 0;
           for (let b = a, k = at; b < hi; b++, k++) { if (memory[b] !== passes[k]) { count++; } }
-          console.log(`  průchod ${i} (${outcome}), ${name}: ${hex(a)} remake ${hex(memory[a], 2)}, originál ${hex(passes[at], 2)}`
-                      + ` – v oblasti ${count} rozdílů; vstupy ${JSON.stringify(inputs[i])}`);
+          console.log(`  pass ${i} (${outcome}), ${name}: ${hex(a)} remake ${hex(memory[a], 2)}, original ${hex(passes[at], 2)}`
+                      + ` – ${count} differences in the region; inputs ${JSON.stringify(inputs[i])}`);
           return {checks, diffs: count, passes: i};
         }
       }
@@ -88,12 +89,12 @@ function main() {
   let checks = 0, diffs = 0, total = 0;
   for (const name of scripts) {
     const r = runScript(path.join(base, name), verbose);
-    console.log(`${name.padEnd(12)} ${String(r.passes).padStart(5)} průchodů, ${r.checks} kontrol, ${r.diffs} rozdílů`);
+    console.log(`${name.padEnd(12)} ${String(r.passes).padStart(5)} passes, ${r.checks} checks, ${r.diffs} differences`);
     checks += r.checks;
     diffs += r.diffs;
     total += r.passes;
   }
-  console.log(`celkem ${total} průchodů, ${checks} kontrol, **${diffs} rozdílů**`);
+  console.log(`total ${total} passes, ${checks} checks, **${diffs} differences**`);
   process.exit(diffs ? 1 : 0);
 }
 

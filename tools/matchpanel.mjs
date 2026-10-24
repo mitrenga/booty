@@ -1,18 +1,18 @@
 #!/usr/bin/env node
 /**
- * Porovná panel, jak ho vytiskne remake, s tím, jak ho vytiskne originál.
+ * Compares the panel as the remake prints it with how the original prints it.
  *
  *   ./tools/matchpanel.mjs [--verbose]
  *
- * Remake: `app/holdRenderer.js` nakreslí podpalubí a `app/panelRenderer.js`
- * nad `data/global.json#panel` vytiskne panel. Originál: `$A900`, zbytek `$E0A9`
- * a úsek hlavní smyčky, který tiskne číslo klíče, v simulátoru Z80
- * (`tools/tracepanel.py`, `build/ref/panel/`).
+ * The remake: `app/holdRenderer.js` draws the hold and `app/panelRenderer.js`
+ * over `data/global.json#panel` prints the panel. The original: `$A900`, the
+ * rest of `$E0A9` and the stretch of the main loop that prints the key
+ * number, in a Z80 simulator (`tools/tracepanel.py`, `build/ref/panel/`).
  *
- * Všech 21 podpalubí (papír panelu je border podpalubí, takže se liší)
- * × šest stavů: životy 0–4, sebraná a zbývající kořist od začátku po
- * nulu – a s nulou text `FIND THE GOLD KEY IN    SECONDS!` na řádku 22 –,
- * čísla klíče 0–9. Porovnává se celá videopaměť.
+ * All 21 holds (the panel's paper is the hold's border, so it differs)
+ * × six states: lives 0–4, collected and remaining booty from the start down
+ * to zero – and with zero the text `FIND THE GOLD KEY IN    SECONDS!` on row
+ * 22 –, key numbers 0–9. The whole video RAM is compared.
  */
 import fs from 'node:fs';
 import path from 'node:path';
@@ -26,7 +26,7 @@ const REF = path.join(ROOT, 'build/ref/panel');
 async function main() {
   const verbose = process.argv.includes('--verbose');
   if (!fs.existsSync(path.join(REF, 'cases.json'))) {
-    console.error(`chybí ${REF} – spusť ./tools/tracepanel.py`);
+    console.error(`${REF} is missing – run ./tools/tracepanel.py`);
     process.exit(2);
   }
   global.atob = (data) => Buffer.from(data, 'base64').toString('binary');
@@ -54,11 +54,11 @@ async function main() {
     checks += 6912;
     diffs += d;
     if (d && verbose) {
-      console.log(`  podpalubí ${c.hold} životy ${c.lives} kořist ${c.booty}/${c.treasure} klíč ${c.key}: ${d} rozdílů`);
+      console.log(`  hold ${c.hold} lives ${c.lives} booty ${c.booty}/${c.treasure} key ${c.key}: ${d} differences`);
     }
   });
-  console.log(`${cases.length} případů (21 podpalubí × ${cases.length/21} stavů)`);
-  console.log(`celkem ${checks} kontrol, **${diffs} rozdílů**`);
+  console.log(`${cases.length} cases (21 holds × ${cases.length/21} states)`);
+  console.log(`total ${checks} checks, **${diffs} differences**`);
   process.exit(diffs ? 1 : 0);
 }
 

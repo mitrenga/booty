@@ -1,14 +1,14 @@
 /**
- * `app/gameWorker.js` bez prohlížeče – pro `runworker.mjs` a `matchrules.mjs`.
+ * `app/gameWorker.js` without a browser – for `runworker.mjs` and `matchrules.mjs`.
  *
- * Worker běží v atrapě prostředí workeru (`node:vm`): `postMessage`,
- * `setTimeout` a `Date` s hodinami, které posouvá nástroj, a
- * `importScripts`, které `bootyLogic.js` načte doopravdy. Data dostane
- * táž, která mu dává model: `data/global.json#memory`, ROM font ze svision,
+ * The worker runs in a mock worker environment (`node:vm`): `postMessage`,
+ * `setTimeout` and `Date` with a clock the tool moves, and `importScripts`
+ * that loads `bootyLogic.js` for real. It gets the same data the model gives
+ * it: `data/global.json#memory`, the ROM font from svision,
  * `data/global.json#transition`.
  *
- * Globální proměnné workeru (`state`, `logic`, `TICK_MS`,
- * `ENTER_LOCK_FRAMES` …) jsou vidět jako vlastnosti `context`.
+ * The worker's globals (`state`, `logic`, `TICK_MS`, `ENTER_LOCK_FRAMES` …)
+ * are visible as properties of `context`.
  */
 import fs from 'node:fs';
 import path from 'node:path';

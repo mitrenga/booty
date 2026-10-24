@@ -1,112 +1,113 @@
 # tools/
 
-Nástroje remaku. Platí pro ně `../../STANDARDS.md` a metodika
-`dump*` → `trace*` → `match*` z `../../METHODOLOGY.md`:
+The remake's tools. `../../STANDARDS.md` applies to them, as does the
+`dump*` → `trace*` → `match*` methodology from `../../METHODOLOGY.md`:
 
-- **`dump*` / `mk*`** vytáhnou z originálu data a uloží je do `../data/`
-- **`trace*`** nahrají z běžícího originálu záznam, proti kterému se měří
-- **`match*`** porovnají remake s originálem a **vypíšou počet kontrol
-  a počet rozdílů**. Milník je hotový, když je rozdílů nula.
+- **`dump*` / `mk*`** pull data out of the original and store it in `../data/`
+- **`trace*`** record the running original — the recording is what we measure against
+- **`match*`** compare the remake with the original and **print the number of
+  checks and the number of differences**. A milestone is done when the
+  differences are zero.
 
-Python nástroje potřebují **SkoolKit** vendorovaný ve svision (R-008), přes
-symlink `app/svision` (`bootylib.SKOOLKIT`). Node nástroje (`*.mjs`) staví
-**skutečným kódem z `../app/`**, načteným přes shim
+The Python tools need **SkoolKit** vendored in svision (R-008), via the
+`app/svision` symlink (`bootylib.SKOOLKIT`). The Node tools (`*.mjs`) build
+**with the real code from `../app/`**, loaded through the shim
 `app/svision/tools/nodeEnv.mjs` (R-001).
 
-## Kazeta a obraz paměti
+## Tape and memory image
 
-| nástroj | co dělá |
+| tool | what it does |
 |---|---|
-| `bootylib.py` | **jediné místo, kde je napsané, co je na kazetě** a jak se z ní skládá obraz paměti: TZX s bloky ID $10 i $11, `memory_image()` (včetně 62 B na `$CD14`), `code_image()`. |
-| `tapinfo.py` | rozebere kazetu blok po bloku; `--basic` vypíše oba programy v BASICu **i se skutečnými binárními hodnotami čísel**. Výstup je v `../sources/docs/tape_layout.md`. |
-| `mksnapshot.sh` | kazeta → `build/booty.z80` + `build/booty.bin`, simulované nahrání až do `USR 52500` (`$CD14`). |
-| `matchimage.py` | ★ **38 726 kontrol, 0 rozdílů** — obraz paměti z `bootylib.py` proti paměti simulátoru. |
-| `traceloading.py` | totéž simulované nahrání, ale **snímek po snímku**: kdykoli se obraz změní, uloží ho (`build/loading/`) a vypíše text, který na něm je (buňky porovnané se znaky ROM na `$3D00`), s atributem a varováním, když je inkoust = papír. Odtud jsou nápisy LOAD TAPE (`Program: BOOTY` viditelně, `Bytes: bs` / `Bytes: bc` neviditelně). `--fast` jen mezi bloky. |
-| `mktape.py` | kazeta → `data/global.json#tape`: osm bloků s časováním (u turbo bloků z TZX, **497 pulzů pilotu**), pauzami a bajty, jak jdou po pásce; z bloku kódu jen první kilobajt. |
+| `bootylib.py` | **the one place that says what is on the tape** and how the memory image is assembled from it: TZX with ID $10 and $11 blocks, `memory_image()` (including the 62 B at `$CD14`), `code_image()`. |
+| `tapinfo.py` | takes the tape apart block by block; `--basic` lists both BASIC programs **with the actual binary values of the numbers**. The output is in `../sources/docs/tape_layout.md`. |
+| `mksnapshot.sh` | tape → `build/booty.z80` + `build/booty.bin`, simulated loading up to `USR 52500` (`$CD14`). |
+| `matchimage.py` | ★ **38 726 checks, 0 differences** — the memory image from `bootylib.py` against the simulator's memory. |
+| `traceloading.py` | the same simulated loading, but **frame by frame**: whenever the picture changes it saves it (`build/loading/`) and prints the text on it (cells compared with the ROM characters at `$3D00`), with the attribute and a warning when ink = paper. This is where the LOAD TAPE captions come from (`Program: BOOTY` visibly, `Bytes: bs` / `Bytes: bc` invisibly). `--fast` only between blocks. |
+| `mktape.py` | tape → `data/global.json#tape`: eight blocks with timing (for the turbo blocks from the TZX, **497 pilot pulses**), pauses and bytes as they come off the tape; of the code block only the first kilobyte. |
 
-## Obrazovka
+## Screen
 
-| nástroj | co dělá |
+| tool | what it does |
 |---|---|
-| `matchloading.py` | ★ **112 128 kontrol, 0 rozdílů** — SCREEN$ z kazety proti `sources/media/screens/loading_screen.scr` (bajty), proti `data/global.json#loading` (bajty) a proti obrazovce simulátoru **po pixelech** v obou fázích FLASH. |
-| `mkscreen.py` | `.scr` → `data/global.json#loading` (videopaměť tak, jak ji drží stroj). |
-| `playtrace.py` | spustí hru v simulátoru, odsimuluje stisky kláves, uloží snímky (`.png` + `.scr`), volitelně mapu pokrytí kódu (`--map`) a celou RAM (`--dump`). |
-| `mkhold.py` | z běhu originálu (titulka → `SPACE` → menu → `0`): **reference** herní obrazovky většinovým hlasem přes 431 snímků (`build/ref/screen.scr`) a snímek menu originálu (`build/ref/menu.scr`) |
-| `matchscreen.mjs` | ★ **16 128 kontrol, 0 rozdílů** — herní obrazovka **složená z dat** (podpalubí, panel, Jim), hlavička menu remaku a **celé menu originálu z proudů** proti videopaměti originálu. |
+| `matchloading.py` | ★ **112 128 checks, 0 differences** — the SCREEN$ from the tape against `sources/media/screens/loading_screen.scr` (bytes), against `data/global.json#loading` (bytes) and against the simulator's screen **pixel by pixel** in both FLASH phases. |
+| `mkscreen.py` | `.scr` → `data/global.json#loading` (the video memory as the machine holds it). |
+| `playtrace.py` | runs the game in the simulator, simulates key presses, saves frames (`.png` + `.scr`), optionally a code coverage map (`--map`) and the whole RAM (`--dump`). |
+| `mkhold.py` | from a run of the original (title → `SPACE` → menu → `0`): the **reference** game screen by majority vote over 431 frames (`build/ref/screen.scr`) and a frame of the original's menu (`build/ref/menu.scr`) |
+| `matchscreen.mjs` | ★ **16 128 checks, 0 differences** — the game screen **composed from data** (hold, panel, Jim), the remake's menu heading and **the original's whole menu from the streams** against the original's video memory. |
 
-## Podpalubí, sprity, panel (M2)
+## Holds, sprites, panel (M2)
 
-| nástroj | co dělá |
+| tool | what it does |
 |---|---|
-| `dumpholds.py` | tabulky 21 podpalubí (`bootylib.holds()`) a glyfy kulisy → `data/global.json#holds`; zpětné složení musí dát bajty z kazety |
-| `traceholds.py` | **kód originálu** (`$AA97`, `$AB44`, `$A900`) v simulátoru nakreslí každé podpalubí ze stavu hry na `$E0A9` → `build/ref/holds/` (obraz, mapa znaků, border) |
-| `matchholds.mjs` | ★ **161 973 kontrol, 0 rozdílů** — `app/holdRenderer.js` proti referenci |
-| `dumpsprites.py` | grafika osmi sad spritů a bloků z paměti běžící hry → `data/global.json#sprites` |
-| `tracesprites.py` | **rutiny originálu** `$EED7` (sprite) a `$EA93` (blok) nakreslí všechno, co se jimi kreslí: 3416 případů, 16 jemných poloh, oba okraje → `build/ref/sprites/` |
-| `matchsprites.mjs` | ★ **23 611 392 kontrol, 0 rozdílů** — `app/spriteRenderer.js` proti referenci |
-| `dumppanel.py` | panel z operandů kódu (s kontrolou instrukcí na adresách) → `data/global.json#panel` |
-| `tracepanel.py` | **kód originálu** (`$E0AC`… a úsek hlavní smyčky `$DF5B`) vytiskne panel ve 21 podpalubích × 6 stavech → `build/ref/panel/` |
-| `matchpanel.mjs` | ★ **870 912 kontrol, 0 rozdílů** — `app/panelRenderer.js` proti referenci |
-| `dumptexts.py` | proudy pro ROM tisk (menu, `DEFINE KEYS`, skrytá hra …) → `data/global.json#texts` |
-| `mkglobal.py` | výchozí stav hry z běhu originálu (snímek 399) → `data/global.json#global` |
+| `dumpholds.py` | the tables of the 21 holds (`bootylib.holds()`) and the scenery glyphs → `data/global.json#holds`; reassembling them must give the bytes from the tape |
+| `traceholds.py` | **the original's code** (`$AA97`, `$AB44`, `$A900`) in the simulator draws every hold from the game state at `$E0A9` → `build/ref/holds/` (picture, character map, border) |
+| `matchholds.mjs` | ★ **161 973 checks, 0 differences** — `app/holdRenderer.js` against the reference |
+| `dumpsprites.py` | the graphics of the eight sprite and block sets from the running game's memory → `data/global.json#sprites` |
+| `tracesprites.py` | **the original's routines** `$EED7` (sprite) and `$EA93` (block) draw everything they ever draw: 3416 cases, 16 fine positions, both edges → `build/ref/sprites/` |
+| `matchsprites.mjs` | ★ **23 611 392 checks, 0 differences** — `app/spriteRenderer.js` against the reference |
+| `dumppanel.py` | the panel from the code's operands (checking the instructions at the addresses) → `data/global.json#panel` |
+| `tracepanel.py` | **the original's code** (`$E0AC`… and the main-loop section `$DF5B`) prints the panel in 21 holds × 6 states → `build/ref/panel/` |
+| `matchpanel.mjs` | ★ **870 912 checks, 0 differences** — `app/panelRenderer.js` against the reference |
+| `dumptexts.py` | the streams for ROM printing (menu, `DEFINE KEYS`, the hidden game …) → `data/global.json#texts` |
+| `mkglobal.py` | the initial game state from a run of the original (frame 399) → `data/global.json#global` |
 
-## Hlavní smyčka (M3)
+## Main loop (M3)
 
-| nástroj | co dělá |
+| tool | what it does |
 |---|---|
-| `tracephysics.py` | záznamy originálu: hra se hraje podle skriptu (ručního, náhodného se semínkem, do každého podpalubí, cílené: zlatý klíč, moře, konec hry) a na začátku každého průchodu `$DF13` se uloží paměť v oblastech a vstupy průchodu (klávesa z `KEY-SCAN`, `FRAMES` časovače, T-stavy). Vstupy se chytají odbočkou v simulátoru → `build/trace/<skript>/` |
-| `matchphysics.mjs` | ★ **425 540 průchodů, 0 rozdílů** – `app/bootyLogic.js` z téže paměti s týmiž vstupy, po každém průchodu celé oblasti paměti; `--base build/rules` totéž nad partiemi z RZX (183 890 / 0) |
-| `physicscoverage.py` | co záznamy pokryly: podpalubí, přechody, smrti, klíče, dveře, kořist, výbuchy, tvorové, pády, plošiny, zlatý klíč, konec hry |
-| `measurecadence.py` | průměrná délka průchodu originálu bez melodie (konstantní tempo remaku) – ověří, že sedí s `PASS_TSTATES` v `app/gameWorker.js` |
-| `tracetransition.py` | ★ přechod dveřmi do podpalubí 1–20 v simulátoru se spornou pamětí, bez melodie: T-stavy zastávek `$EE84` … `$DF13`, obrazovka na konci každého snímku, průběh mazání ROM CL-LINE bez přerušení → `build/transition/`; `--shots DIR` PNG snímků |
-| `mktransition.mjs` | z `build/transition/` modely časů (tabulky, černo) a bloky mazání → `data/global.json#transition` |
-| `matchtransition.mjs` | ★ **197 snímků, 0 rozdílů** — ke každému snímku přechodu originálu remake (`BootyLogic.transitionScreen`) ukáže tentýž obraz, nejvýš 0,045 snímku vedle |
-| `mkmemory.py` | datové oblasti paměti originálu při startu hry (ověřené proti kódu v `booty.ctl`) → `data/global.json#memory` |
-| `matchstart.mjs` | ★ nová hra z `data/global.json#memory` = originál na začátku, a 8 záznamů z ní – **0 rozdílů** |
+| `tracephysics.py` | recordings of the original: the game is played by a script (manual, seeded random, into every hold, targeted: golden key, sea, game over) and at the start of every pass of `$DF13` the memory regions and the pass's inputs are saved (key from `KEY-SCAN`, the `FRAMES` timers, T-states). The inputs are caught by a detour in the simulator → `build/trace/<script>/` |
+| `matchphysics.mjs` | ★ **425 540 passes, 0 differences** – `app/bootyLogic.js` from the same memory with the same inputs, whole memory regions after every pass; `--base build/rules` the same over the games from RZX (183 890 / 0) |
+| `physicscoverage.py` | what the recordings covered: holds, transitions, deaths, keys, doors, booty, explosions, creatures, falls, platforms, golden key, game over |
+| `measurecadence.py` | the average pass length of the original without the tune (the remake's constant rate) – checks that it agrees with `PASS_TSTATES` in `app/gameWorker.js` |
+| `tracetransition.py` | ★ the door transition into holds 1–20 in the simulator with contended memory, without the tune: T-states of the stops `$EE84` … `$DF13`, the screen at the end of every frame, the progress of the ROM CL-LINE clearing without interrupts → `build/transition/`; `--shots DIR` PNG frames |
+| `mktransition.mjs` | from `build/transition/` the timing models (tables, blackout) and the clearing blocks → `data/global.json#transition` |
+| `matchtransition.mjs` | ★ **197 frames, 0 differences** — for every frame of the original's transition the remake (`BootyLogic.transitionScreen`) shows the same picture, at most 0.045 frame off |
+| `mkmemory.py` | the data regions of the original's memory at game start (checked against the code in `booty.ctl`) → `data/global.json#memory` |
+| `matchstart.mjs` | ★ a new game from `data/global.json#memory` = the original at its start, and 8 recordings from it – **0 differences** |
 
-## Pravidla lodi (M4)
+## Ship rules (M4)
 
-| nástroj | co dělá |
+| tool | what it does |
 |---|---|
-| `tracerules.py` | nahrávky RZX z RZX Archive (`build/rzx/`, `sources/docs/provenance.md`) – **celé partie, které hrál člověk** – přehraje SkoolKitem a vstupy průchodů chytá **pozorováním** (`$ED38` klávesa, `$E122`/`$E136` `FRAMES`), bez zásahu do kódu, který by posunul snímky RZX → `build/rules/<jméno>/` ve tvaru `tracephysics.py` |
-| `matchrules.mjs` | ★ **204 043 průchodů, 2 766 278 726 kontrol, 0 rozdílů** — **worker** (`app/gameWorker.js`, jak běží v prohlížeči) od nové hry: klávesy jako akce přes `controls`, tiky, přechody, konec hry; po každém průchodu celá paměť a zpráva `frame`. Podstrkuje se jen `FRAMES` časovače (tempo je odchylka). Partie `gold1`, `gold2` (zlatý klíč, další kolo) a `walk`, `gameover`, `lastlife` z `tracephysics.py`; vypíše, co se v partii stalo (kořist, výbuchy, klíče, dveře, smrti, hrany lodi) |
-| `workersandbox.mjs` | atrapa prostředí workeru (`node:vm`, hodiny, `importScripts`) a data z `data/` pro `runworker.mjs` a `matchrules.mjs` |
+| `tracerules.py` | RZX recordings from the RZX Archive (`build/rzx/`, `sources/docs/provenance.md`) – **whole games played by a human** – replayed with SkoolKit, catching the passes' inputs **by observation** (`$ED38` key, `$E122`/`$E136` `FRAMES`), without touching the code, which would shift the RZX frames → `build/rules/<name>/` in the shape of `tracephysics.py` |
+| `matchrules.mjs` | ★ **204 043 passes, 2 766 278 726 checks, 0 differences** — **the worker** (`app/gameWorker.js`, as it runs in the browser) from a new game: keys as actions via `controls`, ticks, transitions, game over; after every pass the whole memory and the `frame` message. Only the `FRAMES` timers are substituted (the rate is a deviation). The games `gold1`, `gold2` (golden key, next round) and `walk`, `gameover`, `lastlife` from `tracephysics.py`; prints what happened in the game (booty, explosions, keys, doors, deaths, ship edges) |
+| `workersandbox.mjs` | a stand-in for the worker's environment (`node:vm`, clocks, `importScripts`) and the data from `data/` for `runworker.mjs` and `matchrules.mjs` |
 
-## Nepřátelé (M5)
+## Enemies (M5)
 
-| nástroj | co dělá |
+| tool | what it does |
 |---|---|
-| `matchentities.mjs` | ★ **611 302 průchodů, 216 988 343 kontrol, 0 rozdílů** — nad `build/trace` i `build/rules`: **tabulka entit** (piráti `OPST`, tvor `$F31C`, plošiny `LIDAT`, okénka `PHDAT`, výbuch, úlomky, Jim) remaku = originálu po každém průchodu, bajty i obraz na obrazovce; **na datech originálu** pravidla z `sources/docs/enemies.md` (kroky, snímky a otočky pirátů s důvodem, let tvora, meze plošin); **kolizní obálky** piráta a tvora proti všem testům dotyku. Vypíše pokrytí (otočky podle důvodu, druhy a strany tvora, nevypuštění, smrti) |
+| `matchentities.mjs` | ★ **611 302 passes, 216 988 343 checks, 0 differences** — over `build/trace` and `build/rules`: the **entity table** (pirates `OPST`, creature `$F31C`, platforms `LIDAT`, hatches `PHDAT`, explosion, fragments, Jim) of the remake = the original's after every pass, bytes and picture on the screen alike; **on the original's data** the rules from `sources/docs/enemies.md` (pirates' steps, frames and turns with their reason, the creature's flight, platform limits); **collision envelopes** of the pirate and the creature against all touch tests. Prints the coverage (turns by reason, kinds and sides of the creature, non-releases, deaths) |
 
-Cílené záznamy pro M5 jsou v `tracephysics.py`: `creature*` (Jim čeká na
-palubě, kam tvor smí; semínka `$F343`) a `ladder*` (Jim leze po žebříku
-pod pirátem).
+The targeted recordings for M5 are in `tracephysics.py`: `creature*` (Jim waits
+on a deck the creature may enter; seeds `$F343`) and `ladder*` (Jim climbs a
+ladder under a pirate).
 
 ## Worker
 
-| nástroj | co dělá |
+| tool | what it does |
 |---|---|
-| `runworker.mjs` | ★ **35 kontrol, 0 chyb** — `app/gameWorker.js` bez prohlížeče s daty z `data/`: první obrazovka = obrazovka originálu, konstantní tempo průchodů, klávesy přes `KEY-SCAN`, semínko, **přechod dveřmi** (mazání, černo v délce originálu, border, čekající průchod, půl vteřiny bez vstupu), **hodiny s podstrčeným časem** (konstantní `setTimeout`, bez akumulátoru). |
-| `tracerand.py` | pustí generátor originálu `$E349` v simulátoru Z80 na skutečném kódu z kazety a vypíše čísla i stavy `$F343`. |
-| `matchrand.mjs` | ★ **196 608 kontrol, 0 rozdílů** — generátor workeru proti `$E349` na **celé periodě** 65 536 volání (číslo i stav). |
-| `tracegoldfish.py` | skrytá minihra v simulátoru Z80 přes POKE `52798,58`, bez kláves: paměť při vstupu do `$CF36` a oblasti po každém průchodu → `build/goldfish/`. |
-| `mkgoldfish.py` | → `data/global.json#goldfish`: datové oblasti minihry a tempo (medián průchodu). |
-| `matchgoldfish.mjs` | ★ **47 574 000 kontrol, 0 rozdílů** — `app/goldfishLogic.js` (SECRET SUB GAME) proti originálu, 2 × 3000 průchodů: bez kláves a s náhodnými klávesami potápěče (`tracegoldfish.py --keys 1`); i řádky 22–23 FISH/AIR. |
-| `tracesound.py` | zvuk originálu v simulátoru Z80: obsluha IM 2 `$FE69` po cestách (každý `OUT` na `$FE`, délka, paměť), ROM `BEEPER`, ROM `$0038`, a melodie na titulce obsluhu po obsluze → `build/sound/`. |
-| `mksounds.py` | → `data/global.json#sounds`: melodie `$FA00`, parametry slotů z operandů kódu, BEEPER, ROM pro šum, délka ROM `$0038`. |
-| `matchsound.mjs` | ★ **122 448 kontrol, 0 rozdílů** — `app/bootySound.js` proti originálu hranu po hraně v T-stavech, i kdy se přerušení ztratí. |
-| `tracetitle.py` | titulka originálu `$CD86` v simulátoru Z80 (sporná paměť): na každém vstupu do smyčky `$CDAF` videopaměť, stav `$D86F` a T-stav; běh s melodií a bez ní → `build/title/`. |
-| `mktitle.py` | → `data/global.json#title`: obrázek z kopie `$6978`, prahy moře z operandů `$D0AC`, semínko, border a tempo bez melodie. |
-| `matchtitle.mjs` | ★ **1 776 641 kontrol, 0 rozdílů** — moře `app/titleSea.js` proti originálu průchod po průchodu (celá videopaměť i `$D86F`). |
+| `runworker.mjs` | ★ **35 checks, 0 errors** — `app/gameWorker.js` without a browser with the data from `data/`: first screen = the original's screen, constant pass rate, keys via `KEY-SCAN`, seed, **door transition** (clearing, blackout as long as the original's, border, waiting pass, half a second without input), **clock with substituted time** (constant `setTimeout`, no accumulator). |
+| `tracerand.py` | runs the original's generator `$E349` in the Z80 simulator on the real code from the tape and prints the numbers and the states of `$F343`. |
+| `matchrand.mjs` | ★ **196 608 checks, 0 differences** — the worker's generator against `$E349` over **the whole period** of 65 536 calls (number and state). |
+| `tracegoldfish.py` | the hidden sub game in the Z80 simulator via POKE `52798,58`, without keys: the memory on entering `$CF36` and the regions after every pass → `build/goldfish/`. |
+| `mkgoldfish.py` | → `data/global.json#goldfish`: the sub game's data regions and rate (median pass). |
+| `matchgoldfish.mjs` | ★ **47 574 000 checks, 0 differences** — `app/goldfishLogic.js` (SECRET SUB GAME) against the original, 2 × 3000 passes: without keys and with random diver keys (`tracegoldfish.py --keys 1`); rows 22–23 FISH/AIR included. |
+| `tracesound.py` | the original's sound in the Z80 simulator: the IM 2 handler `$FE69` along its paths (every `OUT` to `$FE`, length, memory), ROM `BEEPER`, ROM `$0038`, and the tune on the title handler by handler → `build/sound/`. |
+| `mksounds.py` | → `data/global.json#sounds`: the tune `$FA00`, slot parameters from the code's operands, BEEPER, ROM for the noise, length of ROM `$0038`. |
+| `matchsound.mjs` | ★ **122 448 checks, 0 differences** — `app/bootySound.js` against the original edge by edge in T-states, including when an interrupt is lost. |
+| `tracetitle.py` | the original's title `$CD86` in the Z80 simulator (contended memory): on every entry to the loop `$CDAF` the video memory, the state `$D86F` and the T-state; a run with the tune and one without → `build/title/`. |
+| `mktitle.py` | → `data/global.json#title`: the picture from the copy at `$6978`, the sea thresholds from the operands of `$D0AC`, seed, border and rate without the tune. |
+| `matchtitle.mjs` | ★ **1 776 641 checks, 0 differences** — the sea of `app/titleSea.js` against the original pass by pass (whole video memory and `$D86F`). |
 
-## Disassembly a měření
+## Disassembly and measurements
 
-| nástroj | co dělá |
+| tool | what it does |
 |---|---|
-| `mkasm.py` | `bootylib.code_image()` → `../sources/asm/booty.skool` podle ručně udržovaného `booty.ctl`. První `.ctl` vyrobí `--ctl-from-map` z mapy pokrytí (`playtrace.py --map`) přes SkoolKit `sna2ctl.py`; pak už se jen ručně doplňuje. |
-| `tracecadence.py` | ★ změří délku průchodu hlavní smyčkou `$DF13` v T-stavech (zastaví se na každém vstupu); `--cmio` se spornou pamětí, `--csv` surová data. Výsledek je v `../sources/docs/disasm_notes.md` §4. |
+| `mkasm.py` | `bootylib.code_image()` → `../sources/asm/booty.skool` according to the hand-maintained `booty.ctl`. The first `.ctl` is made by `--ctl-from-map` from the coverage map (`playtrace.py --map`) via SkoolKit `sna2ctl.py`; after that it is only filled in by hand. |
+| `tracecadence.py` | ★ measures the length of a pass of the main loop `$DF13` in T-states (stops on every entry); `--cmio` with contended memory, `--csv` raw data. The result is in `../sources/docs/disasm_notes.md` §4. |
 
-## Co přibude
+## What is to come
 
 `tracesound.py` +
-`matchsound.mjs` (M6). **Žádný z nich nevznikne dřív, než bude co měřit.**
+`matchsound.mjs` (M6). **None of them is written before there is something to measure.**

@@ -1,54 +1,61 @@
 #!/usr/bin/env node
 /**
- * Celá partie originálu přehraná proti **workeru** – pravidla lodi (M4).
+ * A whole game of the original replayed against the **worker** – the rules of the ship (M4).
  *
  *   ./tools/matchrules.mjs [--name gold1] [--verbose] [--no-lock] [--base DIR]
  *
- * Záznam je celá hra, kterou hrál člověk: nahrávka RZX z RZX Archive
- * (Mousey sebere všech 125 kusů kořisti a najde zlatý klíč), přehraná
- * v simulátoru `tools/tracerules.py` → `build/rules/<jméno>/`: paměť
- * originálu na začátku hry a po každém průchodu, a vstupy průchodu.
+ * The recording is a whole game played by a human: an RZX recording from the
+ * RZX Archive (Mousey collects all 125 pieces of booty and finds the gold
+ * key), replayed in the simulator by `tools/tracerules.py` →
+ * `build/rules/<name>/`: the original's memory at the start of the game and
+ * after every pass, and the inputs of the pass.
  *
- * Proti `matchphysics.mjs` (který pouští samotný `BootyLogic.pass`) tu hraje
- * **worker tak, jak běží v prohlížeči** (`app/gameWorker.js` v atrapě
- * prostředí, `tools/workersandbox.mjs`):
+ * Unlike `matchphysics.mjs` (which runs `BootyLogic.pass` alone), here plays
+ * **the worker the way it runs in the browser** (`app/gameWorker.js` in a
+ * mock environment, `tools/workersandbox.mjs`):
  *
- * - **start**: `init` s daty modelu (`data/global.json#memory`, ROM font) a se
- *   semínkem = `$F343` originálu ve chvíli, kdy menu spouští hru; worker
- *   složí paměť a začne novou hru sám. Jediné, co se do jeho paměti
- *   zapíše, je **volba ovládání a kódy kláves** `$5BEA`–`$5BEF` ze
- *   záznamu (Mousey hraje na Interface 2: `6 7 9 8 0`), protože ovládání
- *   a předefinování kláves dělá v remaku model. Pak se porovnají všechny oblasti s originálem na
- *   začátku prvního průchodu
- * - **klávesy**: co vrátil `KEY-SCAN` originálu, se přeloží zpátky na akce
- *   (vlevo, vpravo, nahoru, dolů, ENTER ROOM) a pošle se workeru zprávou
- *   `controls`; průchod dostane, co z nich udělá worker (`heldKey`).
- *   Kontroluje se, že to je **tentýž kód**. `M` (hudba) a `P` (pauza)
- *   obsluhuje v remaku model – průchod je dostane jako „nic“
- * - **tiky**: worker se tiká zprávou `tick`, dokud průchod neproběhne –
- *   s konstantním tempem, s čekáním na přechod dveřmi, s koncem hry
- * - ★ **`FRAMES`**: originál běží 1,5–3,4 snímku na průchod, remake
- *   konstantně (`ZADANI.md` §10) a tiká po 30 ms – počet přerušení mezi
- *   průchody je **vědomá odchylka**. Hodnotu, kterou časovač tvorů
- *   (`$E12A`) v průchodu přečte, proto dodá záznam: zapíše se na `$5C78`
- *   těsně před průchodem. Nic jiného se nepodstrkuje
- * - ★ **ENTER ROOM po přechodu**: worker 25 přerušení po změně podpalubí
- *   klávesu vstupu nepředá (`ENTER_LOCK_FRAMES`, odchylka §10); originál
- *   ano. Worker hraje s ní, jak hraje v prohlížeči, a nástroj **vypíše,
- *   kolikrát v partii zasáhla** (pak by se partie rozešla); `--no-lock`
- *   ji vypne
+ * - **start**: `init` with the model's data (`data/global.json#memory`, ROM font)
+ *   and the seed = the original's `$F343` at the moment the menu starts the
+ *   game; the worker composes the memory and starts a new game itself. The
+ *   only thing written into its memory is **the choice of controls and the
+ *   key codes** `$5BEA`–`$5BEF` from the recording (Mousey plays on
+ *   Interface 2: `6 7 9 8 0`), because the controls and key redefinition are
+ *   the model's job in the remake. Then all regions are compared with the
+ *   original at the start of the first pass
+ * - **keys**: what the original's `KEY-SCAN` returned is translated back into
+ *   actions (left, right, up, down, ENTER ROOM) and sent to the worker in a
+ *   `controls` message; the pass gets what the worker makes of them
+ *   (`heldKey`). It is checked that it is **the same code**. `M` (music) and
+ *   `P` (pause) are the model's job in the remake – the pass gets them as
+ *   "nothing"
+ * - **ticks**: the worker is ticked with `tick` messages until the pass has
+ *   run – at a constant pace, with the wait for the door transition, with
+ *   the end of the game
+ * - ★ **`FRAMES`**: the original runs 1.5–3.4 frames a pass, the remake at a
+ *   constant pace (`ZADANI.md` §10) and ticks every 30 ms – the number of
+ *   interrupts between passes is a **deliberate deviation**. The value the
+ *   creature timer (`$E12A`) reads in the pass therefore comes from the
+ *   recording: it is written to `$5C78` just before the pass. Nothing else
+ *   is slipped in
+ * - ★ **ENTER ROOM after a transition**: for 25 interrupts after a change of
+ *   hold the worker does not pass the enter key on (`ENTER_LOCK_FRAMES`,
+ *   deviation §10); the original does. The worker plays with it the way it
+ *   plays in the browser, and the tool **prints how many times it would
+ *   have struck in the game** (the game would then diverge); `--no-lock`
+ *   turns it off
  *
- * Navíc tři záznamy `tools/tracephysics.py`, které začínají **nedotčenou
- * novou hrou** (`walk`, `gameover`, a `lastlife` až do konce hry – smrti,
- * které Mousey neudělal); ostatní si před prvním průchodem přepisují čísla
- * v paměti, a worker začíná jen novou hrou.
+ * Plus three recordings of `tools/tracephysics.py` that start with an
+ * **untouched new game** (`walk`, `gameover`, and `lastlife` to the end of
+ * the game – the deaths Mousey did not make); the others overwrite numbers
+ * in memory before the first pass, and the worker only starts with a new game.
  *
- * Po každém průchodu se porovnají všechny oblasti paměti (obrazovka,
- * proměnné hry, buffery, všechna podpalubí, objekty) a konec hry; a zpráva
- * `frame`, kterou dostane model (panel, podpalubí, výsledek), s pamětí.
- * Navíc se spočítá, **co se v partii stalo** – kořist, výbuchy, klíče,
- * dveře, smrti podle příčiny, hrany grafu lodi, odpočet a zlatý klíč – to
- * je doklad pravidel v `sources/docs/rules.md`.
+ * After every pass all memory regions (the screen, game variables, buffers,
+ * all holds, objects) and the end of the game are compared; and the `frame`
+ * message the model gets (panel, hold, outcome) against the memory. On top
+ * of that **what happened in the game** is counted – booty, explosions,
+ * keys, doors, deaths by cause, the edges of the ship's graph, the countdown
+ * and the gold key – that is the evidence for the rules in
+ * `sources/docs/rules.md`.
  */
 import fs from 'node:fs';
 import path from 'node:path';
@@ -95,17 +102,17 @@ function instrument(logic, events) {
   });
   const count = (key) => { events[key] = (events[key] || 0)+1; };
   wrap('death', (original) => {
-    count('smrt: '+({creature: 'tvor', splinters: 'úlomek výbuchu', pirates: 'pirát',
-                     jim: 'pád', enter: 'moře', goldKey: 'došel čas zlatého klíče'}[stack[stack.length-1]] || '?'));
+    count('death: '+({creature: 'creature', splinters: 'splinter of an explosion', pirates: 'pirate',
+                     jim: 'fall', enter: 'sea', goldKey: 'the gold key ran out of time'}[stack[stack.length-1]] || '?'));
     return original();
   });
   wrap('collect', (original, ix, c, b) => {
     const m = logic.m;
     const before = m[0xE479];
     original(ix, c, b);
-    count('kořist');
-    if (!before && m[0xE479]) { count('kořist vybuchla'); }
-    if (logic.rd16(0x5BF2) === 0) { count('odpočet zlatého klíče'); }
+    count('booty');
+    if (!before && m[0xE479]) { count('booty exploded'); }
+    if (logic.rd16(0x5BF2) === 0) { count('gold key countdown'); }
     events.treasures.add(`${m[0x5BD3]}:${c},${b}`);
   });
   wrap('pickKey', (original, c, b) => {
@@ -113,20 +120,20 @@ function instrument(logic, events) {
     const had = m[0xF241];
     original(c, b);
     if (m[0xF241] !== had) {
-      count('klíč sebrán');
-      if (had) { count('klíč vyměněn (starý zpátky na místo)'); }
+      count('key picked up');
+      if (had) { count('key swapped (the old one back in place)'); }
     }
   });
   wrap('openDoor', (original, record) => {
-    count('číslované dveře otevřeny');
+    count('numbered door opened');
     events.doors.add(`${logic.m[0x5BD3]}/${logic.m[record+4]}`);
     return original(record);
   });
   wrap('goToHold', (original, to) => {
     const from = logic.m[0x5BD3];
-    if (logic.m[0xF241]) { count('klíč ztracen průchodem dveřmi'); }
+    if (logic.m[0xF241]) { count('key lost by going through a door'); }
     events.edges.add(`${from}→${to}`);
-    count('přechod podpalubí');
+    count('change of hold');
     return original(to);
   });
 }
@@ -155,7 +162,7 @@ async function runGame(name, dir, INIT, options) {
     for (let a = lo; a < hi; a++) {
       checks++;
       if (m[a] !== init[a]) {
-        console.log(`  start, ${label}: ${hex(a)} remake ${hex(m[a], 2)}, originál ${hex(init[a], 2)}`);
+        console.log(`  start, ${label}: ${hex(a)} remake ${hex(m[a], 2)}, original ${hex(init[a], 2)}`);
         return {checks, diffs: 1, passes: 0};
       }
     }
@@ -169,9 +176,9 @@ async function runGame(name, dir, INIT, options) {
   logic.pass = (input) => {
     const want = pending;
     pending = null;
-    if (!want) { throw new Error('průchod, který nástroj nečekal'); }
+    if (!want) { throw new Error('a pass the tool did not expect'); }
     if (want.key !== null && input.key !== want.key) {
-      throw new Error(`worker dal průchodu klávesu ${input.key}, originál ${want.key}`
+      throw new Error(`the worker gave the pass key ${input.key}, the original ${want.key}`
                       +(want.locked ? ' (ENTER_LOCK_FRAMES)' : ''));
     }
     if (want.frames !== null) { logic.wr16(0x5C78, want.frames); }
@@ -184,7 +191,7 @@ async function runGame(name, dir, INIT, options) {
     const frames = inputs[i].filter(([tag]) => tag === 'F').map(([, v]) => v);
     // ★ no key when the pass ends before $ED35 (a death, the gold key)
     if (keys.length > 1 || frames.length > 1) {
-      console.log(`  průchod ${i}: čekám nejvýš jednu klávesu a jedno čtení FRAMES, je ${JSON.stringify(inputs[i])}`);
+      console.log(`  pass ${i}: expected at most one key and one read of FRAMES, got ${JSON.stringify(inputs[i])}`);
       return {checks, diffs: 1, passes: i};
     }
     const action = keys.length ? codes.indexOf(keys[0]) : -1;
@@ -203,18 +210,18 @@ async function runGame(name, dir, INIT, options) {
       try {
         worker.send({id: 'tick'});
       } catch (error) {
-        console.log(`  průchod ${i}: ${error.message}`);
+        console.log(`  pass ${i}: ${error.message}`);
         if (options.verbose) { console.log(error.stack); }
         return {checks, diffs: 1, passes: i};
       }
       ticks++;
       if (++guard > 1000) {
-        console.log(`  průchod ${i}: worker ho za 1000 tiků neudělal`);
+        console.log(`  pass ${i}: the worker did not make it in 1000 ticks`);
         return {checks, diffs: 1, passes: i};
       }
     }
     if (pending) {
-      console.log(`  průchod ${i}: worker neprošel hlídaným průchodem`);
+      console.log(`  pass ${i}: the worker did not go through the guarded pass`);
       return {checks, diffs: 1, passes: i};
     }
     if (m[0x5BD3] !== hold) {
@@ -226,7 +233,7 @@ async function runGame(name, dir, INIT, options) {
     if (outcome === 'round') { rounds++; }
     checks++;
     if ((outcome === 'gameover') !== (outcomes[i] === 'gameover')) {
-      console.log(`  průchod ${i}: remake ${outcome}, originál ${outcomes[i]}`);
+      console.log(`  pass ${i}: remake ${outcome}, original ${outcomes[i]}`);
       return {checks, diffs: 1, passes: i};
     }
     let at = i*size;
@@ -236,8 +243,8 @@ async function runGame(name, dir, INIT, options) {
         if (m[a] !== passes[at]) {
           let count = 0;
           for (let b = a, k = at; b < hi; b++, k++) { if (m[b] !== passes[k]) { count++; } }
-          console.log(`  průchod ${i} (${outcome}), ${label}: ${hex(a)} remake ${hex(m[a], 2)}, originál ${hex(passes[at], 2)}`
-                      +` – v oblasti ${count} rozdílů; vstupy ${JSON.stringify(inputs[i])}`);
+          console.log(`  pass ${i} (${outcome}), ${label}: ${hex(a)} remake ${hex(m[a], 2)}, original ${hex(passes[at], 2)}`
+                      +` – ${count} differences in the region; inputs ${JSON.stringify(inputs[i])}`);
           return {checks, diffs: count, passes: i};
         }
       }
@@ -251,7 +258,7 @@ async function runGame(name, dir, INIT, options) {
         && frame.screen && frame.screen.every((v, k) => v === m[0x4000+k]);
       checks++;
       if (!ok && !ctx.state.transition) {
-        console.log(`  průchod ${i}: zpráva frame neodpovídá paměti: `
+        console.log(`  pass ${i}: the frame message does not match the memory: `
                     +JSON.stringify(Object.assign({}, frame, {screen: frame && !!frame.screen, jim: undefined}))
                     +` pass ${ctx.state.pass}, hold ${m[0x5BD3]}, key ${m[0xF241]}`);
         return {checks, diffs: 1, passes: i};
@@ -259,7 +266,7 @@ async function runGame(name, dir, INIT, options) {
     } else {
       checks++;
       if (!messages.some((msg) => msg.id === 'gameOver')) {
-        console.log(`  průchod ${i}: konec hry bez zprávy gameOver`);
+        console.log(`  pass ${i}: end of the game without a gameOver message`);
         return {checks, diffs: 1, passes: i};
       }
       return {checks, diffs: 0, passes: i+1, events, lockHits, ticks, rounds};
@@ -282,7 +289,7 @@ async function main() {
   } else {
     const rules = path.join(ROOT, 'build/rules');
     if (!fs.existsSync(rules)) {
-      console.log('build/rules/ chybí – ./tools/tracerules.py');
+      console.log('build/rules/ is missing – ./tools/tracerules.py');
       process.exit(2);
     }
     games = fs.readdirSync(rules).filter((d) => fs.existsSync(path.join(rules, d, 'inputs.json'))).sort()
@@ -296,25 +303,25 @@ async function main() {
   let checks = 0, diffs = 0, total = 0;
   for (const [name, dir] of games) {
     const r = await runGame(name, dir, INIT, options);
-    console.log(`${name.padEnd(8)} ${String(r.passes).padStart(6)} průchodů, ${r.checks} kontrol, ${r.diffs} rozdílů`);
+    console.log(`${name.padEnd(8)} ${String(r.passes).padStart(6)} passes, ${r.checks} checks, ${r.diffs} differences`);
     if (r.events) {
       const e = r.events;
       const counts = Object.keys(e).filter((k) => typeof e[k] === 'number').sort()
         .map((k) => `${k} ${e[k]}`).join(', ');
       console.log(`         ${counts}`);
-      console.log(`         nové kolo (zlatý klíč) ${r.rounds}×; různých kusů kořisti ${e.treasures.size}, `
-                  +`otevřených dveří ${e.doors.size}, hran lodi ${e.edges.size}`);
+      console.log(`         new round (gold key) ${r.rounds}×; distinct pieces of booty ${e.treasures.size}, `
+                  +`doors opened ${e.doors.size}, edges of the ship ${e.edges.size}`);
       if (options.verbose) {
-        console.log(`         hrany: ${[...e.edges].sort((a, b) => parseInt(a)-parseInt(b) || a.localeCompare(b)).join(' ')}`);
-        console.log(`         dveře (podpalubí/číslo): ${[...e.doors].sort((a, b) => parseInt(a)-parseInt(b)).join(' ')}`);
+        console.log(`         edges: ${[...e.edges].sort((a, b) => parseInt(a)-parseInt(b) || a.localeCompare(b)).join(' ')}`);
+        console.log(`         doors (hold/number): ${[...e.doors].sort((a, b) => parseInt(a)-parseInt(b)).join(' ')}`);
       }
-      console.log(`         ENTER_LOCK_FRAMES by zasáhl ${r.lockHits}×; tiků workeru ${r.ticks}`);
+      console.log(`         ENTER_LOCK_FRAMES would have struck ${r.lockHits}×; worker ticks ${r.ticks}`);
     }
     checks += r.checks;
     diffs += r.diffs;
     total += r.passes;
   }
-  console.log(`celkem ${total} průchodů, ${checks} kontrol, **${diffs} rozdílů**`);
+  console.log(`total ${total} passes, ${checks} checks, **${diffs} differences**`);
   process.exit(diffs ? 1 : 0);
 }
 

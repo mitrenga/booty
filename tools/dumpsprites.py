@@ -1,32 +1,33 @@
 #!/usr/bin/env python3
-"""Vytáhne z programu grafiku spritů a bloků: `data/global.json#sprites`.
+"""Extracts the sprite and block graphics from the program: `data/global.json#sprites`.
 
     ./tools/dumpsprites.py                # → data/global.json#sprites
 
-★ Pohyblivé věci kreslí dvě rutiny (`sources/docs/sprites.md`):
+★ Moving things are drawn by two routines (`sources/docs/sprites.md`):
 
-- **`$EED7`** – sprite: objekt předsunutý o jemnou polohu do bufferu
-  a vytištěný jako znaky. Jim, piráti, krysa a papoušek, plošiny
-- **`$EA93`** – blok: obdélník znaků číslovaných dál, bez jemné polohy.
-  Okénka, výbuch, úlomky výbuchu, padací dveře
+- **`$EED7`** – sprite: an object pre-shifted by its fine position into a
+  buffer and printed as characters. Jim, pirates, rat and parrot, platforms
+- **`$EA93`** – block: a rectangle of consecutively numbered characters,
+  without fine position. Portholes, explosion, explosion fragments, trapdoors
 
-Obě berou grafiku z `CHARS` + 8 × kód, kde `CHARS` nastaví volající.
-Do souboru jde každá sada od znaku 32 tak, jak ji vidí hra – **z paměti
-běžící hry na začátku** (snímek 399, jako `tools/mkglobal.py`), protože
-jedna sada leží v RAM, kterou hra při startu přepíše: `$9F6C` + 256 =
-`$A06C`, blok 128 nul (`$CD56`). U ostatních sad nástroj ověří, že jsou
-v běžící hře bajt po bajtu stejné jako na kazetě.
+Both take the graphics from `CHARS` + 8 × code, where `CHARS` is set by the
+caller. Every set goes into the file from character 32 as the game sees it –
+**from the memory of the running game at the start** (frame 399, as in
+`tools/mkglobal.py`), because one set lies in RAM the game overwrites at
+start-up: `$9F6C` + 256 = `$A06C`, a block of 128 zeros (`$CD56`). For the
+other sets the tool verifies that they are byte for byte the same in the
+running game as on the tape.
 
-| sada | `CHARS` | kdo ji nastaví | co |
+| set | `CHARS` | who sets it | what |
 |---|---|---|---|
-| `jim` | `$8978` | `$ECC4` | ★ Jim, objekt `$F231` |
-| `pirate` | `$8E28` | `$F007` | ★ objekty `OPST` (piráti) |
-| `creature` | `$934C` | `$E239` | ★ objekt `$F31C` z časovače `$E12A`: 4 × 1 (? krysa) nebo 2 × 2 (? papoušek) |
-| `platform` | `$F17B` | `$E82D` | ★ objekty `LIDAT` (? pohyblivé plošiny) |
-| `porthole` | `$914C` | `$F1FC` | ★ bloky `PHDAT` 2 × 2, kód + 4 dokola (? okénka) |
-| `explosion` | `$924C` | `$E48C` | ★ výbuch nastražené kořisti, blok 2 × 2 |
-| `blank` | `$9F6C` | `$E593`, `$E637` | ★ padací dveře (`TDDAT`) a místo po kořisti – znaky z bloku nul |
-| `icons` | `$F15B` | `$E064`, `$E3EA` | ★ ikony panelu (`$21`–`$23`) a úlomek výbuchu (`$20`) |
+| `jim` | `$8978` | `$ECC4` | ★ Jim, object `$F231` |
+| `pirate` | `$8E28` | `$F007` | ★ `OPST` objects (pirates) |
+| `creature` | `$934C` | `$E239` | ★ object `$F31C` from the timer `$E12A`: 4 × 1 (? rat) or 2 × 2 (? parrot) |
+| `platform` | `$F17B` | `$E82D` | ★ `LIDAT` objects (? moving platforms) |
+| `porthole` | `$914C` | `$F1FC` | ★ `PHDAT` blocks 2 × 2, code + 4 cyclically (? portholes) |
+| `explosion` | `$924C` | `$E48C` | ★ explosion of booby-trapped loot, block 2 × 2 |
+| `blank` | `$9F6C` | `$E593`, `$E637` | ★ trapdoors (`TDDAT`) and the place after loot – characters from the block of zeros |
+| `icons` | `$F15B` | `$E064`, `$E3EA` | ★ panel icons (`$21`–`$23`) and explosion fragment (`$20`) |
 """
 import argparse, base64, os, sys
 
@@ -37,7 +38,7 @@ sys.path.insert(0, B.RETRO)
 import playtrace                                                 # noqa: E402
 
 FIRST = 32
-# jméno: (CHARS, kdo ji nastaví, kolik znaků od 32, jen z běhu)
+# name: (CHARS, who sets it, how many characters from 32, from the run only)
 BANKS = {
     'jim': (0x8978, '$ECC4', 96, False),
     'pirate': (0x8E28, '$F007', 96, False),
@@ -70,7 +71,7 @@ def main():
         start, end = chars + 8 * FIRST - 0x4000, chars + 8 * (FIRST + count) - 0x4000
         run_bytes = ram[start:end]
         if not runtime and run_bytes != tape[start:end]:
-            raise SystemExit('sada %s se v běhu liší od kazety' % name)
+            raise SystemExit('set %s differs in the run from the tape' % name)
         data['banks'][name] = {'chars': chars, 'codes': [FIRST, FIRST + count - 1],
                                'bytes': base64.b64encode(run_bytes).decode('ascii')}
     print('%s: %s' % (B.write_section('sprites', data), ', '.join('%s $%04X' % (n, b[0]) for n, b in BANKS.items())))

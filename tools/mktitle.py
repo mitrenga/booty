@@ -1,24 +1,26 @@
 #!/usr/bin/env python3
-"""Titulka originálu pro `MainModel` → `data/global.json#title`.
+"""The original's title for `MainModel` → `data/global.json#title`.
 
     ./tools/mktitle.py
 
-★ Všechno se bere z kódu na kazetě (`tools/bootylib.py` `memory_image()`)
-a z měření `tools/tracetitle.py`, nic z obrázku zachyceného za běhu:
+★ Everything is taken from the code on the tape (`tools/bootylib.py`
+`memory_image()`) and from the measurement of `tools/tracetitle.py`, nothing
+from a picture captured at run time:
 
-- `videoRAM` – obrázek, jak ho `$CDA6` `LDIR` zkopíruje z `$6978` na `$4000`;
-  moře v něm je ještě značka `$05`, kterou první průchod `$D0AC` přepíše
-- `seaMark` – operand `CP $05` na `$D0B3`: bajt kopie, který je moře
-- `seaLimit` – operand `CP $80` na `$D0BD`: číslo pod ním se zapíše, jinak 0
-- `seed` – stav generátoru `$D8D4` na `$D86F` po nahrání
-- `border` – operand `LD A,$03` na `$CD93` před ROM `BORDER` (`$229B`)
-- `demoTStates` – za jak dlouho titulka odejde do ukázky (`$D602`,
-  `FRAMES` = `$0400`), bez melodie; s melodií pro srovnání
-- tempo: průměrná délka průchodu smyčkou `$CDAF` **bez melodie**
-  (`build/title/quiet/info.json`) – remake jde v konstantním tempu a hudba
-  ho nemění, stejně jako `PASS_TSTATES` u hry; s melodií pro srovnání
+- `videoRAM` – the picture as `$CDA6` `LDIR` copies it from `$6978` to `$4000`;
+  the sea in it is still the mark `$05`, which the first pass of `$D0AC` overwrites
+- `seaMark` – operand of `CP $05` at `$D0B3`: the byte of the copy that is sea
+- `seaLimit` – operand of `CP $80` at `$D0BD`: a number below it is written, otherwise 0
+- `seed` – state of the generator `$D8D4` at `$D86F` after loading
+- `border` – operand of `LD A,$03` at `$CD93` before ROM `BORDER` (`$229B`)
+- `demoTStates` – how long until the title leaves for the demo (`$D602`,
+  `FRAMES` = `$0400`), without the tune; with the tune for comparison
+- cadence: average length of a pass through the loop `$CDAF` **without the
+  tune** (`build/title/quiet/info.json`) – the remake runs at a constant
+  cadence and the music does not change it, just like `PASS_TSTATES` for the
+  game; with the tune for comparison
 
-Kontrolu dělá `tools/matchtitle.mjs`.
+The check is done by `tools/matchtitle.mjs`.
 """
 import base64, json, os, sys
 
@@ -27,8 +29,8 @@ sys.path.insert(0, HERE)
 import bootylib as B                                            # noqa: E402
 
 FRAME = 69888
-PICTURE = 0x6978        # ★ kopie titulky
-SEED = 0xD86F           # ★ stav generátoru $D8D4
+PICTURE = 0x6978        # ★ copy of the title picture
+SEED = 0xD86F           # ★ state of the generator $D8D4
 
 
 def main():
@@ -37,16 +39,16 @@ def main():
     def peek(addr):
         return image[addr - 0x4000]
 
-    # operandy: ověřit opcode, ať se nečte z jiného místa, než se myslí
+    # operands: verify the opcode, so that nothing is read from a place other than intended
     for at, opcode, what in ((0xD0B3, 0xFE, 'CP n'), (0xD0BD, 0xFE, 'CP n'),
                              (0xCD93, 0x3E, 'LD A,n')):
         if peek(at) != opcode:
-            raise SystemExit('na $%04X čekám %s, je tam $%02X' % (at, what, peek(at)))
+            raise SystemExit('at $%04X expected %s, found $%02X' % (at, what, peek(at)))
     info = {}
     for run in ('quiet', 'tune'):
         path = os.path.join(B.ROOT, 'build', 'title', run, 'info.json')
         if not os.path.exists(path):
-            raise SystemExit('chybí %s – spusť ./tools/tracetitle.py' % path)
+            raise SystemExit('%s is missing – run ./tools/tracetitle.py' % path)
         info[run] = json.load(open(path))
 
     quiet = info['quiet']['passTStates']
@@ -59,14 +61,14 @@ def main():
         'border': peek(0xCD94),
         'passTStates': quiet,
         'passFrames': round(quiet / FRAME, 4),
-        # ★ titulka odejde do ukázky po 1024 přerušeních: bez melodie
-        # (tempo remaku), s ní pro srovnání
+        # ★ the title leaves for the demo after 1024 interrupts: without the
+        # tune (the remake's cadence), with it for comparison
         'demoTStates': info['quiet']['demoTStates'],
     }
     where = B.write_section('title', out)
     sea = sum(1 for b in image[PICTURE - 0x4000:PICTURE - 0x4000 + 6144] if b == out['seaMark'])
-    print('%s: %d bajtů moře, semínko $%02X, border %d, průchod %.3f snímku '
-          '(s melodií %.3f)' % (where, sea, out['seed'], out['border'], out['passFrames'],
+    print('%s: %d bytes of sea, seed $%02X, border %d, pass %.3f frames '
+          '(with the tune %.3f)' % (where, sea, out['seed'], out['border'], out['passFrames'],
                                 info['tune']['passTStates'] / FRAME))
 
 

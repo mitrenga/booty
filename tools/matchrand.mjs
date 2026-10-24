@@ -1,23 +1,24 @@
 #!/usr/bin/env node
 /**
- * Porovná generátor náhody workeru s generátorem originálu — na celé periodě.
+ * Compares the worker's random generator with the original's — over the whole period.
  *
  *   ./tools/matchrand.mjs [--seed 0xABCD]
  *
- * ★ Originál má jediný generátor, `$E349`, se šestnáctibitovým stavem na
- * `$F343` (`sources/docs/disasm_notes.md` §5), a `app/gameWorker.js` ho
- * přenáší instrukci po instrukci (`originalRand`). Tenhle nástroj to dokládá:
+ * ★ The original has a single generator, `$E349`, with a sixteen-bit state at
+ * `$F343` (`sources/docs/disasm_notes.md` §5), and `app/gameWorker.js` ports
+ * it instruction by instruction (`originalRand`). This tool proves it:
  *
- * - `tools/tracerand.py` pustí **skutečný kód z kazety** v simulátoru Z80
- *   (SkoolKit) a zavolá `$E349` 65 536krát – celá perioda – od semínka
- * - tentýž počet volání udělá `originalRand` z `app/gameWorker.js`, spuštěný
- *   tak, jak ho spouští prohlížeč (atrapa workeru)
- * - po každém volání se porovná vrácené číslo **i nový stav `$F343`**:
- *   3 × 65 536 = 196 608 kontrol
+ * - `tools/tracerand.py` runs **the real code from the tape** in a Z80
+ *   simulator (SkoolKit) and calls `$E349` 65,536 times – the whole period –
+ *   from the seed
+ * - `originalRand` from `app/gameWorker.js` makes the same number of calls,
+ *   run the way the browser runs it (a mock worker)
+ * - after every call the returned number **and the new state of `$F343`** are
+ *   compared: 3 × 65,536 = 196,608 checks
  *
- * Bez `--seed` se začíná od `$0000`, tedy od stavu originálu čerstvě po
- * nahrání. Protože je perioda plná, projde se tím každý stav právě jednou
- * a na semínku pak nezáleží – kontroluje se i to.
+ * Without `--seed` it starts from `$0000`, that is from the original's state
+ * fresh after loading. Because the period is full, every state is visited
+ * exactly once and the seed then does not matter – that is checked too.
  */
 import fs from 'node:fs';
 import path from 'node:path';
@@ -49,7 +50,7 @@ function main() {
                            ['--count', String(COUNT), '--seed', '0x'+seed.toString(16)],
                            {maxBuffer: 16*1024*1024});
   if (z80.length !== 3*COUNT) {
-    console.error(`tracerand.py vrátil ${z80.length} B místo ${3*COUNT}`);
+    console.error(`tracerand.py returned ${z80.length} B instead of ${3*COUNT}`);
     process.exit(2);
   }
 
@@ -67,7 +68,7 @@ function main() {
       if (got[k] !== expect[k]) {
         diffs++;
         if (first === null) {
-          first = `volání ${i+1}: worker ${got.map((v) => v.toString(16))}, `
+          first = `call ${i+1}: worker ${got.map((v) => v.toString(16))}, `
                   + `Z80 ${expect.map((v) => v.toString(16))}`;
         }
       }
@@ -75,12 +76,12 @@ function main() {
     seen[state] = 1;
   }
   const states = seen.reduce((sum, v) => sum+v, 0);
-  console.log(`semínko $${seed.toString(16).toUpperCase().padStart(4, '0')}, ${COUNT} volání $E349`);
-  console.log(`vrácené číslo a stav $F343: ${checks} kontrol, ${diffs} rozdílů`);
-  console.log(`různých stavů za periodu: ${states} z 65536`);
-  if (first) { console.log('  první rozdíl: '+first); }
+  console.log(`seed $${seed.toString(16).toUpperCase().padStart(4, '0')}, ${COUNT} calls of $E349`);
+  console.log(`returned number and state $F343: ${checks} checks, ${diffs} differences`);
+  console.log(`distinct states over the period: ${states} of 65536`);
+  if (first) { console.log('  first difference: '+first); }
   if (states !== 65536) { diffs++; }
-  console.log(`celkem ${checks} kontrol, **${diffs} rozdílů**`);
+  console.log(`total ${checks} checks, **${diffs} differences**`);
   process.exit(diffs ? 1 : 0);
 }
 

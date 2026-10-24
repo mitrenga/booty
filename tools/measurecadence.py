@@ -1,20 +1,22 @@
 #!/usr/bin/env python3
-"""Tempo remaku: jak dlouho průměrně trvá průchod hlavní smyčkou originálu.
+"""The remake's cadence: how long a pass through the original's main loop takes on average.
 
     ./tools/measurecadence.py
 
-★ Hlavní smyčka originálu na snímek nečeká: průchod trvá pevné zpoždění
-`$E9D9` plus práci, kterou udělá, plus přerušení – 1,5 až 3,4 snímku podle
-podpalubí (`sources/docs/physics.md`). A s melodií je o třetinu delší, protože
-noty hraje obsluha přerušení na beeperu a čas bere hlavní smyčce.
+★ The original's main loop does not wait for the frame: a pass takes the
+fixed delay `$E9D9` plus the work it does plus interrupts – 1.5 to 3.4 frames
+depending on the hold (`sources/docs/physics.md`). And with the tune it is a
+third longer, because the notes are played by the interrupt handler on the
+beeper and take time from the main loop.
 
-**Remake tohle nesimuluje** (rozhodnutí operátora 2026-10-06): průchod
-běží v konstantním tempu a zvuk ve vlastním vlákně hru nezpomaluje.
-Konstantou je **průměrná délka průchodu originálu bez melodie** – změřená
-na záznamech `tools/tracephysics.py` se zvukem vypnutým (`quiet*`), čítačem
-T-stavů simulátoru i s přerušeními. Remake ji drží jako `PASS_TSTATES`
-v `app/gameWorker.js`; nástroj ji změří znovu a ověří, že konstanta sedí
-(jinak skončí chybou a vypíše hodnotu, kterou tam zapsat).
+**The remake does not simulate this** (operator's decision 2026-10-06): a
+pass runs at a constant cadence and the sound in its own thread does not slow
+the game down. The constant is **the original's average pass length without
+the tune** – measured on the `tools/tracephysics.py` recordings with the
+sound off (`quiet*`), by the simulator's T-state counter including
+interrupts. The remake keeps it as `PASS_TSTATES` in `app/gameWorker.js`; the
+tool measures it again and verifies that the constant holds (otherwise it
+exits with an error and prints the value to write there).
 """
 import glob, json, os, re, sys
 
@@ -37,21 +39,21 @@ def main():
             music_total += sum(durations)
             music_n += len(durations)
     if not n:
-        raise SystemExit('chybí záznamy quiet* – spusť ./tools/tracephysics.py')
+        raise SystemExit('quiet* recordings are missing – run ./tools/tracephysics.py')
     pass_t = total / n
     music = music_total / music_n / FRAME if music_n else 0
-    print('průchod %.2f T = %.3f snímku = %.2f průchodu/s (%d průchodů bez melodie); '
-          's melodií %.4f snímku (%d průchodů)' % (pass_t, pass_t / FRAME, 3500000 / pass_t, n,
+    print('pass %.2f T = %.3f frames = %.2f passes/s (%d passes without the tune); '
+          'with the tune %.4f frames (%d passes)' % (pass_t, pass_t / FRAME, 3500000 / pass_t, n,
                                                    music, music_n))
     worker = open(os.path.join(ROOT, 'app', 'gameWorker.js'), encoding='utf8').read()
     found = re.search(r'^var PASS_TSTATES = (\d+);', worker, re.M)
     if not found:
-        raise SystemExit('v app/gameWorker.js chybí var PASS_TSTATES')
+        raise SystemExit('var PASS_TSTATES is missing in app/gameWorker.js')
     if int(found.group(1)) != round(pass_t):
-        print('ROZDÍL: app/gameWorker.js má PASS_TSTATES = %s, změřeno %d'
+        print('DIFFERENCE: app/gameWorker.js has PASS_TSTATES = %s, measured %d'
               % (found.group(1), round(pass_t)))
         sys.exit(1)
-    print('PASS_TSTATES = %d v app/gameWorker.js sedí' % round(pass_t))
+    print('PASS_TSTATES = %d in app/gameWorker.js holds' % round(pass_t))
 
 
 if __name__ == '__main__':

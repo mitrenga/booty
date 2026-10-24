@@ -1,34 +1,37 @@
 #!/usr/bin/env node
 /**
- * Porovná obrazovky, které remake složí, s videopamětí originálu.
+ * Compares the screens the remake composes with the original's video RAM.
  *
  *   ./tools/matchscreen.mjs [--verbose]
  *
- * Staví je **skutečným kódem, který jde do prohlížeče** —
- * `app/screenComposer.js` nakrmený snímkem z `app/gameWorker.js` — a
- * porovnává je bajt po bajtu se snímky videopaměti běžícího originálu, které
- * uložil `tools/mkhold.py`:
+ * It builds them with **the real code that goes into the browser** —
+ * `app/screenComposer.js` fed with a frame from `app/gameWorker.js` — and
+ * compares them byte by byte with the video RAM snapshots of the running
+ * original saved by `tools/mkhold.py`:
  *
- * 1. **herní obrazovka** — všech 6912 bajtů (6144 bitmapy, 768 atributů)
- *    proti `build/ref/screen.scr`: podpalubí, ve kterém hra začíná, i s
- *    panelem
- * 2. **hlavička menu** — znakové řádky 0–7 (2048 B bitmapy, 256 atributů)
- *    tak, jak je remake tiskne pod své menu, proti `build/ref/menu.scr`
- * 3. **menu originálu celé** — všech 6912 bajtů: proudy z `data/global.json#texts`
- *    vytištěné jako ROM (`ZXRomPrint` ve svision) i se zvýrazněnou položkou
- *    `1 - KEYBOARD` (`$5BEA` = `$24`), proti témuž snímku. Remake tohle menu
- *    neukazuje – je to kontrola proudů a tisku
+ * 1. **the game screen** — all 6912 bytes (6144 bitmap, 768 attributes)
+ *    against `build/ref/screen.scr`: the hold the game starts in, panel
+ *    included
+ * 2. **the menu header** — character rows 0–7 (2048 B bitmap, 256 attributes)
+ *    as the remake prints them above its menu, against `build/ref/menu.scr`
+ * 3. **the original's whole menu** — all 6912 bytes: the streams from
+ *    `data/global.json#texts` printed as the ROM does (`ZXRomPrint` in svision),
+ *    with the highlighted item `1 - KEYBOARD` (`$5BEA` = `$24`), against the
+ *    same snapshot. The remake does not show this menu – it is a check of the
+ *    streams and the printing
  *
- * ★ **Od M2 se herní obrazovka skládá z dat**: podpalubí z tabulek
- * programu (`app/holdRenderer.js`, `data/global.json#holds`), panel z operandů kódu
- * (`app/panelRenderer.js`, `data/global.json#panel`) a Jim přepisem sprite rutiny
- * (`app/spriteRenderer.js`, `data/global.json#sprites`) v poloze z běhu originálu
- * (`data/global.json#global`). Reference je pořád většinový hlas nad běžícím
- * originálem (`tools/mkhold.py`), který o formátu nic nepředpokládá – nula
- * tedy říká, že složení z dat dá přesně obrazovku originálu.
+ * ★ **Since M2 the game screen is composed from data**: the hold from the
+ * program's tables (`app/holdRenderer.js`, `data/global.json#holds`), the panel
+ * from the code's operands (`app/panelRenderer.js`, `data/global.json#panel`)
+ * and Jim by a port of the sprite routine (`app/spriteRenderer.js`,
+ * `data/global.json#sprites`) at the position from the original's run
+ * (`data/global.json#global`). The reference is still a majority vote over
+ * the running original (`tools/mkhold.py`), which assumes nothing about the
+ * format – so zero says that composing from data gives exactly the
+ * original's screen.
  *
- * Od M2 už ani hlavička menu není zachycený obraz: tiskne se z proudu
- * originálu (`data/global.json#texts`).
+ * Since M2 the menu header is no captured image either: it is printed from
+ * the original's stream (`data/global.json#texts`).
  */
 import fs from 'node:fs';
 import path from 'node:path';
@@ -51,7 +54,7 @@ function offsetOf(y, col) {
 }
 
 /**
- * Porovná znakové řádky [0, rows) dvou obrazů.
+ * Compares the character rows [0, rows) of two images.
  * @returns {{bitmap: number, attrs: number, bitmapChecks: number, attrChecks: number, perRow: number[]}}
  */
 function compare(bytes, reference, rows) {
@@ -78,13 +81,13 @@ function compare(bytes, reference, rows) {
 function report(name, result, verbose) {
   if (verbose) {
     result.perRow.forEach((diffs, row) => {
-      console.log(`  řádek ${String(row).padStart(2)}: ${diffs} rozdílů`);
+      console.log(`  row ${String(row).padStart(2)}: ${diffs} differences`);
     });
   }
   const checks = result.bitmapChecks + result.attrChecks;
   const diffs = result.bitmap + result.attrs;
-  console.log(`${name.padEnd(16)} bitmapa ${String(result.bitmapChecks).padStart(4)} / ${result.bitmap}, `
-              + `atributy ${String(result.attrChecks).padStart(3)} / ${result.attrs}  → ${checks} kontrol, ${diffs} rozdílů`);
+  console.log(`${name.padEnd(16)} bitmap ${String(result.bitmapChecks).padStart(4)} / ${result.bitmap}, `
+              + `attributes ${String(result.attrChecks).padStart(3)} / ${result.attrs}  → ${checks} checks, ${diffs} differences`);
   return {checks, diffs};
 }
 
@@ -92,7 +95,7 @@ async function main() {
   const verbose = process.argv.includes('--verbose');
   for (const ref of [REF_SCREEN, REF_MENU]) {
     if (!fs.existsSync(ref)) {
-      console.error(`chybí ${ref} – spusť ./tools/mksnapshot.sh a ./tools/mkhold.py`);
+      console.error(`${ref} is missing – run ./tools/mksnapshot.sh and ./tools/mkhold.py`);
       process.exit(2);
     }
   }
@@ -118,11 +121,11 @@ async function main() {
   // ★ $5BEA = $24 (KEYBOARD) after the first start, $CD6F
   render.composeOriginalMenu(original, 0x24);
 
-  const a = report('herní obrazovka', compare(game.bytes, fs.readFileSync(REF_SCREEN), 24), verbose);
-  const b = report('hlavička menu', compare(menu.bytes, fs.readFileSync(REF_MENU), MENU_ROWS), verbose);
-  const c = report('menu originálu', compare(original.bytes, fs.readFileSync(REF_MENU), 24), verbose);
+  const a = report('game screen', compare(game.bytes, fs.readFileSync(REF_SCREEN), 24), verbose);
+  const b = report('menu header', compare(menu.bytes, fs.readFileSync(REF_MENU), MENU_ROWS), verbose);
+  const c = report('original menu', compare(original.bytes, fs.readFileSync(REF_MENU), 24), verbose);
   const checks = a.checks + b.checks + c.checks, diffs = a.diffs + b.diffs + c.diffs;
-  console.log(`celkem ${checks} kontrol, **${diffs} rozdílů**`);
+  console.log(`total ${checks} checks, **${diffs} differences**`);
   process.exit(diffs ? 1 : 0);
 }
 

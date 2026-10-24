@@ -1,26 +1,27 @@
 #!/usr/bin/env python3
-"""Vytáhne z programu texty: `data/global.json#texts`.
+"""Extracts the texts from the program: `data/global.json#texts`.
 
     ./tools/dumptexts.py                # → data/global.json#texts
 
-★ Hra tiskne své texty dvojím způsobem (`sources/docs/texts.md`):
+★ The game prints its texts in two ways (`sources/docs/texts.md`):
 
-- **proudy pro ROM tisk** – znaky a řídicí kódy (`INK` 16, `PAPER` 17,
-  `FLASH` 18, `BRIGHT` 19, `INVERSE` 20, `AT` 22) zakončené `$FF`, které
-  rutina `$D60E` posílá po znaku do `RST $10`. Tak je napsané menu,
-  `DEFINE KEYS`, `PRESS FIRE BUTTON` a úvod skryté hry
-- **řádek po 32 znacích** vlastní rutinou `$E6DC` (šablona panelu `$F2BB`
-  v `data/global.json#panel`, `FIND THE GOLD KEY …` na `$E6BC`)
+- **streams for ROM printing** – characters and control codes (`INK` 16,
+  `PAPER` 17, `FLASH` 18, `BRIGHT` 19, `INVERSE` 20, `AT` 22) terminated by
+  `$FF`, which the routine `$D60E` sends character by character to `RST $10`.
+  The menu, `DEFINE KEYS`, `PRESS FIRE BUTTON` and the intro of the hidden
+  game are written this way
+- **a row of 32 characters** by its own routine `$E6DC` (panel template
+  `$F2BB` in `data/global.json#panel`, `FIND THE GOLD KEY …` at `$E6BC`)
 
-Soubor nese proudy **tak, jak leží v paměti** (bajty), s adresou a s tím,
-kdo je tiskne. Proud se čte od své adresy po `$FF`; kde volající tiskne
-několik proudů za sebou (menu: `$D60E` sedmkrát, DE běží dál), jsou tu
-jednotlivě v tom pořadí.
+The file carries the streams **as they lie in memory** (bytes), with the
+address and who prints them. A stream is read from its address up to `$FF`;
+where the caller prints several streams in a row (menu: `$D60E` seven times,
+DE runs on), they are here one by one in that order.
 
-★ Menu (`$CDE3`–`$CE1B`): hlavička, pak šest položek; před položkou se
-`INVERSE 1` vytiskne (`$D259`), když `$5BEA` je hodnota té položky – `$24`
-KEYBOARD, `$1C` INTERFACE 2, `$14` CURSOR, `$0C` KEMPSTON. Každá položka
-končí `INVERSE 0`.
+★ Menu (`$CDE3`–`$CE1B`): header, then six items; before an item `INVERSE 1`
+is printed (`$D259`) when `$5BEA` is that item's value – `$24` KEYBOARD,
+`$1C` INTERFACE 2, `$14` CURSOR, `$0C` KEMPSTON. Every item ends with
+`INVERSE 0`.
 """
 import argparse, os, sys
 
@@ -32,7 +33,7 @@ NAMES = {16: 'INK', 17: 'PAPER', 18: 'FLASH', 19: 'BRIGHT', 20: 'INVERSE', 21: '
 
 
 def stream(mem, address):
-    """Bajty proudu od adresy po $FF (včetně) a čitelný přepis."""
+    """Bytes of the stream from the address up to $FF (inclusive) and a readable transcript."""
     out, text, i = [], [], address - 0x4000
     while True:
         c = mem[i]
@@ -49,7 +50,7 @@ def stream(mem, address):
         elif 0x20 <= c <= 0x7F:
             text.append('©' if c == 0x7F else chr(c))
         else:
-            raise SystemExit('neznámý kód %d v proudu $%04X' % (c, address))
+            raise SystemExit('unknown code %d in stream $%04X' % (c, address))
     return out, ''.join(text), address + len(out)
 
 
@@ -75,11 +76,11 @@ def main():
             'attrP': 0x00,
             'header': menu[0],
             'items': menu[1:],
-            # ★ $CDE9-$CE0F: INVERSE 1 před položkou, když $5BEA = hodnota
+            # ★ $CDE9-$CE0F: INVERSE 1 before an item when $5BEA = value
             'select': [0x24, 0x1C, 0x14, 0x0C, None, None],
         },
         'pressFire': segments(0xD16F, 1, '$D10C')[0],
-        'goldfish': segments(0xDD9A, 1, '$CE44 (skrytá hra za JP $D08A na $CE3E)')[0],
+        'goldfish': segments(0xDD9A, 1, '$CE44 (hidden game behind JP $D08A at $CE3E)')[0],
     }
     print('%s:' % B.write_section('texts', data))
     for address, printed_by, text in shown:

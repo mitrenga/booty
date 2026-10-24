@@ -1,19 +1,20 @@
 #!/bin/sh
-# Z kazety udělá snapshot a obraz RAM ve chvíli, kdy BASIC skočí na
-# RANDOMIZE USR 52500 ($CD14) – tedy po nahrání všech osmi bloků, těsně před
-# instalací IM 2 a vstupem do hry. Potřebuje sources/tape/Booty.tzx (mimo git,
-# viz sources/tape/README.md) a SkoolKit ve svision (R-008).
+# Makes a snapshot and a RAM image from the tape at the moment BASIC jumps to
+# RANDOMIZE USR 52500 ($CD14) – i.e. after all eight blocks have loaded, just
+# before IM 2 is installed and the game is entered. Needs sources/tape/Booty.tzx
+# (outside git, see sources/tape/README.md) and SkoolKit in svision (R-008).
 #
-# Kazeta má dva turbo bloky (ID $11) a zavaděč, který je čte přes rutiny ROM
-# s vlastním hledáním pilotu (sources/docs/tape_layout.md). Simulované nahrání
-# v tap2sna.py ho doopravdy provede, takže snapshot je nezávislá kontrola toho,
-# co z kazety skládá tools/bootylib.py – porovná ho tools/matchimage.py.
+# The tape has two turbo blocks (ID $11) and a loader that reads them through
+# the ROM routines with its own pilot search (sources/docs/tape_layout.md). The
+# simulated load in tap2sna.py really executes it, so the snapshot is an
+# independent check of what tools/bootylib.py assembles from the tape –
+# tools/matchimage.py compares them.
 set -e
 ROOT=$(cd "$(dirname "$0")/.." && pwd)
 SK=$(cd "$ROOT/tools" && python3 -c 'import bootylib; print(bootylib.SKOOLKIT)')
 TAPE="$ROOT/sources/tape/Booty.tzx"
 mkdir -p "$ROOT/build"
-[ -f "$TAPE" ] || { echo "chybi $TAPE - viz sources/tape/README.md"; exit 1; }
+[ -f "$TAPE" ] || { echo "missing $TAPE - see sources/tape/README.md"; exit 1; }
 PYTHONPATH="$SK" python3 "$SK/skoolkit-10.1.data/scripts/tap2sna.py" \
     --start 0xCD14 "$TAPE" "$ROOT/build/booty.z80"
 PYTHONPATH="$SK" python3 - "$ROOT" <<'PY'

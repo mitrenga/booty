@@ -1,26 +1,30 @@
 #!/usr/bin/env node
 /**
- * Porovná, co je při přechodu dveřmi vidět v remaku a v originálu.
+ * Compares what is visible during a door transition in the remake and in the original.
  *
  *   ./tools/tracetransition.py && ./tools/mktransition.mjs && ./tools/matchtransition.mjs [--verbose]
  *
- * Originál: obrazovky na konci snímků přechodu do podpalubí 1–20, bez
- * melodie (`tools/tracetransition.py`). Remake: `BootyLogic.goToHold`
- * z paměti originálu ve chvíli `$EE84` a `BootyLogic.transitionScreen`
- * s časy z `data/global.json#transition` – v týchž T-stavech od `$EE84` jako snímky
- * originálu. Porovnávají se bajty obrazovky, jen v černé fázi (atributy
- * všechny 0) stačí shoda atributů: originál pod nimi kreslí pixely, které
- * nejsou vidět.
+ * The original: the screens at the end of the frames of the transition into
+ * holds 1–20, without the tune (`tools/tracetransition.py`). The remake:
+ * `BootyLogic.goToHold` from the original's memory at the moment of `$EE84`
+ * and `BootyLogic.transitionScreen` with the times from
+ * `data/global.json#transition` – at the same T-states from `$EE84` as the
+ * original's frames. The screen bytes are compared; only in the black phase
+ * (all attributes 0) matching attributes suffice: the original draws pixels
+ * under them that are not visible.
  *
- * Měří se **čas**: pro každý snímek originálu se hledá nejbližší okamžik,
- * kdy remake ukáže přesně tentýž obraz (do ±`WINDOW` T po `STEP` T). Shoda
- * v pixelech v tomtéž T by vyžadovala přerušení na T-stav – fáze přechodu
- * vůči snímku je ale v remaku stejně libovolná (průchod v konstantním tempu).
- * Snímek, ke kterému remake takový obraz nemá vůbec, je **rozdíl**.
+ * What is measured is **time**: for every frame of the original the nearest
+ * moment is sought at which the remake shows exactly the same picture (within
+ * ±`WINDOW` T in steps of `STEP` T). A pixel match at the same T would need
+ * the interrupt placed to the T-state – but the phase of the transition
+ * against the frame is arbitrary in the remake anyway (the pass runs at a
+ * constant pace). A frame for which the remake has no such picture at all is
+ * a **difference**.
  *
- * Snímky po konci tisku panelu (`$EEA2`) se neporovnávají – zbytek průchodu
- * už je běžný průchod. ? Panel se v originálu tiskne asi půl snímku po
- * znacích, remake ho ukáže najednou: řádky 22–23 se během tisku nepočítají.
+ * Frames after the end of printing the panel (`$EEA2`) are not compared – the
+ * rest of the pass is an ordinary pass. ? The original prints the panel
+ * character by character over about half a frame, the remake shows it at
+ * once: rows 22–23 do not count during the printing.
  */
 import fs from 'node:fs';
 import path from 'node:path';
@@ -39,10 +43,10 @@ const WINDOW = 6000;
 const STEP = 4;
 
 /**
- * Je vidět totéž? Při atributech všech nulových je obraz černý, ať jsou
- * pixely jakékoli (originál pod nimi kreslí podpalubí); jinak se musí
- * shodovat každý bajt. `limit` – konec porovnávaných atributů: `$1AC0`
- * znamená bez panelu (i jeho pixelů).
+ * Is the same thing visible? With all attributes zero the picture is black
+ * whatever the pixels are (the original draws the hold under them); otherwise
+ * every byte must match. `limit` – the end of the compared attributes:
+ * `$1AC0` means without the panel (its pixels included).
  */
 function sameView(theirs, ours, limit) {
   let black = true;
@@ -65,7 +69,7 @@ function sameView(theirs, ours, limit) {
   return true;
 }
 
-/** pixelový bajt v řádcích 22–23 (panel) */
+/** a pixel byte in rows 22–23 (the panel) */
 function inPanel(k) {
   return k >= 0x1000 && (k & 0xE0) >= 0xC0;
 }
@@ -90,7 +94,7 @@ function main() {
       const theirs = Buffer.from(b64, 'base64');
       const same = (when) => sameView(theirs,
         BootyLogic.transitionScreen(tr, times, data, when, final).screen,
-        // ? panel (řádky 22–23): v originálu se tiskne po znacích
+        // ? the panel (rows 22–23): the original prints it character by character
         when >= times.shown ? 0x1AC0 : 0x1B00);
       frames++;
       let found = null;
@@ -103,18 +107,18 @@ function main() {
       }
       if (found === null) {
         errors++;
-        line.push(`${(t/69888).toFixed(2)}:ROZDÍL`);
+        line.push(`${(t/69888).toFixed(2)}:DIFFERENCE`);
       } else {
         worst = Math.max(worst, Math.abs(found));
         line.push(`${(t/69888).toFixed(2)}:${found > 0 ? '+' : ''}${found}`);
       }
     });
     if (verbose) {
-      console.log(`podpalubí ${String(hold).padStart(2)}  ${line.join('  ')}`);
+      console.log(`hold ${String(hold).padStart(2)}  ${line.join('  ')}`);
     }
   });
-  console.log(`${frames} snímků v ${Object.keys(record.holds).length} přechodech, **${errors} rozdílů**; `+
-              `obraz originálu remake ukáže nejvýš ${worst} T (${(worst/69888).toFixed(3)} snímku) vedle`);
+  console.log(`${frames} frames in ${Object.keys(record.holds).length} transitions, **${errors} differences**; `+
+              `the remake shows the original's picture at most ${worst} T (${(worst/69888).toFixed(3)} frames) off`);
   process.exit(errors ? 1 : 0);
 }
 

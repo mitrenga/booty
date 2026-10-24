@@ -3,7 +3,7 @@ const { ZXVideoRAM } = await import('./svision/js/platform/canvas2D/zx/zxVideoRA
 
 /**
  * The sea of the original's title screen (sources/docs/screen_layout.md,
- * "Úvodní obrazovky"), out of data/global.json#title (tools/mktitle.py).
+ * the intro screens section), out of data/global.json#title (tools/mktitle.py).
  *
  * ★ What the program does, and so what this does:
  *

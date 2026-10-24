@@ -1,33 +1,33 @@
 #!/usr/bin/env python3
-"""Skrytá minihra CATCH 20 GOLDFISH v simulátoru: průchod po průchodu.
+"""The hidden mini-game CATCH 20 GOLDFISH in the simulator: pass by pass.
 
     ./tools/tracegoldfish.py [--passes N] [--out DIR] [--keys SEED]
 
-★ Minihra je v kódu na kazetě (`$CE41`, hlavní smyčka `$CF36`), ale hra se
-k ní bez zásahu nedostane (`sources/docs/secondary_findings.md` §7). Nástroj
-ji pustí, jak to dělá POKE z druhé ruky: `POKE 52798,58` (`JP $D08A` na
-`$CE3E` → `LD A,($D08A)`), titulka → `SPACE` → menu → `0`. **Bez kláves**:
-potápěč stojí u hladiny, vzduch se mu doplňuje (`$CFD7`) a srážka s rybou
-nikoho nezabije, takže smyčka běží donekonečna – přesně to remake ukazuje
-jako pozadí menu.
+★ The mini-game is in the code on the tape (`$CE41`, main loop `$CF36`), but
+the game never reaches it without intervention (`sources/docs/secondary_findings.md`
+§7). The tool starts it the way the second-hand POKE does: `POKE 52798,58`
+(`JP $D08A` at `$CE3E` → `LD A,($D08A)`), title → `SPACE` → menu → `0`.
+**Without keys**: the diver stands at the surface, his air refills (`$CFD7`)
+and a collision with a fish kills nobody, so the loop runs forever – exactly
+what the remake shows as the menu background.
 
-Výstup do `DIR` (výchozí `build/goldfish/`):
+Output to `DIR` (default `build/goldfish/`):
 
-- `init.bin` – celá paměť při prvním vstupu do `$CF36` (z ní `mkgoldfish.py`)
-- `passes.xor.gz` – oblasti `REGIONS` na začátku každého dalšího průchodu,
-  XOR s předchozím a gzip (jako `tracephysics.py`)
-- `info.json` – oblasti, počet průchodů, T-stavy, tempo bez melodie
+- `init.bin` – whole memory on the first entry into `$CF36` (`mkgoldfish.py` uses it)
+- `passes.xor.gz` – the `REGIONS` areas at the start of every further pass,
+  XOR with the previous one and gzip (as `tracephysics.py`)
+- `info.json` – areas, number of passes, T-states, cadence without the tune
 
-Melodie se vypne (`$FFF8` = 0) jako u `measurecadence.py`: tempo remaku je
-bez ní a paměti se netýká. Pro `tools/matchgoldfish.mjs`.
+The tune is switched off (`$FFF8` = 0) as in `measurecadence.py`: the remake's
+cadence is without it and it does not touch memory. For `tools/matchgoldfish.mjs`.
 
-`--keys SEED` (výstup `build/goldfish-keys/`): místo klidu se drží náhodně
-klávesy potápěče `5 8 7 6` (výchozí originálu, `$5BEB`–`$5BEE`), aby se
-prošly i cesty, které bez kláves nikdy neproběhnou – pohyb a mazání
-potápěče, chycení rybky, srážka s velkou rybou, bubliny odjinud. Co ROM
-`KEY-SCAN` v `$D585` vrátila, se zaznamená podprogramem v nepoužité RAM
-(`CALL $028E` → `CALL $6400`, jako `tracephysics.py`) do `keys.json`, po
-průchodech; `matchgoldfish.mjs` to přehraje.
+`--keys SEED` (output `build/goldfish-keys/`): instead of standing still, the
+diver's keys `5 8 7 6` (the original's defaults, `$5BEB`–`$5BEE`) are held at
+random, so that the paths that never run without keys get covered too – the
+diver's movement and erasing, catching a fish, collision with the big fish,
+bubbles from elsewhere. What ROM `KEY-SCAN` in `$D585` returned is logged by
+a subroutine in unused RAM (`CALL $028E` → `CALL $6400`, as in
+`tracephysics.py`) into `keys.json`, by passes; `matchgoldfish.mjs` replays it.
 """
 import argparse, gzip, json, os, sys
 
@@ -40,17 +40,17 @@ from skoolkit.simutils import from_snapshot                     # noqa: E402
 from skoolkit.trace import Tracer                               # noqa: E402
 
 FRAME = 69888
-LOOP = 0xCF36           # ★ hlavní smyčka minihry
-POKE = (52798, 58)      # ★ $CE3E JP $D08A → LD A,($D08A): menu `0` → minihra
+LOOP = 0xCF36           # ★ main loop of the mini-game
+POKE = (52798, 58)      # ★ $CE3E JP $D08A → LD A,($D08A): menu `0` → mini-game
 SCRIPT = '200:210:SPACE,300:310:0'
-KEY_SCAN = 0xD585       # ★ CALL $028E klávesnice minihry ($D579)
+KEY_SCAN = 0xD585       # ★ CALL $028E of the mini-game keyboard ($D579)
 STUB = 0x6400
 LOG_PTR = 0x64FE
 LOG = 0x6500
 
 
 def fuzz(seed, start, frames):
-    """Klávesy potápěče (nebo nic) držené 4–40 snímků, se semínkem."""
+    """Diver keys (or nothing) held for 4–40 frames, seeded."""
     import random
     rnd = random.Random(seed)
     out, frame = [], start
@@ -64,9 +64,9 @@ def fuzz(seed, start, frames):
 
 
 def patch(memory):
-    """$D585 CALL $028E → CALL STUB: KEY-SCAN, E do záznamu, nic jiného."""
+    """$D585 CALL $028E → CALL STUB: KEY-SCAN, E into the log, nothing else."""
     if list(memory[KEY_SCAN:KEY_SCAN + 3]) != [0xCD, 0x8E, 0x02]:
-        raise SystemExit('na $%04X není CALL $028E' % KEY_SCAN)
+        raise SystemExit('no CALL $028E at $%04X' % KEY_SCAN)
     memory[STUB:STUB + 19] = [0xCD, 0x8E, 0x02,             # CALL $028E
                               0xF5, 0xE5,                   # PUSH AF / PUSH HL
                               0x2A, LOG_PTR & 0xFF, LOG_PTR >> 8,   # LD HL,(ptr)
@@ -86,16 +86,16 @@ def read_log(memory):
     memory[LOG_PTR + 1] = LOG >> 8
     return out
 
-# (od, do, jméno) – co se po každém průchodu porovnává
+# (from, to, name) – what is compared after every pass
 REGIONS = [
-    (0x4000, 0x5B00, 'obrazovka'),
+    (0x4000, 0x5B00, 'screen'),
     (0x5C36, 0x5C38, 'CHARS'),
     (0x5C7D, 0x5C7F, 'COORDS'),
-    (0xA06C, 0xA1F4, 'buffery spritu'),
-    (0xD33E, 0xD33F, 'vzduch'),
-    (0xD86F, 0xD870, 'generátor $D8D4'),
-    (0xD93D, 0xD93E, 'čítač průchodů'),
-    (0xDB36, 0xDDA0, 'proměnné, objekty, potápěč, písek, bubliny'),
+    (0xA06C, 0xA1F4, 'sprite buffers'),
+    (0xD33E, 0xD33F, 'air'),
+    (0xD86F, 0xD870, 'generator $D8D4'),
+    (0xD93D, 0xD93E, 'pass counter'),
+    (0xDB36, 0xDDA0, 'variables, objects, diver, sand, bubbles'),
 ]
 
 
@@ -104,7 +104,7 @@ def main():
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument('--passes', type=int, default=3000)
     ap.add_argument('--out')
-    ap.add_argument('--keys', type=int, help='semínko náhodných kláves potápěče')
+    ap.add_argument('--keys', type=int, help='seed of the random diver keys')
     args = ap.parse_args()
     if args.out is None:
         args.out = os.path.join(B.ROOT, 'build', 'goldfish' if args.keys is None else 'goldfish-keys')
@@ -115,7 +115,7 @@ def main():
     sim = from_snapshot(cls, snap, {}, {'ay': [None] * 16},
                         {'fast_djnz': False, 'fast_ldir': False}, None)
     if list(sim.memory[0xCE3E:0xCE41]) != [0xC3, 0x8A, 0xD0]:
-        raise SystemExit('na $CE3E není JP $D08A')
+        raise SystemExit('no JP $D08A at $CE3E')
     sim.memory[POKE[0]] = POKE[1]
     if args.keys is not None:
         patch(sim.memory)
@@ -141,7 +141,7 @@ def main():
     regs = sim.registers
     sim.trace(snap.pc, LOOP, 0, 0, 1, draw, None, keyboard, None, None)
     if regs[24] != LOOP:
-        raise SystemExit('minihra $%04X nezačala' % LOOP)
+        raise SystemExit('mini-game $%04X did not start' % LOOP)
     sim.memory[0xFFF8] = 0
     if args.keys is not None:
         read_log(sim.memory)
@@ -154,7 +154,7 @@ def main():
         sim.trace(regs[24], -1, 1, 0, 1, draw, None, keyboard, None, None)
         sim.trace(regs[24], LOOP, 0, 0, 1, draw, None, keyboard, None, None)
         if regs[24] != LOOP:
-            raise SystemExit('smyčka $%04X se přerušila' % LOOP)
+            raise SystemExit('loop $%04X was interrupted' % LOOP)
         tstates.append(regs[25])
         if args.keys is not None:
             keys.append(read_log(sim.memory))
@@ -175,7 +175,7 @@ def main():
     if args.keys is not None:
         info['keys'] = keys
     json.dump(info, open(os.path.join(args.out, 'info.json'), 'w'), ensure_ascii=False)
-    print('%d průchodů, průchod průměrně %d T = %.3f snímku (%d–%d T)'
+    print('%d passes, a pass on average %d T = %.3f frames (%d–%d T)'
           % (args.passes, info['passTStates'], info['passTStates'] / FRAME,
              info['minTStates'], info['maxTStates']))
 

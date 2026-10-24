@@ -1,21 +1,23 @@
 #!/usr/bin/env python3
-"""Výchozí paměť remaku: `data/global.json#memory`.
+"""Initial memory of the remake: `data/global.json#memory`.
 
     ./tools/mkmemory.py
 
-`app/bootyLogic.js` pracuje nad 64 KB paměti rozložené jako u originálu.
-Na začátku hry v ní musí být to, co originál v té chvíli **čte jako data**:
-tabulky podpalubí, glyfy kulisy a spritů, šablony objektů, texty, proměnné.
-**Kód v ní není** – ten je přepsaný v `bootyLogic.js` – a nástroj to hlídá:
-každá oblast se ověří proti `sources/asm/booty.ctl`, že nezasahuje do
-žádného bloku kódu (`c`).
+`app/bootyLogic.js` works over 64 KB of memory laid out as in the original.
+At the start of the game it must contain what the original **reads as data**
+at that moment: hold tables, scenery and sprite glyphs, object templates,
+texts, variables. **The code is not in it** – that is rewritten in
+`bootyLogic.js` – and the tool guards that: every area is checked against
+`sources/asm/booty.ctl` that it does not reach into any code block (`c`).
 
-Bere se z paměti originálu ve chvíli, kdy menu spouští hru (`CALL $DEA8`,
-`build/trace/walk/start.bin` z `tools/tracephysics.py`). ROM font
-(`$3D00`–`$3FFF`) v souboru není: ten dodá svision (`ZXFonts8x8`).
+It is taken from the original's memory at the moment the menu starts the game
+(`CALL $DEA8`, `build/trace/walk/start.bin` from `tools/tracephysics.py`).
+The ROM font (`$3D00`–`$3FFF`) is not in the file: svision supplies it
+(`ZXFonts8x8`).
 
-Doklad, že to stačí: `tools/matchstart.mjs` z té paměti spustí novou hru
-(`BootyLogic.newGame`) a celé záznamy originálu – **0 rozdílů**.
+Proof that it suffices: `tools/matchstart.mjs` starts a new game from that
+memory (`BootyLogic.newGame`) and whole recordings of the original –
+**0 differences**.
 """
 import base64, os, sys
 
@@ -25,19 +27,19 @@ import bootylib as B                                             # noqa: E402
 ROOT = os.path.dirname(HERE)
 
 SEGMENTS = [
-    (0x5BCC, 0x5C00, 'proměnné hry (barvy podpalubí, klávesy $5BEB, mód $5BF0, životy, kořist)'),
-    (0x5C00, 0x5CC0, 'systémové proměnné ROM (CHARS, ATTR, DF-CC, S-POSN …)'),
-    (0x8378, 0xA06C, 'glyfy kulisy ($8378, $8678) a sady spritů ($8978, $8E28, $914C, $924C, $934C, $9F6C)'),
-    (0xA06C, 0xA1C4, 'blok nul $A06C (pro sprite) a buffer spritu'),
-    (0xABD6, 0xBAA1, 'tabulky 21 podpalubí'),
-    (0xBAA1, 0xBCCB, 'proměnné kreslení podpalubí, ukazatele, buffer $BAD7 (co v něm hra nepřepíše, zůstane z kazety)'),
-    (0xCB95, 0xCB96, 'bajt za pracovní kopií podpalubí (zbytek z kazety, porovnává se)'),
-    (0xDFBB, 0xDFCB, 'glyf zlatého klíče (CHARS $DEBB)'),
-    (0xE46F, 0xE47A, 'proměnné výbuchu'),
+    (0x5BCC, 0x5C00, 'game variables (hold colours, keys $5BEB, mode $5BF0, lives, loot)'),
+    (0x5C00, 0x5CC0, 'ROM system variables (CHARS, ATTR, DF-CC, S-POSN …)'),
+    (0x8378, 0xA06C, 'scenery glyphs ($8378, $8678) and sprite sets ($8978, $8E28, $914C, $924C, $934C, $9F6C)'),
+    (0xA06C, 0xA1C4, 'block of zeros $A06C (for the sprite) and sprite buffer'),
+    (0xABD6, 0xBAA1, 'tables of the 21 holds'),
+    (0xBAA1, 0xBCCB, 'hold drawing variables, pointers, buffer $BAD7 (what the game does not overwrite stays from the tape)'),
+    (0xCB95, 0xCB96, 'byte after the working copy of the holds (leftover from the tape, is compared)'),
+    (0xDFBB, 0xDFCB, 'gold key glyph (CHARS $DEBB)'),
+    (0xE46F, 0xE47A, 'explosion variables'),
     (0xE6BC, 0xE6DC, 'text FIND THE GOLD KEY IN    SECONDS!'),
-    (0xE820, 0xE821, 'plošina pod Jimem'),
-    (0xF231, 0xF346, 'Jimův objekt a šablona, šablony úlomků, patra, panel, ikony, plošiny, stav generátoru'),
-    (0xFFF7, 0x10000, 'zvuk: tempo, melodie zapnutá, sloty'),
+    (0xE820, 0xE821, 'platform under Jim'),
+    (0xF231, 0xF346, "Jim's object and template, fragment templates, floors, panel, icons, platforms, generator state"),
+    (0xFFF7, 0x10000, 'sound: cadence, tune on, slots'),
 ]
 
 
@@ -59,11 +61,11 @@ def main():
     for lo, hi, what in SEGMENTS:
         clash = [(a, b) for a, b in code if a < hi and b > lo]
         if clash:
-            raise SystemExit('$%04X-$%04X zasahuje do kódu: %s'
+            raise SystemExit('$%04X-$%04X reaches into code: %s'
                              % (lo, hi - 1, ', '.join('$%04X' % a for a, b in clash)))
         data['segments'].append({'address': lo, 'length': hi - lo,
                                  'bytes': base64.b64encode(start[lo:hi]).decode('ascii')})
-    print('%s: %d oblastí, %d B' % (B.write_section('memory', data), len(SEGMENTS), sum(hi - lo for lo, hi, w in SEGMENTS)))
+    print('%s: %d areas, %d B' % (B.write_section('memory', data), len(SEGMENTS), sum(hi - lo for lo, hi, w in SEGMENTS)))
 
 
 if __name__ == '__main__':

@@ -1,35 +1,36 @@
 #!/usr/bin/env node
 /**
- * Projde celou smyčku workeru bez prohlížeče.
+ * Runs the whole worker loop without a browser.
  *
  *   ./tools/runworker.mjs [--verbose]
  *
- * `app/gameWorker.js` se spustí v atrapě prostředí workeru (postMessage,
- * setTimeout, Date, importScripts – `bootyLogic.js` se načte doopravdy)
- * s daty, která mu dává model: `data/global.json#memory`, ROM font ze svision,
- * `data/global.json#transition`. Kontroluje se:
+ * `app/gameWorker.js` is started in a mock worker environment (postMessage,
+ * setTimeout, Date, importScripts – `bootyLogic.js` is loaded for real)
+ * with the data the model gives it: `data/global.json#memory`, the ROM font
+ * from svision, `data/global.json#transition`. Checked:
  *
- * - **start**: worker odpoví na `init` snímkem a jeho obrazovka je **bajt
- *   po bajtu obrazovka originálu na začátku prvního průchodu**
- *   (`build/trace/walk/init.bin`); panel: podpalubí 1, tři životy, kořist
- *   0 / 125, klíč 0
- * - **tempo**: průchod se pouští konstantně, jednou za `passTStates`
- *   T-stavů snímků (`PASS_TSTATES` workeru) – za 1000 tiků tolik průchodů,
- *   kolik z toho vyjde, a obrazovka chodí jen se snímkem, ve kterém průchod
- *   proběhl
- * - **klávesy**: akce se přeloží na klávesy originálu (`$5BEB`) a ROM
- *   `KEY-SCAN` – Jim jde vpravo, když se drží „vpravo“
- * - **semínko**: stav `$F343` dorazí a dva běhy s týmž semínkem a týmiž
- *   klávesami dají tentýž stav
- * - ★ **hodiny**: s podstrčeným časem tik po `TICK_MS` workeru, nikdy víc než
- *   jeden naplánovaný časovač, pauza, dvojí `continue`, výpadek karty (bez
- *   akumulátoru se nic nedohání: po výpadku jeden tik)
- * - **přechod dveřmi** (`data/global.json#transition`): Jim před dveřmi s drženým
- *   vstupem – průchod změní podpalubí, worker pak snímek po snímku ukazuje
- *   mazání, černo a nové podpalubí (`BootyLogic.transitionScreen`), border
- *   se změní až s ním, další průchod počká, a držený vstup se ještě
- *   `ENTER_LOCK_FRAMES` snímků po přechodu nepočítá
- * - `reset` zastaví a zahodí stav
+ * - **start**: the worker answers `init` with a frame and its screen is
+ *   **byte for byte the original's screen at the start of the first pass**
+ *   (`build/trace/walk/init.bin`); panel: hold 1, three lives, booty
+ *   0 / 125, key 0
+ * - **pace**: the pass runs at a constant rate, once every `passTStates`
+ *   T-states of frames (the worker's `PASS_TSTATES`) – in 1000 ticks as
+ *   many passes as that gives, and the screen comes only with the frame in
+ *   which a pass ran
+ * - **keys**: actions are translated into the original's keys (`$5BEB`) and
+ *   ROM `KEY-SCAN` – Jim walks right while "right" is held
+ * - **seed**: the state `$F343` arrives and two runs with the same seed and
+ *   the same keys give the same state
+ * - ★ **clock**: with a substituted time a tick every `TICK_MS` of the worker,
+ *   never more than one scheduled timer, pause, a double `continue`, a tab
+ *   stall (no accumulator, so nothing is caught up: one tick after a stall)
+ * - **door transition** (`data/global.json#transition`): Jim in front of a door
+ *   with enter held – the pass changes the hold, the worker then shows frame
+ *   by frame the clearing, the black and the new hold
+ *   (`BootyLogic.transitionScreen`), the border changes only with it, the
+ *   next pass waits, and the held enter does not count for another
+ *   `ENTER_LOCK_FRAMES` frames after the transition
+ * - `reset` stops and drops the state
  */
 import fs from 'node:fs';
 import path from 'node:path';
@@ -45,7 +46,7 @@ function check(condition, label) {
   checks++;
   if (!condition) {
     failures++;
-    console.log('  CHYBA: '+label);
+    console.log('  FAIL: '+label);
   }
 }
 
@@ -67,16 +68,16 @@ async function main() {
   // --- start
   const { worker, messages } = run({seed: 0}, 0);
   const first = messages[0];
-  check(first && first.id === 'frame', 'init odpovědělo snímkem');
-  check(first && first.screen && first.screen.length === 6912, 'snímek po init nese obrazovku');
+  check(first && first.id === 'frame', 'init answered with a frame');
+  check(first && first.screen && first.screen.length === 6912, 'the frame after init carries the screen');
   const init = fs.readFileSync(path.join(ROOT, 'build/trace/walk/init.bin'));
   const same = first && first.screen && first.screen.every((b, i) => b === init[0x4000+i]);
-  check(same, 'obrazovka po init = obrazovka originálu na začátku prvního průchodu (walk/init.bin)');
-  check(first && first.hold === 1, 'hra začíná v podpalubí 1');
-  check(first && first.panel.lives === 3 && first.panel.key === 0, 'tři životy, klíč 0');
-  check(first && first.panel.booty === 0 && first.panel.treasure === 125, 'kořist 0 / 125');
-  check(first && first.rand === 0, 'semínko 0 = stav $F343 po nahrání');
-  check(first && first.border === 0, 'border podpalubí 1 je černý');
+  check(same, 'the screen after init = the original\'s screen at the start of the first pass (walk/init.bin)');
+  check(first && first.hold === 1, 'the game starts in hold 1');
+  check(first && first.panel.lives === 3 && first.panel.key === 0, 'three lives, key 0');
+  check(first && first.panel.booty === 0 && first.panel.treasure === 125, 'booty 0 / 125');
+  check(first && first.rand === 0, 'seed 0 = the state of $F343 after loading');
+  check(first && first.border === 0, 'the border of hold 1 is black');
 
   // --- tempo: one pass per passTStates of frames
   const ticks = 1000;
@@ -84,28 +85,28 @@ async function main() {
   const passTStates = w2.context.PASS_TSTATES;
   const expected = Math.floor(ticks*69888/passTStates);
   const last = m2[m2.length-1];
-  check(last.pass === expected, `za ${ticks} tiků ${expected} průchodů (je ${last.pass})`);
-  check(last.frame === ticks, `počítadlo snímků ${ticks} (je ${last.frame})`);
+  check(last.pass === expected, `${expected} passes in ${ticks} ticks (got ${last.pass})`);
+  check(last.frame === ticks, `frame counter ${ticks} (got ${last.frame})`);
   const withScreen = m2.slice(1).filter((msg) => msg.screen).length;
-  check(withScreen === expected, `obrazovka jen se snímkem, ve kterém proběhl průchod (${withScreen})`);
+  check(withScreen === expected, `the screen only with the frame in which a pass ran (${withScreen})`);
 
   // --- keys: holding right walks Jim right (C goes down)
   const right = run({seed: 0}, 200, {20: {right: true}});
   const startC = right.messages[0].jim[0];
   const endC = right.messages[right.messages.length-1].jim[0];
-  check(endC < startC, `drží se „vpravo“: Jim jde vpravo (C ${startC} → ${endC})`);
+  check(endC < startC, `"right" held: Jim walks right (C ${startC} → ${endC})`);
   const left = run({seed: 0}, 200, {20: {left: true}});
-  check(left.messages[left.messages.length-1].jim[0] > startC, 'drží se „vlevo“: Jim jde vlevo');
+  check(left.messages[left.messages.length-1].jim[0] > startC, '"left" held: Jim walks left');
   const both = run({seed: 0}, 200, {20: {left: true, right: true}});
   check(JSON.stringify(both.messages[both.messages.length-1].jim) === JSON.stringify(left.messages[left.messages.length-1].jim),
-        'vlevo a vpravo naráz = co vrátí KEY-SCAN (5 je v řadě $F7FE dřív než 8)');
+        'left and right at once = what KEY-SCAN returns (5 comes before 8 in row $F7FE)');
 
   // --- seed and determinism
   const a = run({seed: 0x1234}, 400, {10: {right: true}, 200: {right: false, up: true}});
   const b = run({seed: 0x1234}, 400, {10: {right: true}, 200: {right: false, up: true}});
-  check(a.messages[0].rand === 0x1234, 'semínko je počáteční stav $F343');
+  check(a.messages[0].rand === 0x1234, 'the seed is the initial state of $F343');
   check(JSON.stringify(a.messages[a.messages.length-1]) === JSON.stringify(b.messages[b.messages.length-1]),
-        'tentýž seed a tytéž klávesy dají tentýž stav');
+        'the same seed and the same keys give the same state');
 
   // --- a door: the change of hold the way the original shows it
   const seen = [];
@@ -129,7 +130,7 @@ async function main() {
     }
   }
   const at = seen.findIndex((msg) => msg.hold === 2);
-  check(at > 0, 'držený vstup před dveřmi vede do podpalubí 2');
+  check(at > 0, 'enter held in front of the door leads into hold 2');
   if (at > 0) {
     const black = (msg) => msg.screen && msg.screen.subarray(0x1800).every((v) => v === 0);
     const passAt = seen[at].pass;
@@ -140,28 +141,28 @@ async function main() {
     const frames = end-at;
     const blackFrames = seen.slice(at, end).filter(black).length;
     check(!black(seen[at]) && seen[at].border === seen[at-1].border,
-          'v prvním snímku přechodu je ještě staré podpalubí i border');
-    check(blackFrames >= 4, `obraz je několik snímků černý (${blackFrames})`);
-    // délka přechodu: mazání a konec TRANSITION_SLOWDOWN× pomaleji, černo
-    // jako originál (tools/tracetransition.py), + průchod
+          'the first frame of the transition still has the old hold and border');
+    check(blackFrames >= 4, `the picture is black for several frames (${blackFrames})`);
+    // the length of the transition: the clearing and the end TRANSITION_SLOWDOWN×
+    // slower, the black as in the original (tools/tracetransition.py), + a pass
     const length = doorWorker.context.transitionLength(times)/69888;
     check(frames >= Math.floor(length) && frames <= Math.ceil(length)+3,
-          `další průchod počká na konec přechodu (${frames} snímků, přechod ${length.toFixed(1)})`);
+          `the next pass waits for the end of the transition (${frames} frames, transition ${length.toFixed(1)})`);
     const blackOriginal = (times.copy-times.black)/69888;
     check(Math.abs(seen.slice(at, end).filter(black).length-blackOriginal) <= 2,
-          `černo trvá jako v originálu (${blackOriginal.toFixed(1)} snímku)`);
+          `the black lasts as in the original (${blackOriginal.toFixed(1)} frames)`);
     const firstBlack = seen.findIndex((msg, i) => i >= at && black(msg));
     const shownAt = seen.findIndex((msg, i) => i > firstBlack && msg.screen && !black(msg));
-    check(seen.slice(at, shownAt+1).every((msg) => msg.screen), 'během přechodu nese obrazovku každý snímek');
+    check(seen.slice(at, shownAt+1).every((msg) => msg.screen), 'every frame during the transition carries the screen');
     check(shownAt > at && seen.slice(at, shownAt).every((msg) => msg.border === seen[at].border),
-          'border se změní až s novým podpalubím');
+          'the border changes only with the new hold');
     const lock = doorWorker.context.ENTER_LOCK_FRAMES;
     check(seen.slice(shownAt, shownAt+lock).every((msg) => msg.hold === 2) && seen.length > shownAt+lock,
-          `držený vstup se po přechodu ještě ${lock} snímků nepočítá (zůstává podpalubí 2)`);
+          `the held enter does not count for another ${lock} frames after the transition (hold 2 stays)`);
     check(!black(seen[shownAt]) && seen.slice(shownAt+1, end).every((msg) => !msg.screen || !black(msg)),
-          'přechod skončil novým podpalubím');
+          'the transition ended with the new hold');
     if (verbose) {
-      console.log(`přechod: od snímku ${at}, ${frames} snímků, černých ${blackFrames}, podpalubí vidět od ${shownAt}`);
+      console.log(`transition: from frame ${at}, ${frames} frames, ${blackFrames} black, the hold visible from ${shownAt}`);
     }
   }
 
@@ -169,7 +170,7 @@ async function main() {
   const before = messages.length;
   worker.send({id: 'reset'});
   worker.send({id: 'tick'});
-  check(messages.length === before, 'reset zastaví headless tikání');
+  check(messages.length === before, 'reset stops the headless ticking');
 
   // --- the clock (R-046)
   const live = [];
@@ -179,32 +180,32 @@ async function main() {
   const ticksDone = live[live.length-1].frame;
   TICK_MS = clocked.context.TICK_MS;
   const perSecond = Math.floor(1000/TICK_MS);
-  check(ticksDone === perSecond, `za vteřinu ${perSecond} tiků po ${TICK_MS} ms (je ${ticksDone})`);
+  check(ticksDone === perSecond, `${perSecond} ticks of ${TICK_MS} ms in a second (got ${ticksDone})`);
   clocked.advance(10000);
   const tenSeconds = live[live.length-1].frame-ticksDone;
   check(Math.abs(tenSeconds-Math.round(10000/TICK_MS)) <= 1,
-        `za deset vteřin ${Math.round(10000/TICK_MS)} tiků (je ${tenSeconds})`);
-  check(clocked.clock.maxPending === 1, `nikdy víc než jeden naplánovaný časovač (bylo ${clocked.clock.maxPending})`);
+        `${Math.round(10000/TICK_MS)} ticks in ten seconds (got ${tenSeconds})`);
+  check(clocked.clock.maxPending === 1, `never more than one scheduled timer (was ${clocked.clock.maxPending})`);
   clocked.send({id: 'pause'});
   const paused = live.length;
   clocked.advance(1000);
-  check(live.length === paused, 'pause zastaví hodiny');
-  check(clocked.clock.timers.length === 0, 'po pause nezůstal naplánovaný časovač');
+  check(live.length === paused, 'pause stops the clock');
+  check(clocked.clock.timers.length === 0, 'no scheduled timer is left after pause');
   clocked.send({id: 'continue'});
   clocked.send({id: 'continue'});
-  check(clocked.clock.timers.length === 1, 'continue dvakrát nezaloží dvoje hodiny');
+  check(clocked.clock.timers.length === 1, 'continue twice does not start two clocks');
   const resumed = live[live.length-1].frame;
   clocked.advance(1000);
-  check(Math.abs(live[live.length-1].frame-resumed-perSecond) <= 1, `po continue zase ${perSecond} tiků za vteřinu`);
+  check(Math.abs(live[live.length-1].frame-resumed-perSecond) <= 1, `after continue ${perSecond} ticks a second again`);
   const stalled = live[live.length-1].frame;
   clocked.clock.timers[0].at = clocked.clock.now+10000;
   clocked.advance(10000+TICK_MS, 1);
-  check(live[live.length-1].frame-stalled <= 5, 'po výpadku nejvýš čtyři tiky naráz');
+  check(live[live.length-1].frame-stalled <= 5, 'at most four ticks at once after a stall');
   clocked.send({id: 'reset'});
-  check(clocked.clock.timers.length === 0, 'reset zastaví hodiny');
+  check(clocked.clock.timers.length === 0, 'reset stops the clock');
 
   if (verbose) { console.log(JSON.stringify(last).slice(0, 300)); }
-  console.log(`${checks} kontrol, **${failures} chyb**`);
+  console.log(`${checks} checks, **${failures} failures**`);
   process.exit(failures ? 1 : 0);
 }
 

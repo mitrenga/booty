@@ -1,33 +1,36 @@
 #!/usr/bin/env node
 /**
- * Porovná skrytou minihru remaku s originálem — průchod po průchodu.
+ * Compares the remake's hidden mini-game with the original — pass by pass.
  *
  *   ./tools/matchgoldfish.mjs [--ink] [--verbose]
  *
- * ★ Reference je `tools/tracegoldfish.py`: skutečný kód z kazety
- * v simulátoru Z80, minihra spuštěná přes POKE, bez kláves, a po každém
- * průchodu `$CF36` obrazovka, buffery spritů, proměnné, objekty, potápěč,
- * písek a bubliny. Remake je `app/goldfishLogic.js`, **kód, který běží
- * v SECRET SUB GAME** (`app/subGameWorker.js`), puštěný z paměti, ze které
- * začíná (`data/global.json#goldfish`, jen datové oblasti – co by přepis četl
- * jinde, ukáže se – a ROM font na `$3D00`), s animací potápěče a s tiskem
- * řádků 22–23 jako v originálu (`animateDiver`, `panel`).
+ * ★ The reference is `tools/tracegoldfish.py`: the real code from the tape in
+ * a Z80 simulator, the mini-game started through a POKE, with no keys, and
+ * after every pass `$CF36` the screen, sprite buffers, variables, objects,
+ * the diver, the sand and the bubbles. The remake is `app/goldfishLogic.js`,
+ * **the code that runs in SECRET SUB GAME** (`app/subGameWorker.js`), run
+ * from the memory it starts from (`data/global.json#goldfish`, data regions
+ * only – whatever the port would read elsewhere shows up – and the ROM font
+ * at `$3D00`), with the diver's animation and rows 22–23 printed as in the
+ * original (`animateDiver`, `panel`).
  *
- * Dva běhy: **klid** (bez kláves, paměť z `data/global.json#goldfish`) a **klávesy**
- * (`tracegoldfish.py --keys`, `build/goldfish-keys/`): náhodně držené klávesy
- * potápěče, co ROM `KEY-SCAN` vrátila, přehrané do přepisu přes `input`
- * (`$D579`) – pohyb a mazání potápěče, chycení, srážka s velkou rybou.
+ * Two runs: **idle** (no keys, memory from `data/global.json#goldfish`) and
+ * **keys** (`tracegoldfish.py --keys`, `build/goldfish-keys/`): randomly held
+ * diver keys, what ROM `KEY-SCAN` returned, replayed into the port through
+ * `input` (`$D579`) – the diver's movement and erasing, a catch, a collision
+ * with the big fish.
  *
- * Kontroluje se všechno po každém průchodu, bajt po bajtu – i řádky 22–23
- * (FISH, počet ryb `$CFA8`, ukazatel AIR `$D2F8`). Menu pouští tentýž kód
- * bez potápěče a bez ryb (`diver: false`, `objects: false`) a na řádky
- * 22–23 píše svoje.
+ * Everything is checked after every pass, byte by byte – rows 22–23 too
+ * (FISH, the fish count `$CFA8`, the AIR gauge `$D2F8`). The menu runs the
+ * same code without the diver and without fish (`diver: false`, `objects:
+ * false`) and writes its own rows 22–23.
  *
- * `--ink` pustí oba běhy s **barevnou rovinou** (`inkPlane`, R-036, jako
- * SECRET SUB GAME při `ScreenLayout.TRUE_COLOUR`): paměť musí dál sedět na
- * bajt (rovina je *vedle* ní), majitele smějí mít jen rozsvícené pixely, a
- * vypíše se, kolik rozsvícených pixelů má jiný inkoust, než by jim dala
- * buňka – nula by znamenala, že se rovina neplní (DESIGN-inkplane.md §5).
+ * `--ink` runs both with the **ink plane** (`inkPlane`, R-036, as SECRET SUB
+ * GAME does under `ScreenLayout.TRUE_COLOUR`): the memory must still match to
+ * the byte (the plane sits *beside* it), only lit pixels may have an owner,
+ * and it prints how many lit pixels have an ink other than the one their
+ * cell would give them – zero would mean the plane is not being filled
+ * (DESIGN-inkplane.md §5).
  */
 import fs from 'node:fs';
 import path from 'node:path';
@@ -75,13 +78,13 @@ function runRecord(name, base, memory, GoldfishLogic) {
     try {
       outcome = logic.pass();
     } catch (error) {
-      console.log(`${name} průchod ${i}: ${error.message}`);
+      console.log(`${name} pass ${i}: ${error.message}`);
       if (verbose) { console.log(error.stack); }
       diffs++;
       break;
     }
     if (outcome !== 'pass') {
-      console.log(`${name} průchod ${i}: remake ${outcome}, originál pokračuje`);
+      console.log(`${name} pass ${i}: remake ${outcome}, the original goes on`);
       diffs++;
       break;
     }
@@ -91,7 +94,7 @@ function runRecord(name, base, memory, GoldfishLogic) {
         checks++;
         if (memory[a] !== passes[at]) {
           count++;
-          if (!first) { first = `${region}: ${hex(a)} remake ${hex(memory[a], 2)}, originál ${hex(passes[at], 2)}`; }
+          if (!first) { first = `${region}: ${hex(a)} remake ${hex(memory[a], 2)}, original ${hex(passes[at], 2)}`; }
         }
       }
     }
@@ -104,15 +107,15 @@ function runRecord(name, base, memory, GoldfishLogic) {
       }
     }
     if (count) {
-      console.log(`${name} průchod ${i}: ${count} rozdílů, první ${first}`);
+      console.log(`${name} pass ${i}: ${count} differences, first ${first}`);
       diffs += count;
       break;
     }
     done++;
   }
-  console.log(`${name.padEnd(8)} ${done} průchodů z ${info.passes}, ${checks} kontrol, ${diffs} rozdílů`);
+  console.log(`${name.padEnd(8)} ${done} passes of ${info.passes}, ${checks} checks, ${diffs} differences`);
   if (withInk) {
-    console.log(`${''.padEnd(8)} rovina: přebarvených ${ink.recoloured} z ${ink.pixels} rozsvícených pixelů (${(100*ink.recoloured/Math.max(1, ink.pixels)).toFixed(2)} %), nejvíc v průchodu ${ink.most}`);
+    console.log(`${''.padEnd(8)} plane: ${ink.recoloured} of ${ink.pixels} lit pixels recoloured (${(100*ink.recoloured/Math.max(1, ink.pixels)).toFixed(2)} %), most in a pass ${ink.most}`);
   }
   return {checks, diffs};
 }
@@ -140,7 +143,7 @@ function inkCheck(memory, plane, ink) {
         checks++;
         if (own && !lit) {
           diffs++;
-          if (!first) { first = `rovina: pixel ${col*8+bit},${y} má majitele a nesvítí`; }
+          if (!first) { first = `plane: pixel ${col*8+bit},${y} has an owner and is not lit`; }
         }
         if (lit) {
           ink.pixels++;
@@ -159,7 +162,7 @@ function inkCheck(memory, plane, ink) {
 async function main() {
   const base = path.join(ROOT, 'build/goldfish');
   if (!fs.existsSync(path.join(base, 'init.bin'))) {
-    console.error('chybí build/goldfish – spusť ./tools/tracegoldfish.py');
+    console.error('build/goldfish is missing – run ./tools/tracegoldfish.py');
     process.exit(2);
   }
   await import(url.pathToFileURL(path.join(ROOT, 'app/svision/tools/nodeEnv.mjs')).href);
@@ -180,15 +183,15 @@ async function main() {
   memory.set(init.subarray(0x3D00, 0x4000), 0x3D00);
   // the keys of the game ($5BEB-$5BEE) are not data of the hidden game: from
   // the run, for the mapping of KEY-SCAN's codes only
-  const runs = [runRecord('klid', base, memory, GoldfishLogic)];
+  const runs = [runRecord('idle', base, memory, GoldfishLogic)];
   const keysBase = path.join(ROOT, 'build/goldfish-keys');
   if (fs.existsSync(path.join(keysBase, 'init.bin'))) {
     const full = new Uint8Array(fs.readFileSync(path.join(keysBase, 'init.bin')));
-    runs.push(runRecord('klávesy', keysBase, full, GoldfishLogic));
+    runs.push(runRecord('keys', keysBase, full, GoldfishLogic));
   }
   const checks = runs.reduce((sum, r) => sum+r.checks, 0);
   const diffs = runs.reduce((sum, r) => sum+r.diffs, 0);
-  console.log(`celkem ${checks} kontrol, **${diffs} rozdílů**`);
+  console.log(`total ${checks} checks, **${diffs} differences**`);
   process.exit(diffs ? 1 : 0);
 }
 
