@@ -1,9 +1,9 @@
-const { ZXVideoRAM } = await import('./svision/js/platform/canvas2D/zxSpectrum/zxVideoRAM.js?ver='+window.srcVersion);
+const { ZXVideoRAM } = await import('./svision/js/platform/canvas2D/zx/zxVideoRAM.js?ver='+window.srcVersion);
 const { ScreenLayout } = await import('./screenLayout.js?ver='+window.srcVersion);
 const { HoldRenderer } = await import('./holdRenderer.js?ver='+window.srcVersion);
 const { SpriteRenderer } = await import('./spriteRenderer.js?ver='+window.srcVersion);
 const { PanelRenderer } = await import('./panelRenderer.js?ver='+window.srcVersion);
-const { ZXRomPrint } = await import('./svision/js/platform/canvas2D/zxSpectrum/zxRomPrint.js?ver='+window.srcVersion);
+const { ZXRomPrint } = await import('./svision/js/platform/canvas2D/zx/zxRomPrint.js?ver='+window.srcVersion);
 // begin code
 
 /**

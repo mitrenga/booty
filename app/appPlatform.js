@@ -1,4 +1,4 @@
-const { ZXSpectrumPlatform } = await import('./svision/js/platform/canvas2D/zxSpectrum/zxSpectrumPlatform.js?ver='+window.srcVersion);
+const { ZXPlatform } = await import('./svision/js/platform/canvas2D/zx/zxPlatform.js?ver='+window.srcVersion);
 // begin code
 
 /**
@@ -7,5 +7,5 @@ const { ZXSpectrumPlatform } = await import('./svision/js/platform/canvas2D/zxSp
  * original ran on (ZADANI chap. 2).
  */
 export function appPlatform() {
-  return new ZXSpectrumPlatform();
+  return new ZXPlatform();
 } // appPlatform

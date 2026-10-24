@@ -2,8 +2,8 @@
 
 Věrný remake hry **Booty** (Firebird Software, 1984, ZX Spectrum 48K,
 ★ autor John F. Cain — loading screen i menu, ? řada Firebird Silver) pro webový prohlížeč,
-JavaScript, vlastní knihovna **svision**. Běží na `ZXSpectrumPlatform`
-s rozvržením `ZXSpectrumLayout` (`zxSpectrumLayout`) — stejná větev jako
+JavaScript, vlastní knihovna **svision**. Běží na `ZXPlatform`
+s rozvržením `ZXLayout` (`zxLayout`) — stejná větev jako
 sabrewulf / manicminer / jetsetwilly / jetpac / lunarjetman / aticatac, ne
 arkádová `ArcadePlatform`.
 
@@ -325,7 +325,7 @@ kořisti za celou hru přes všechna kola (`sources/docs/rules.md`).
 ## 8. Cíle remaku
 
 - Rozlišení **256×192 + border**, celočíselné škálování,
-  `ZXSpectrumPlatform` + `ZXSpectrumLayout`.
+  `ZXPlatform` + `ZXLayout`.
 - Grafika **vytažená z originálního programu** (sprity Jima, nepřátel,
   předmětů, kusy podpalubí, atributy), ne dokreslená.
 - Zvuky syntetizované jako 1bitový beeper podle rutin z disassembly,

@@ -24,7 +24,7 @@ export async function initData() {
   global.atob = (data) => Buffer.from(data, 'base64').toString('binary');
   await import(url.pathToFileURL(path.join(ROOT, 'app/svision/tools/nodeEnv.mjs')).href);
   const { ZXFonts8x8 } = await import(
-    url.pathToFileURL(path.join(ROOT, 'app/svision/js/platform/canvas2D/zxSpectrum/zxFonts8x8.js')).href);
+    url.pathToFileURL(path.join(ROOT, 'app/svision/js/platform/canvas2D/zx/zxFonts8x8.js')).href);
   const font = new ZXFonts8x8({}, false);
   const romFont = new Uint8Array(768);
   for (let c = 0; c < 96; c++) { romFont.set(font.glyphBytes(font.fontsChars.charAt(c)), c*8); }

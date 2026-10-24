@@ -164,7 +164,7 @@ async function main() {
   }
   await import(url.pathToFileURL(path.join(ROOT, 'app/svision/tools/nodeEnv.mjs')).href);
   const loadClassicScript = require(path.join(ROOT, 'app/svision/tools/classicScript.cjs'));
-  globalThis.ZXRomDraw = loadClassicScript(path.join(ROOT, 'app/svision/js/platform/canvas2D/zxSpectrum/zxRomDraw.js'));
+  globalThis.ZXRomDraw = loadClassicScript(path.join(ROOT, 'app/svision/js/platform/canvas2D/zx/zxRomDraw.js'));
   const GoldfishLogic = loadClassicScript(path.join(ROOT, 'app/goldfishLogic.js'));
 
   // ★ the memory the menu starts from: data/global.json#goldfish (tools/mkgoldfish.py),

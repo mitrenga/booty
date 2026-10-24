@@ -101,7 +101,7 @@ async function main() {
   const { ScreenComposer } = await import(
     url.pathToFileURL(path.join(ROOT, 'app/screenComposer.js')).href);
   const { ZXVideoRAM } = await import(
-    url.pathToFileURL(path.join(ROOT, 'app/svision/js/platform/canvas2D/zxSpectrum/zxVideoRAM.js')).href);
+    url.pathToFileURL(path.join(ROOT, 'app/svision/js/platform/canvas2D/zx/zxVideoRAM.js')).href);
 
   const data = {};
   ['holds', 'sprites', 'panel', 'global', 'texts'].forEach((name) => { data[name] = loadDataFile(name); });

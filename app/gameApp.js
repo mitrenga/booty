@@ -1,10 +1,10 @@
 const { Version } = await import('./version.js?ver='+window.srcVersion);
 const { AbstractApp } = await import('./svision/js/abstractApp.js?ver='+window.srcVersion);
 const { AudioManager } = await import('./audioManager.js?ver='+window.srcVersion);
-const { ZXFonts8x8 } = await import('./svision/js/platform/canvas2D/zxSpectrum/zxFonts8x8.js?ver='+window.srcVersion);
+const { ZXFonts8x8 } = await import('./svision/js/platform/canvas2D/zx/zxFonts8x8.js?ver='+window.srcVersion);
 const { Fonts5x5 } = await import('./svision/js/platform/canvas2D/fonts5x5.js?ver='+window.srcVersion);
 const { Fonts3x3 } = await import('./svision/js/platform/canvas2D/fonts3x3.js?ver='+window.srcVersion);
-const { ZXResetModel } = await import('./svision/js/platform/canvas2D/zxSpectrum/zxResetModel.js?ver='+window.srcVersion);
+const { ZXResetModel } = await import('./svision/js/platform/canvas2D/zx/zxResetModel.js?ver='+window.srcVersion);
 const { MenuModel } = await import('./menuModel.js?ver='+window.srcVersion);
 const { MainModel } = await import('./mainModel.js?ver='+window.srcVersion);
 const { SubMenuModel } = await import('./subMenuModel.js?ver='+window.srcVersion);
@@ -12,14 +12,14 @@ const { GameModel } = await import('./gameModel.js?ver='+window.srcVersion);
 const { SubGameModel } = await import('./subGameModel.js?ver='+window.srcVersion);
 const { GameOverModel } = await import('./gameOverModel.js?ver='+window.srcVersion);
 const { TapeLoadingModel } = await import('./tapeLoadingModel.js?ver='+window.srcVersion);
-const { ZXErrorEntity } = await import('./svision/js/platform/canvas2D/zxSpectrum/zxErrorEntity.js?ver='+window.srcVersion);
+const { ZXErrorEntity } = await import('./svision/js/platform/canvas2D/zx/zxErrorEntity.js?ver='+window.srcVersion);
 const { Tool } = await import('./svision/js/tool.js?ver='+window.srcVersion);
-const { ZXColor } = await import('./svision/js/platform/canvas2D/zxSpectrum/zxColor.js?ver='+window.srcVersion);
+const { ZXColor } = await import('./svision/js/platform/canvas2D/zx/zxColor.js?ver='+window.srcVersion);
 // begin code
 
 /**
  * Booty application shell (M1 skeleton, built on the Booty and Jetpac
- * ones — a ZX game on ZXSpectrumPlatform with a worker).
+ * ones — a ZX game on ZXPlatform with a worker).
  * LoadingModel -> MenuModel -> GameModel (the game) -> GameOverModel, plus
  * SubGameModel (the original's hidden CATCH 20 GOLDFISH, SECRET SUB GAME),
  * TapeLoadingModel and SubMenuModel (HALL OF FAME, SOUNDS, MUSIC, SETTINGS,

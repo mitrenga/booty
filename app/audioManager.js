@@ -3,8 +3,8 @@ const { AudioWorkletHandler } = await import('./svision/js/audio/audioWorkletHan
 const { AudioScriptProcessorHandler } = await import('./svision/js/audio/audioScriptProcessorHandler.js?ver='+window.srcVersion);
 const { AudioSilentHandler } = await import('./svision/js/audio/audioSilentHandler.js?ver='+window.srcVersion);
 const { Tool } = await import('./svision/js/tool.js?ver='+window.srcVersion);
-const { ZXMachineSounds } = await import('./svision/js/platform/canvas2D/zxSpectrum/zxMachineSounds.js?ver='+window.srcVersion);
-const { ZXVideoRAM } = await import('./svision/js/platform/canvas2D/zxSpectrum/zxVideoRAM.js?ver='+window.srcVersion);
+const { ZXMachineSounds } = await import('./svision/js/platform/canvas2D/zx/zxMachineSounds.js?ver='+window.srcVersion);
+const { ZXVideoRAM } = await import('./svision/js/platform/canvas2D/zx/zxVideoRAM.js?ver='+window.srcVersion);
 const { BootySound } = await import('./bootySound.js?ver='+window.srcVersion);
 // begin code
 

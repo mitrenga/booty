@@ -34,7 +34,7 @@ async function main() {
   const load = async (f) => import(url.pathToFileURL(path.join(ROOT, f)).href);
   const { HoldRenderer } = await load('app/holdRenderer.js');
   const { PanelRenderer } = await load('app/panelRenderer.js');
-  const { ZXVideoRAM } = await load('app/svision/js/platform/canvas2D/zxSpectrum/zxVideoRAM.js');
+  const { ZXVideoRAM } = await load('app/svision/js/platform/canvas2D/zx/zxVideoRAM.js');
   const json = (f) => JSON.parse(fs.readFileSync(path.join(ROOT, f), 'utf8'));
 
   const holds = new HoldRenderer(readSection('holds'));

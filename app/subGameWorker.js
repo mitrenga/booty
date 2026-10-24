@@ -34,7 +34,7 @@
  */
 
 var query = (typeof self !== 'undefined' && self.location) ? self.location.search : '';
-importScripts('svision/js/platform/canvas2D/zxSpectrum/zxRomDraw.js'+query);
+importScripts('svision/js/platform/canvas2D/zx/zxRomDraw.js'+query);
 importScripts('goldfishLogic.js'+query);
 // ROM KEY-SCAN (BootyLogic.keyScan): the machine's, shared with the game
 importScripts('bootyLogic.js'+query);

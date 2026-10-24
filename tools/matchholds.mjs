@@ -41,7 +41,7 @@ async function main() {
   await import(url.pathToFileURL(path.join(ROOT, 'app/svision/tools/nodeEnv.mjs')).href);
   const { HoldRenderer } = await import(url.pathToFileURL(path.join(ROOT, 'app/holdRenderer.js')).href);
   const { ZXVideoRAM } = await import(
-    url.pathToFileURL(path.join(ROOT, 'app/svision/js/platform/canvas2D/zxSpectrum/zxVideoRAM.js')).href);
+    url.pathToFileURL(path.join(ROOT, 'app/svision/js/platform/canvas2D/zx/zxVideoRAM.js')).href);
 
   const renderer = new HoldRenderer(readSection('holds'));
   const borders = JSON.parse(fs.readFileSync(path.join(REF, 'global.json#holds'), 'utf8'));

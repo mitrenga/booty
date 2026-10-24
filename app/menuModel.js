@@ -4,13 +4,13 @@ const { BorderEntity } = await import('./borderEntity.js?ver='+window.srcVersion
 const { TextEntity } = await import('./svision/js/platform/canvas2D/textEntity.js?ver='+window.srcVersion);
 const { ButtonEntity } = await import('./svision/js/platform/canvas2D/buttonEntity.js?ver='+window.srcVersion);
 const { MenuEntity } = await import('./svision/js/platform/canvas2D/menuEntity.js?ver='+window.srcVersion);
-const { ZXWaitForAudioEventEntity } = await import('./svision/js/platform/canvas2D/zxSpectrum/zxWaitForAudioEventEntity.js?ver='+window.srcVersion);
-const { ZXColor } = await import('./svision/js/platform/canvas2D/zxSpectrum/zxColor.js?ver='+window.srcVersion);
-const { ZXDialogEntity } = await import('./svision/js/platform/canvas2D/zxSpectrum/zxDialogEntity.js?ver='+window.srcVersion);
-const { ZXVideoRAMEntity } = await import('./svision/js/platform/canvas2D/zxSpectrum/zxVideoRAMEntity.js?ver='+window.srcVersion);
-const { ZXVideoRAM } = await import('./svision/js/platform/canvas2D/zxSpectrum/zxVideoRAM.js?ver='+window.srcVersion);
+const { ZXWaitForAudioEventEntity } = await import('./svision/js/platform/canvas2D/zx/zxWaitForAudioEventEntity.js?ver='+window.srcVersion);
+const { ZXColor } = await import('./svision/js/platform/canvas2D/zx/zxColor.js?ver='+window.srcVersion);
+const { ZXDialogEntity } = await import('./svision/js/platform/canvas2D/zx/zxDialogEntity.js?ver='+window.srcVersion);
+const { ZXVideoRAMEntity } = await import('./svision/js/platform/canvas2D/zx/zxVideoRAMEntity.js?ver='+window.srcVersion);
+const { ZXVideoRAM } = await import('./svision/js/platform/canvas2D/zx/zxVideoRAM.js?ver='+window.srcVersion);
 const { SubMenuModel } = await import('./subMenuModel.js?ver='+window.srcVersion);
-await import('./svision/js/platform/canvas2D/zxSpectrum/zxRomDraw.js?ver='+window.srcVersion);
+await import('./svision/js/platform/canvas2D/zx/zxRomDraw.js?ver='+window.srcVersion);
 await import('./goldfishLogic.js?ver='+window.srcVersion);
 // begin code
 

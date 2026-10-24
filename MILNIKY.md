@@ -125,7 +125,7 @@ Výstup: **spustitelná aplikace se statickou herní obrazovkou**.
 
 - [x] `app/` podle vzoru **aticatac** / **lunarjetman** / **jetpac**:
       `main.js` (beze změny, R-002), `gameApp.js`, `appPlatform.js`
-      (`new ZXSpectrumPlatform()`), `version.js`, `menuModel.js`,
+      (`new ZXPlatform()`), `version.js`, `menuModel.js`,
       `tapeLoadingModel.js`, `gameOverModel.js`, `gameModel.js`,
       `gameAreaEntity.js`, `borderEntity.js`, `pauseGameEntity.js`,
       `aboutModel.js`, `hallOfFameModel.js` (od 2026-10-10 jeden
@@ -137,7 +137,7 @@ Výstup: **spustitelná aplikace se statickou herní obrazovkou**.
       `config/` (compile.json, config.php.sample, createDB.sql, infoDB.sql,
       nginx.conf), `db/`, `data/`, `images/` (jen README, ikony jsou M7),
       `package.json`. Tabulky `rg_bt_`, databáze `booty`
-- [x] `ZXSpectrumPlatform` 256×192 + border, atributová mřížka 32×24;
+- [x] `ZXPlatform` 256×192 + border, atributová mřížka 32×24;
       ★ hrací plocha řádky 0–22 přes celou šířku, panel řádek 23
       (`app/screenLayout.js` podle `sources/docs/screen_layout.md`)
 - [x] **Statická herní obrazovka ze skutečných pixelů originálu**:
