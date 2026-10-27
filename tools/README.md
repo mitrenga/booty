@@ -19,6 +19,7 @@ The Python tools need **SkoolKit** vendored in svision (R-008), via the
 | tool | what it does |
 |---|---|
 | `bootylib.py` | **the one place that says what is on the tape** and how the memory image is assembled from it: TZX with ID $10 and $11 blocks, `memory_image()` (including the 62 B at `$CD14`), `code_image()`. |
+| `jsonformat.mjs` | the Node side of `bootylib.py`'s `write_json` / `read_section` / `write_section`: reads and writes the sections of `data/global.json` in the same shape (indent 2, arrays of numbers on one line), for the `*.mjs` tools. |
 | `tapinfo.py` | takes the tape apart block by block; `--basic` lists both BASIC programs **with the actual binary values of the numbers**. The output is in `../sources/docs/tape_layout.md`. |
 | `mksnapshot.sh` | tape → `build/booty.z80` + `build/booty.bin`, simulated loading up to `USR 52500` (`$CD14`). |
 | `matchimage.py` | ★ **38 726 checks, 0 differences** — the memory image from `bootylib.py` against the simulator's memory. |
@@ -109,5 +110,6 @@ ladder under a pirate).
 
 ## What is to come
 
-`tracesound.py` +
-`matchsound.mjs` (M6). **None of them is written before there is something to measure.**
+Nothing is waiting: the sound tools of M6 (`tracesound.py`, `mksounds.py`,
+`matchsound.mjs`) are under *Worker* above. **A tool is not written before
+there is something to measure.**
