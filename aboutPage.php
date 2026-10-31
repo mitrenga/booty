@@ -53,7 +53,6 @@ class AboutPage extends AbstractAboutPage {
       'links' => [
         ['label' => 'Booty at Spectrum Computing', 'url' => 'https://spectrumcomputing.co.uk/entry/633/ZX-Spectrum/Booty'],
         ['label' => 'Booty at World of Spectrum', 'url' => 'https://worldofspectrum.org/archive/software/games/booty-firebird-software-ltd'],
-        ['label' => 'Retro Games — more classic remakes playable in your browser', 'url' => 'https://retrogames.free/'],
       ],
       'footer' =>
         '<p>An unofficial fan remake. The original game and its artwork belong to their authors '.

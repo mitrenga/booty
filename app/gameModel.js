@@ -108,6 +108,30 @@ export class GameModel extends AbstractModel {
     this.app.openAudioBuses();
     this.app.audioManager.resetGameSounds();
 
+    // the data files: at once from localStorage, or from the server when
+    // they are missing there (R-062)
+    this.loadDataFiles(this.dataKeys(), (files, error) => this.initData(files, error));
+  } // init
+
+  /** the data files the model, its screen and its sounds read */
+  dataKeys() {
+    return ['holds', 'sprites', 'panel', 'global', 'texts', 'memory', 'transition', 'sounds'];
+  } // dataKeys
+
+  /**
+   * The part of init() that needs the data files. Runs inside init() when
+   * they are in localStorage, later when they had to come from the server.
+   * @param {Object|null} files - The data files, or null.
+   * @param {Error} [error] - Why they are missing.
+   */
+  initData(files, error) {
+    if (this.app.model !== this) {
+      return;
+    }
+    if (!files) {
+      this.app.showErrorMessage(error ? error.message : 'Game data could not be loaded.', 'restart');
+    }
+
     if (!this.initScreen()) {
       this.desktopEntity.addEntity(new TextEntity(this.desktopEntity, this.app.fonts.zxFonts8x8, 0, 8*8, this.desktopWidth, 8, 'BOOTY', ZXColor.brightWhite, false, {align: 'center'}));
       this.desktopEntity.addEntity(new TextEntity(this.desktopEntity, this.app.fonts.fonts5x5, 8, 8*8+16, this.desktopWidth-16, 40,
@@ -132,7 +156,7 @@ export class GameModel extends AbstractModel {
     this.worker = this.gameWorker();
     this.app.inputEventsManager.sendEventsActiveKeys('Press');
     this.sendWorkerMessage({id: 'init', initData: this.workerInitData()});
-  } // init
+  } // initData
 
   /** what the screen says when the data of the game are not there */
   missingDataText() {

@@ -168,14 +168,9 @@ export class MenuModel extends AbstractModel {
     this.borderEntity.bkColor = ZXColor.cyan;
     this.desktopEntity.bkColor = ZXColor.blue;
 
-    if (this.initGoldfish()) {
-      // the hidden game's bottom band (row 22, where FISH is): the remake's
-      // line in the 5x5 font, black on its cyan
-      this.desktopEntity.addEntity(new TextEntity(this.desktopEntity, this.app.fonts.fonts5x5, 0, 23*8, this.desktopWidth, 6, this.app.copyright, ZXColor.black, false, {align: 'center'}));
-    } else {
-      this.desktopEntity.addEntity(new TextEntity(this.desktopEntity, this.app.fonts.fonts5x5, 8, 22*8, this.desktopWidth-16, 12,
-        'MENU DATA MISSING (data/global.json#goldfish). RUN tools/tracegoldfish.py AND tools/mkgoldfish.py.', ZXColor.brightWhite, false, {align: 'center', textWrap: true}));
-    }
+    // the hidden game under the items: at once from localStorage, or from the
+    // server when it is missing there (R-062)
+    this.loadDataFiles(['goldfish'], (files, error) => this.initData(files, error));
     // the items over the sea, rows 8-19, without a panel of their own
     var rows = Math.ceil(this.menuItems.length/this.menuOptions.columns);
     this.menuEntity = new MenuEntity(this.desktopEntity, 0, MenuModel.MENU_Y, this.desktopWidth, (rows-1)*this.menuOptions.itemPitch+this.menuOptions.itemHeight, false, this.menuOptions, this, this.getMenuData);
@@ -209,6 +204,34 @@ export class MenuModel extends AbstractModel {
 
     this.sendEvent(0, {id: 'closeAllAudioBuses'});
   } // init
+
+  /**
+   * The part of init() that needs the data files: the hidden game under the
+   * items. Runs inside init() when they are in localStorage, later when they
+   * had to come from the server.
+   * @param {Object|null} files - goldfish, or null.
+   * @param {Error} [error] - Why it is missing.
+   */
+  initData(files, error) {
+    if (this.app.model !== this) {
+      return;
+    }
+    if (!files) {
+      this.app.showErrorMessage(error ? error.message : 'Game data could not be loaded.', 'restart');
+    }
+    if (this.initGoldfish()) {
+      // under the items, also when the data came after them
+      var entities = this.desktopEntity.entities;
+      entities.splice(entities.indexOf(this.screenEntity), 1);
+      entities.unshift(this.screenEntity);
+      // the hidden game's bottom band (row 22, where FISH is): the remake's
+      // line in the 5x5 font, black on its cyan
+      this.desktopEntity.addEntity(new TextEntity(this.desktopEntity, this.app.fonts.fonts5x5, 0, 23*8, this.desktopWidth, 6, this.app.copyright, ZXColor.black, false, {align: 'center'}));
+    } else {
+      this.desktopEntity.addEntity(new TextEntity(this.desktopEntity, this.app.fonts.fonts5x5, 8, 22*8, this.desktopWidth-16, 12,
+        'MENU DATA MISSING (data/global.json#goldfish). RUN tools/tracegoldfish.py AND tools/mkgoldfish.py.', ZXColor.brightWhite, false, {align: 'center', textWrap: true}));
+    }
+  } // initData
 
   shutdown() {
     super.shutdown();

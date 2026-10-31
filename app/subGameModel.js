@@ -55,11 +55,18 @@ export class SubGameModel extends GameModel {
     // ★ the hidden game's border: cyan (5, tools/tracegoldfish.py's run)
     this.borderEntity.bkColor = ZXColor.cyan;
     this.desktopEntity.bkColor = ZXColor.cyan;
+  } // init
 
-    if (this.screenEntity && this.app.audioManager.hasSound('tune')) {
+  dataKeys() {
+    return ['goldfish', 'sounds'];
+  } // dataKeys
+
+  initData(files, error) {
+    super.initData(files, error);
+    if (this.app.model === this && this.screenEntity && this.app.audioManager.hasSound('tune')) {
       this.sendEvent(0, {id: 'playSound', bus: 'music', sound: 'tune', options: {repeat: true}});
     }
-  } // init
+  } // initData
 
   /**
    * The screen of the hidden game as data/global.json#goldfish has it (the

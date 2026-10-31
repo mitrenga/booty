@@ -75,6 +75,25 @@ export class MainModel extends AbstractModel {
     this.borderEntity.bkColor = ZXColor.black;
     this.desktopEntity.bkColor = ZXColor.black;
 
+    // the title and its tune: at once from localStorage, or from the server
+    // when they are missing there (R-062)
+    this.loadDataFiles(['title', 'sounds'], (files, error) => this.initData(files, error));
+  } // init
+
+  /**
+   * The part of init() that needs the data files. Runs inside init() when
+   * they are in localStorage, later when they had to come from the server.
+   * @param {Object|null} files - title and sounds, or null.
+   * @param {Error} [error] - Why they are missing.
+   */
+  initData(files, error) {
+    if (this.app.model !== this) {
+      return;
+    }
+    if (!files) {
+      this.app.showErrorMessage(error ? error.message : 'Game data could not be loaded.', 'restart');
+    }
+
     var title = this.loadDataFile('title');
     if (title) {
       // ★ the state of $D86F goes on from the last visit (titleSea.js)
@@ -97,7 +116,7 @@ export class MainModel extends AbstractModel {
       this.sendEvent(0, {id: 'playSound', bus: 'music', sound: 'tune', options: {repeat: true}});
     }
     this.app.keepTune = false;
-  } // init
+  } // initData
 
   shutdown() {
     super.shutdown();

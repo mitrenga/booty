@@ -135,7 +135,10 @@ export class AudioManager extends AbstractAudioManager {
    * @returns {Object|null} The parsed content, or null.
    */
   loadDataFile(key) {
-    return Tool.loadDataFile(key);
+    // through the model: a file its loadDataFiles() had to get from the
+    // server is there, not in localStorage (R-062)
+    var model = this.app.model;
+    return model && model.loadDataFile ? model.loadDataFile(key) : Tool.loadDataFile(key);
   } // loadDataFile
 
   /**

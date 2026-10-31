@@ -130,6 +130,25 @@ export class TapeLoadingModel extends AbstractModel {
     this.programNameEntity.hide = true;
     this.desktopEntity.addEntity(this.programNameEntity);
 
+    // the tape and the picture: at once from localStorage, or from the server
+    // when they are missing there (R-062)
+    this.loadDataFiles(['tape', 'loading'], (files, error) => this.initData(files, error));
+  } // init
+
+  /**
+   * The part of init() that needs the data files. Runs inside init() when
+   * they are in localStorage, later when they had to come from the server.
+   * @param {Object|null} files - tape and loading, or null.
+   * @param {Error} [error] - Why they are missing.
+   */
+  initData(files, error) {
+    if (this.app.model !== this) {
+      return;
+    }
+    if (!files) {
+      this.app.showErrorMessage(error ? error.message : 'Game data could not be loaded.', 'restart');
+    }
+
     var tape = this.loadDataFile('tape');
     if (!tape || !this.loadDataFile('loading')) {
       this.inputLineEntity.setText('TAPE DATA MISSING (data/global.json#tape)');
@@ -143,7 +162,7 @@ export class TapeLoadingModel extends AbstractModel {
 
     this.app.stack.flashState = false;
     this.sendEvent(330, {id: 'changeFlashState'});
-  } // init
+  } // initData
 
   newBorderEntity() {
     // no X in the border, like the other screens: a click or a touch anywhere
