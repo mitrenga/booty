@@ -366,7 +366,7 @@ export class SubMenuModel extends AbstractModel {
     }
     if (original) {
       var note = new TextEntity(panel, this.app.fonts.fonts5x5, 4, h-16, w-48, 12,
-        navigator.onLine ? 'THE ORIGINAL TABLE - NOBODY HAS PLAYED YET' : 'SYSTEM OFFLINE - THE ORIGINAL TABLE',
+        navigator.onLine ? 'NOBODY HAS PLAYED YET' : 'SYSTEM OFFLINE',
         ZXColor.brightRed, false, {textWrap: true, margin: 1});
       panel.addEntity(note);
       this.rowEntities.push(note);
