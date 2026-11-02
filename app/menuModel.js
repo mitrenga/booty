@@ -12,6 +12,7 @@ const { ZXVideoRAM } = await import('./svision/js/platform/canvas2D/zx/zxVideoRA
 const { SubMenuModel } = await import('./subMenuModel.js?ver='+window.srcVersion);
 await import('./svision/js/platform/canvas2D/zx/zxRomDraw.js?ver='+window.srcVersion);
 await import('./goldfishLogic.js?ver='+window.srcVersion);
+const { VolumeControl } = await import('./svision/js/platform/canvas2D/dialogs/volumeControl.js?ver='+window.srcVersion);
 // begin code
 
 /**
@@ -308,14 +309,14 @@ export class MenuModel extends AbstractModel {
     return o.t1LeftMargin+width <= o.itemWidth;
   } // labelFits
 
+  /**
+   * The level as the volume dialog words it (VolumeControl.levelText): OFF,
+   * 10%..90%, MAX.
+   * @param {number} volume - A slider's 0-10.
+   * @returns {string}
+   */
   volumeText(volume) {
-    switch (volume) {
-      case 0:
-        return 'OFF';
-      case 10:
-        return 'MAX';
-    }
-    return (volume*10)+'%';
+    return VolumeControl.levelText(volume);
   } // volumeText
 
   /**
