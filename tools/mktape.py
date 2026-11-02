@@ -17,13 +17,15 @@ XOR checksum.
   That is why the pilot sounds shorter – the property of the tape that can
   be heard
 
-Bytes are stored for everything short (headers, BASIC, both turbo blocks):
-the remake then **plays them for real**, not random noise. The two long
-blocks are different: SCREEN$ `bs` is in `data/global.json#loading`
-(`tools/mkscreen.py`) and the code `bc` has 38 655 B, i.e. over three and a
-half minutes of tape – the file carries only its first `CODE_CUT` bytes
-(including the flag), the remake plays them and cuts the block short. This
-is recorded as a deviation (`ZADANI.md` §10).
+Bytes are stored only where the remake shows them: the three headers (the
+names `BOOTY`, `bs`, `bc`) and the SCREEN$ `bs`, which refers to
+`data/global.json#loading` (`tools/mkscreen.py`). The BASIC, the two turbo
+blocks and the code `bc` **only sound**: the remake plays their pilot and
+then noise in the block's own timing (`app/audioManager.js`, the way Manic
+Miner and Bobby Bearing do) for `durationMs` – the block's length on the
+tape, except the code, 38 655 B and over three and a half minutes, which
+is cut to the length of its first `CODE_CUT` bytes (`ZADANI.md` §10;
+operator 2026-11-02: no bytes of the program in the data).
 
 ? **Sync of the turbo blocks** is 875/525 T in our dump, but a second
 independent dump of the same tape has the ROM sync (667/735 T) with identical
@@ -83,15 +85,12 @@ def main():
             out.update({'header': True, 'type': h['typeName'], 'name': h['name'],
                         'dataLength': h['length'], 'param1': h['param1']})
             out['bytes'] = data.hex()
-        elif blk['id'] == 0x10 and owner in LONG:
-            if LONG[owner]:
-                out['bytesIn'] = LONG[owner]
-            else:
-                out['bytes'] = data[:CODE_CUT].hex()
-                out['cut'] = True
+        elif blk['id'] == 0x10 and owner in LONG and LONG[owner]:
+            out['bytesIn'] = LONG[owner]
             owner = None
         else:
-            out['bytes'] = data.hex()
+            # only sounds: noise for as long as the block (the code: its first CODE_CUT bytes)
+            out['played'] = data[:CODE_CUT] if blk['id'] == 0x10 and owner in LONG else data
             owner = None
         # how long the block sounds: pilot, sync, bits, final pulse –
         # `durationMs` what the remake plays, `tapeMs` the whole block on the tape
@@ -101,7 +100,7 @@ def main():
                        + 2 * (ones * out['one'] + (8 * len(payload) - ones) * out['zero']) + 945)
             return round(tstates / 3500)
         out['tapeMs'] = sounds(data)
-        out['durationMs'] = sounds(bytes.fromhex(out['bytes'])) if out.get('cut') else out['tapeMs']
+        out['durationMs'] = sounds(out.pop('played')) if 'played' in out else out['tapeMs']
         blocks.append(out)
 
     result = {
@@ -113,8 +112,8 @@ def main():
               % (b['block'], b['kind'], (b.get('name') or '').strip() or '-', b['length'],
                  b['pilotPulses'], b['pilot'], b['tapeMs'], b['pauseMs'],
                  '  (bytes in %s)' % b['bytesIn'] if 'bytesIn' in b
-                else '  (%d B played, %d ms)' % (len(b['bytes']) // 2, b['durationMs'])
-                if b.get('cut') else ''))
+                else '  (bytes)' if 'bytes' in b
+                else '  (noise, %d ms)' % b['durationMs']))
     print('-> %s' % where)
 
 

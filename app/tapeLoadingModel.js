@@ -14,11 +14,15 @@ const { ZXColor } = await import('./svision/js/platform/canvas2D/zx/zxColor.js?v
  * that has just loaded the tape: tools/matchloading.py, 112 128 checks, zero
  * differences).
  *
- * Every block is played as it is on the tape (audioManager.tapeBlockSound,
- * data/global.json#tape): the pilot, the sync pulses and the bytes it really
- * carries. The sound says when the pilot is over and when the block is over,
- * and the loading lives off those events rather than off a timer, so the
- * picture, the stripes and the sound cannot drift apart.
+ * Every block is played in its own timing off the tape
+ * (audioManager.tapeBlockSound, data/global.json#tape): the pilot, the sync
+ * pulses and the bytes — the headers and the SCREEN$ block really carry
+ * them, the BASIC, the turbo blocks and the code **only sound** as noise for
+ * as long as the block lasts on the tape (operator 2026-11-02, as Manic
+ * Miner and Bobby Bearing). The sound says when the pilot is over and when
+ * a block of bytes is over, and the loading lives off those events rather
+ * than off a timer, so the picture, the stripes and the sound cannot drift
+ * apart; a block of noise ends by the clock.
  *
  * The picture is not revealed, it is **loaded**: the sound sends an event
  * after every byte of the SCREEN$ block and the model writes that byte into
@@ -52,8 +56,9 @@ const { ZXColor } = await import('./svision/js/platform/canvas2D/zx/zxColor.js?v
  * machine code hidden in line 65295 loads past the ROM, the header `bs` and
  * the SCREEN$ block, the header `bc` and 38 655 bytes of the game, and the
  * **second turbo block**, whose 62 bytes end up at $CD14. The code block is
- * cut short after its first kilobyte: the whole of it is three minutes and a
- * half, and the picture is already on the screen (ZADANI chap. 10).
+ * cut short to the length of its first kilobyte: the whole of it is three
+ * minutes and a half, and the picture is already on the screen (ZADANI
+ * chap. 10).
  */
 export class TapeLoadingModel extends AbstractModel {
 
@@ -89,7 +94,9 @@ export class TapeLoadingModel extends AbstractModel {
   script(tape) {
     var b = tape.blocks;
     var pause = (n) => ({id: 'pause', duration: b[n-1].pauseMs});
-    var block = (n, extra) => Object.assign({id: 'block', block: n, duration: b[n-1].durationMs}, extra || {});
+    // a block without bytes only sounds: noise, ended by the clock (nextStep)
+    var block = (n, extra) => Object.assign({id: 'block', block: n, duration: b[n-1].durationMs,
+                                              noise: !b[n-1].bytes && !b[n-1].bytesIn}, extra || {});
     return [
       {id: 'pause', duration: 1000},
       // the ROM loads the BASIC: header, then the program
@@ -188,6 +195,11 @@ export class TapeLoadingModel extends AbstractModel {
       case 'block':
         this.sendEvent(0, {id: 'playSound', bus: 'sounds', sound: 'tapeBlock'+step.block, options: false});
         this.sendEvent(0, {id: 'setBorderAnimation', value: 'pilotTone'});
+        if (step.noise) {
+          // noise lasts as long as the block on the tape, by the clock
+          this.sendEvent(step.duration, {id: 'updateTape'});
+          return;
+        }
         // the block ends itself with `tapeBlockEnd`; this only catches a bus
         // that never got to play it
         this.sendEvent(step.duration+2000, {id: 'updateTape', fallback: true});

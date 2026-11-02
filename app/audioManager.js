@@ -145,7 +145,11 @@ export class AudioManager extends AbstractAudioManager {
    * One block of the tape as it sounds: the pilot, the two sync pulses, every
    * bit of the bytes the block carries and the terminating pulse — in the
    * block's own timing out of data/global.json#tape (tools/mktape.py), played by
-   * svision's ZXMachineSounds.tapeBlock.
+   * svision's ZXMachineSounds.tapeBlock. Only the headers and the SCREEN$
+   * block carry bytes; the BASIC, the turbo blocks and the code **only
+   * sound**: their pilot and then endless noise in the block's own timing
+   * (`infinityRndPulses`, as Manic Miner's tapeRndDataSound), stopped by the
+   * tape loading after the block's `durationMs` (operator 2026-11-02).
    *
    * Three events come with it, and the tape loading lives off them rather
    * than off a timer, so the picture and the stripes cannot drift away from
@@ -181,6 +185,18 @@ export class AudioManager extends AbstractAudioManager {
     var block = tape.blocks[number-1];
     var bytes = null;
     var picture = false;
+    if (!block.bytes && !block.bytesIn) {
+      // the pilot, the sync pulses and noise for as long as it is let play;
+      // nothing ends it, so no `tapeBlockEnd`
+      var fragments = [block.pilot, block.sync[0], block.sync[1], block.zero, block.one].map(
+        (tStates) => ZXMachineSounds.pulse(sampleRate, tStates));
+      var pulses = new Array(block.pilotPulses).fill(0);
+      var events = {};
+      events[pulses.length] = {id: 'tapePilotEnd', block: number};
+      pulses.push(1, 2);
+      return {fragments: fragments, pulses: pulses, volume: level, events: events,
+              infinityRndPulses: {fragments: [3, 4], quantity: 2}};
+    }
     if (block.bytesIn) {
       var loading = this.loadDataFile(block.bytesIn);
       if (!loading) {
