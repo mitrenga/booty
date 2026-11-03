@@ -5,6 +5,7 @@ const { PauseGameEntity } = await import('./pauseGameEntity.js?ver='+window.srcV
 const { ZXColor } = await import('./svision/js/platform/canvas2D/zx/zxColor.js?ver='+window.srcVersion);
 const { ScreenComposer } = await import('./screenComposer.js?ver='+window.srcVersion);
 const { GameAreaEntity } = await import('./gameAreaEntity.js?ver='+window.srcVersion);
+const { SpriteTool } = await import('./svision/js/spriteTool.js?ver='+window.srcVersion);
 // begin code
 
 /**
@@ -155,6 +156,11 @@ export class GameModel extends AbstractModel {
 
     this.worker = this.gameWorker();
     this.app.inputEventsManager.sendEventsActiveKeys('Press');
+    // the test flight (testFlightPage.php): its script sets this.flight
+    this.flight = null;
+    if (!this.demo) {
+      SpriteTool.scriptedSprite(this, this.app.appIconSprite);
+    }
     this.sendWorkerMessage({id: 'init', initData: this.workerInitData()});
   } // initData
 
@@ -191,7 +197,9 @@ export class GameModel extends AbstractModel {
       memory: this.loadDataFile('memory'),
       romFont: this.romFont(),
       // the times of a change of hold through a door (data/global.json#transition)
-      transition: this.loadDataFile('transition')
+      transition: this.loadDataFile('transition'),
+      // a game of a recording played by itself (tools/mkflight.mjs), or null
+      flight: this.flight
     };
   } // workerInitData
 

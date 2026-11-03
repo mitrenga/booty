@@ -24,7 +24,7 @@ memory and the `frame` message after every pass, 0 differences.
 
 | message | fields | meaning |
 |---|---|---|
-| `init` | `initData: {headless, seed, hiScore, memory, romFont, transition}` | new game. `headless: true` ticks only on the `tick` message (tools). |
+| `init` | `initData: {headless, seed, hiScore, memory, romFont, transition, flight}` | new game. `headless: true` ticks only on the `tick` message (tools). |
 | `controls` | `left`, `right`, `up`, `down`, `enter` (boolean) | the full state of the actions; sent on every change, and whole. |
 | `pause` / `continue` | – | stops / restarts the clock; `continue` without `pause` does nothing. |
 | `tick` | – | one frame in `headless` mode. |
@@ -39,9 +39,30 @@ memory and the `frame` message after every pass, 0 differences.
 | `transition` | `data/global.json#transition` – the door transition timings; without it the new hold appears at once |
 | `seed` | ★ the initial state of the generator `$F343`; `0` = the original after loading. The model carries it from game to game as the original does |
 | `hiScore` | the high score from the server |
+| `flight` | the test flight (`testFlightPage.php`, `tools/mkflight.mjs`), or `null` — see below |
 
 The worker assembles the memory from them (`BootyLogic.composeMemory`) and
 starts a new game (`BootyLogic.newGame` – the rewrite of `$DEA8` … `$DF13`).
+
+### Test flight
+
+`flight` is a game of the original from an RZX recording played by itself
+(`tools/mkflight.mjs`; the page `?testFlight`, `?testFlight&speed=N`):
+
+| key | contents |
+|---|---|
+| `seed` | ★ `$F343` when the recording's menu started the game; it replaces `seed` |
+| `controls` | ★ `$5BEA`–`$5BEF` of the recording: the controls chosen and their five keys, written after `newGame` |
+| `keys`, `runs` | the key of every pass (`0xFF` = none) as runs of indices into `keys` |
+| `frames`, `long` | ★ per pass `0` = the timer does not read `FRAMES`, else 1 + the original's interrupts since the previous pass left `FRAMES`; the last character of the alphabet = the next value of `long` |
+| `speed` | 1–32, ticks a call of the clock; the sound plays at any speed |
+
+While the flight lasts the pass gets its key and `FRAMES` from the data
+(the `controls` messages and the ENTER lock do not count) and the ticks do
+not count `FRAMES`; then the player goes on with the game as it stands —
+the recordings end in the middle of a game. With `demo` the flight is
+ignored. `tools/mkflight.mjs` plays the data through this worker and
+compares every pass with the original before it writes them.
 
 ### ★ Controls
 

@@ -72,6 +72,7 @@ The Python tools need **SkoolKit** vendored in svision (R-008), via the
 |---|---|
 | `tracerules.py` | RZX recordings from the RZX Archive (`build/rzx/`, `sources/docs/provenance.md`) – **whole games played by a human** – replayed with SkoolKit, catching the passes' inputs **by observation** (`$ED38` key, `$E122`/`$E136` `FRAMES`), without touching the code, which would shift the RZX frames → `build/rules/<name>/` in the shape of `tracephysics.py` |
 | `matchrules.mjs` | ★ **204 043 passes, 2 766 278 726 checks, 0 differences** — **the worker** (`app/gameWorker.js`, as it runs in the browser) from a new game: keys as actions via `controls`, ticks, transitions, game over; after every pass the whole memory and the `frame` message. Only the `FRAMES` timers are substituted (the rate is a deviation). The games `gold1`, `gold2` (golden key, next round) and `walk`, `gameover`, `lastlife` from `tracephysics.py`; prints what happened in the game (booty, explosions, keys, doors, deaths, ship edges) |
+| `mkflight.mjs` | the test flight (`testFlight.json`, `testFlightPage.php`): a game of `build/rules/<name>/` (`gold1` by default) as the worker's `flight` — the key of every pass and `FRAMES` relative to what the previous pass left; played twice through the worker and compared with the original after every pass (`gold1`: 62 363 passes, 1 690 785 656 checks, 0 differences) |
 | `workersandbox.mjs` | a stand-in for the worker's environment (`node:vm`, clocks, `importScripts`) and the data from `data/` for `runworker.mjs` and `matchrules.mjs` |
 
 ## Enemies (M5)

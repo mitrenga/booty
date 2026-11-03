@@ -70,6 +70,11 @@ var TRANSITION_SLOWDOWN = 2;
 // of a drowning rises by, so that it keeps step with its sound, which the
 // audio thread plays in real time
 var REAL_T_PER_TICK = TICK_MS*3500;
+// the runs of a test flight: printable ASCII without the digits (the count
+// of a run follows its character), the quote and the backslash — 82 values
+// (tools/mkflight.mjs ALPHABET)
+var FLIGHT_ALPHABET = Array.from({length: 94}, (_, i) => String.fromCharCode(33+i))
+  .filter((c) => !/[0-9"\\]/.test(c)).join('');
 
 /** the real time a change of hold takes, T-states (TRANSITION_SLOWDOWN) */
 function transitionLength(times) {
@@ -126,10 +131,46 @@ function reset() {
     // ★ the five actions of the original's DEFINE KEYS; what they are as
     // keys is read out of the memory ($5BEB-$5BEF) when a pass runs
     controls: {left: false, right: false, up: false, down: false, enter: false},
+    // the test flight (decodeFlight), or null
+    flight: null,
     outcome: 'pass',
     sounds: []
   };
 } // reset
+
+/**
+ * The test flight of `init` (tools/mkflight.mjs) for runPass(): its runs (a
+ * character of FLIGHT_ALPHABET = a value, then the count of passes in
+ * decimal when more than one) spread out to one value a pass.
+ * @param {Object} flight - {keys, runs, frames, long, speed, …}.
+ * @returns {Object} {keys, passes, frames, speed}.
+ */
+function decodeFlight(flight) {
+  var spread = (runs) => {
+    var values = [];
+    for (var at = 0; at < runs.length;) {
+      var value = FLIGHT_ALPHABET.indexOf(runs[at++]);
+      var count = '';
+      while (at < runs.length && runs[at] >= '0' && runs[at] <= '9') {
+        count += runs[at++];
+      }
+      for (var n = count ? Number(count) : 1; n > 0; n--) {
+        values.push(value);
+      }
+    }
+    return values;
+  };
+  // the last character stands for the next of the long ones
+  var long = (flight.long || []).slice();
+  var frames = spread(flight.frames).map((d) => (d === FLIGHT_ALPHABET.length-1 ? long.shift() : d));
+  return {keys: flight.keys, passes: spread(flight.runs), frames: frames,
+          speed: Math.max(1, flight.speed || 1)};
+} // decodeFlight
+
+/** whether the next pass is one of the test flight's */
+function inFlight() {
+  return state.flight !== null && state.pass < state.flight.passes.length;
+} // inFlight
 
 /** the key code ROM KEY-SCAN would give for the actions held */
 function heldKey() {
@@ -221,7 +262,20 @@ function transitionView() {
 /** one pass of the main loop; false when the game is over */
 function runPass() {
   var hold = logic.m[0x5BD3];
-  var outcome = logic.pass({key: heldKey()});
+  var key = heldKey();
+  if (inFlight()) {
+    // ★ the test flight: the key the original's KEY-SCAN gave in this pass,
+    // and FRAMES as its timer read it — what the pass left there and the
+    // interrupts of the original since (tools/mkflight.mjs); the ticks of
+    // the flight do not count FRAMES
+    var flight = state.flight;
+    key = flight.keys[flight.passes[state.pass]];
+    if (flight.frames[state.pass]) {
+      var frames = (logic.rd16(0x5C78)+flight.frames[state.pass]-1) & 0xFFFF;
+      logic.wr16(0x5C78, frames);
+    }
+  }
+  var outcome = logic.pass({key: key});
   if (logic.m[0x5BD3] !== hold) {
     state.enterLockUntil = state.frame+ENTER_LOCK_FRAMES;
   }
@@ -312,10 +366,12 @@ function tick() {
   var m = logic.m;
   state.frame++;
   interrupt();
-  var frames = (m[0x5C78] | (m[0x5C79] << 8) | (m[0x5C7A] << 16))+1;
-  m[0x5C78] = frames & 0xFF;
-  m[0x5C79] = (frames >> 8) & 0xFF;
-  m[0x5C7A] = (frames >> 16) & 0xFF;
+  if (!inFlight()) {
+    var frames = (m[0x5C78] | (m[0x5C79] << 8) | (m[0x5C7A] << 16))+1;
+    m[0x5C78] = frames & 0xFF;
+    m[0x5C79] = (frames >> 8) & 0xFF;
+    m[0x5C7A] = (frames >> 16) & 0xFF;
+  }
   state.passT += FRAME_T;
   if (state.drowning) {
     // the water first, in real time like its sound, then the change of hold
@@ -340,12 +396,16 @@ function schedule() {
   if (!state.running || state.paused || state.headless) {
     return;
   }
+  // a test flight may go faster (as bobbybearing's): speed ticks a call
+  var speed = state.flight ? state.flight.speed : 1;
   timer = setTimeout(() => {
     // the message handler may have stopped the clock in the meantime
     if (timer === null) {
       return;
     }
-    tick();
+    for (var step = 0; step < speed && state.running; step++) {
+      tick();
+    }
     schedule();
   }, TICK_MS);
 } // schedule
@@ -382,10 +442,21 @@ onmessage = function(event) {
       if (initData.demo) {
         logic.m[0x5BF0] = 3;
       }
+      if (initData.flight && !initData.demo) {
+        // ★ the test flight starts as its recording did: the generator, and
+        // the controls chosen in the original's menu with the keys they
+        // define ($5BEA-$5BEF), which the pass compares the key with
+        state.flight = decodeFlight(initData.flight);
+        logic.m[0xF343] = initData.flight.seed & 0xFF;
+        logic.m[0xF344] = (initData.flight.seed >> 8) & 0xFF;
+      }
       logic.newGame();
+      if (state.flight) {
+        initData.flight.controls.forEach((v, i) => { logic.m[0x5BEA+i] = v; });
+      }
       // ? test only (GameModel.TEST_START_HOLD): another hold to start in,
       // entered the way a door enters it
-      if (initData.startHold) {
+      if (initData.startHold && !state.flight) {
         // Jim placed first, as tools/tracephysics.py `to_hold` does: his
         // place and the place he is remembered at (+13, +14)
         if (initData.startAt) {
